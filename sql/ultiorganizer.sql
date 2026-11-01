@@ -890,6 +890,7 @@ CREATE TABLE IF NOT EXISTS `uo_api_receipt` (
   `request_hash` char(64) NOT NULL,
   `status` smallint(5) NOT NULL,
   `response` text DEFAULT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_api_receipt_key` (`api_token`,`scorekeeper_token`,`game`,`idempotency_key`),

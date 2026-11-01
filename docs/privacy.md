@@ -54,7 +54,7 @@ Keeps competition history, removes personal data and direct identifiers:
 | `uo_event_log` | delete player-category rows by `id1` (not `id2`, the team); then write one non-identifying audit entry |
 | `uo_player_stats`, `uo_played`, `uo_goal`, `uo_defense` | unchanged; history stays linked to the kept rows |
 | `uo_scoresheet_history` | rows kept; `detail` player ids left as references; snapshot `assist_name`, `scorer_name` and `played[].name` rewritten to `- -` by player id, so names recorded before a correction are reached too |
-| `uo_api_receipt` | unchanged; holds only token ids, request hashes and small JSON responses without names or notes, and goes with the game |
+| `uo_api_receipt` | unchanged; holds only token ids, request hashes, the client `User-Agent` (not recorded while `DisableVisitorLogging` is on) and small JSON responses without names or notes, and goes with the game |
 
 The snapshot scrub runs inside the anonymization transaction, whose read view is fixed at start, so a snapshot written concurrently keeps the old name. Prefer running outside live scoring, or run it again: the tool is idempotent and resolves its subject by ids anonymization does not clear.
 

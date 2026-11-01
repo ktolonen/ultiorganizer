@@ -247,9 +247,12 @@ function ApiReceiptFind($apiTokenId, $linkTokenId, $gameId, $key)
  */
 function ApiReceiptStore($apiTokenId, $linkTokenId, $gameId, $key, $method, $path, $requestHash, $status, array $response)
 {
+    // Like the history IP, DisableVisitorLogging suppresses it (docs/privacy.md).
+    $userAgent = IsVisitorLoggingDisabled() ? ''
+        : substr((string) preg_replace('/[^\x20-\x7e]/', '', (string) ($_SERVER['HTTP_USER_AGENT'] ?? '')), 0, 255);
     DBExecute(sprintf(
-        "INSERT INTO uo_api_receipt (api_token, scorekeeper_token, game, idempotency_key, method, path, request_hash, status, response)
-		VALUES (%d, %d, %d, '%s', '%s', '%s', '%s', %d, '%s')",
+        "INSERT INTO uo_api_receipt (api_token, scorekeeper_token, game, idempotency_key, method, path, request_hash, status, response, user_agent)
+		VALUES (%d, %d, %d, '%s', '%s', '%s', '%s', %d, '%s', NULLIF('%s', ''))",
         (int) $apiTokenId,
         (int) $linkTokenId,
         (int) $gameId,
@@ -259,6 +262,7 @@ function ApiReceiptStore($apiTokenId, $linkTokenId, $gameId, $key, $method, $pat
         DBEscapeString((string) $requestHash),
         (int) $status,
         DBEscapeString((string) json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)),
+        DBEscapeString($userAgent),
     ));
 }
 
