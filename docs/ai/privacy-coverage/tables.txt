@@ -13,6 +13,7 @@
 
 personal         uo_accreditationlog
 none             uo_api_rate_limit
+none             uo_api_receipt                   # token ids, request hashes and small JSON responses; no names or notes
 none             uo_api_token
 personal-exempt  uo_club                          # contacts, story, and achievements are free text on a club row, not on a data subject's own row; a name mentioned there needs manual admin editing during a request
 personal-exempt  uo_comment                       # free-text field keyed to an entity, not to a data subject; handled by manual review during a request

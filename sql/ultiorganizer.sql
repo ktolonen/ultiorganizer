@@ -346,7 +346,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(100, '2026-08-30 00:00:00'),
 	(101, '2026-09-27 00:00:00'),
 	(102, '2026-10-03 00:00:00'),
-	(103, '2026-10-04 00:00:00');
+	(103, '2026-10-04 00:00:00'),
+	(104, '2026-10-17 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -487,6 +488,7 @@ CREATE TABLE IF NOT EXISTS `uo_scoresheet_history` (
   `has_snapshot` tinyint(1) NOT NULL DEFAULT 0,
   `snapshot` mediumtext DEFAULT NULL,
   `scorekeeper_token` int(10) DEFAULT NULL,
+  `api_token` int(10) DEFAULT NULL,
   PRIMARY KEY (`history_id`),
   KEY `idx_scoresheet_history_game_time` (`game`,`time`),
   KEY `idx_scoresheet_history_restorable` (`game`,`has_snapshot`,`time`),
@@ -875,6 +877,25 @@ CREATE TABLE IF NOT EXISTS `uo_reservation` (
   KEY `idx_reservation_group_time_loc_field` (`reservationgroup`,`starttime`,`location`,`fieldname`),
   CONSTRAINT `fk_reservation_location` FOREIGN KEY (`location`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `uo_api_receipt` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `api_token` int(10) NOT NULL,
+  `scorekeeper_token` int(10) NOT NULL,
+  `game` int(10) NOT NULL,
+  `idempotency_key` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `method` varchar(10) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `request_hash` char(64) NOT NULL,
+  `status` smallint(5) NOT NULL,
+  `response` text DEFAULT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_api_receipt_key` (`api_token`,`scorekeeper_token`,`game`,`idempotency_key`),
+  KEY `idx_api_receipt_game` (`game`),
+  CONSTRAINT `fk_api_receipt_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 CREATE TABLE IF NOT EXISTS `uo_scorekeeper_token` (

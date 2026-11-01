@@ -818,14 +818,15 @@ function IsScorekeeperApp()
 
 /**
  * Whether a scorekeeping link held by this session covers the game. Links
- * count only in Scorekeeper; the desktop editors need a real role.
+ * count only in Scorekeeper and for the scorekeeping app API actor; the
+ * desktop editors need a real role.
  */
 function ScorekeeperGrantCovers($game)
 {
-    if (!IsScorekeeperApp()) {
+    require_once __DIR__ . '/scorekeeper.functions.php';
+    if (!IsScorekeeperApp() && !ScorekeeperApiActorIsSet()) {
         return false;
     }
-    require_once __DIR__ . '/scorekeeper.functions.php';
     return ScorekeeperGrantTokenId($game) > 0;
 }
 
@@ -835,10 +836,10 @@ function ScorekeeperGrantCovers($game)
  */
 function ScorekeeperAnonymousTokenId($game)
 {
-    if (isLoggedIn() || !IsScorekeeperApp()) {
+    require_once __DIR__ . '/scorekeeper.functions.php';
+    if (isLoggedIn() || (!IsScorekeeperApp() && !ScorekeeperApiActorIsSet())) {
         return 0;
     }
-    require_once __DIR__ . '/scorekeeper.functions.php';
     return ScorekeeperGrantTokenId($game);
 }
 

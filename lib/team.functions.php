@@ -554,7 +554,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
     $previousExceptionMode = DBShouldThrowExceptions();
     DBSetExceptionMode(true);
     try {
-        DBQuery('START TRANSACTION');
+        DBTransactionBegin();
         if ($evict) {
             DBQuery(sprintf(
                 "DELETE FROM uo_team_pool WHERE pool=%d AND rank=%d",
@@ -576,9 +576,9 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
             (int) $move['torank'],
             (int) $move['torank'],
         ));
-        DBQuery('COMMIT');
+        DBTransactionCommit();
     } catch (Throwable $e) {
-        DBQuery('ROLLBACK');
+        DBTransactionRollback();
         DBSetExceptionMode($previousExceptionMode);
         throw $e;
     }

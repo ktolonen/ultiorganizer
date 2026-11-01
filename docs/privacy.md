@@ -54,6 +54,7 @@ Keeps competition history, removes personal data and direct identifiers:
 | `uo_event_log` | delete player-category rows by `id1` (not `id2`, the team); then write one non-identifying audit entry |
 | `uo_player_stats`, `uo_played`, `uo_goal`, `uo_defense` | unchanged; history stays linked to the kept rows |
 | `uo_scoresheet_history` | rows kept; `detail` player ids left as references; snapshot `assist_name`, `scorer_name` and `played[].name` rewritten to `- -` by player id, so names recorded before a correction are reached too |
+| `uo_api_receipt` | unchanged; holds only token ids, request hashes and small JSON responses without names or notes, and goes with the game |
 
 The snapshot scrub runs inside the anonymization transaction, whose read view is fixed at start, so a snapshot written concurrently keeps the old name. Prefer running outside live scoring, or run it again: the tool is idempotent and resolves its subject by ids anonymization does not clear.
 
@@ -82,7 +83,7 @@ Report scope: `uo_users`, `uo_userproperties`, `uo_scorekeeper_grant` (without t
 Deletion:
 
 - delete matching rows from `uo_event_log`, `uo_accreditationlog`, `uo_registerrequest`, `uo_passwordresetrequest`, `uo_userproperties` and `uo_scorekeeper_grant`, then the `uo_users` row; `uo_extraemail`, `uo_extraemailrequest` and `uo_enrolledteam` cascade
-- anonymize `uo_scoresheet_history` rows (`user_id` set to `-`, `ip` cleared); they belong to the game's history and go only with the game
+- anonymize `uo_scoresheet_history` rows (`user_id` set to `-`, `ip` cleared; the `scorekeeper_token` and `api_token` ids are not personal and stay); they belong to the game's history and go only with the game
 - write one non-identifying audit entry
 
 `uo_passwordresetrequest` has no foreign key, hence the explicit delete. It is left out of the report because a pending row holds a live reset token.
