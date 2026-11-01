@@ -125,9 +125,9 @@ function ApiTokenDelete($tokenId)
 }
 
 /**
- * The logged-in user's own active user-scoped token, created on first use.
- * Returns ['token_id' => int, 'token' => string], or null for anyone but that
- * user.
+ * The logged-in user's own active user-scoped token as ['token_id' => int,
+ * 'token' => string, 'last_used' => ?string], or null when there is none or
+ * for anyone but that user.
  */
 function ApiUserToken($userId)
 {
@@ -135,30 +135,44 @@ function ApiUserToken($userId)
         return null;
     }
     $row = DBQueryToRowUncached(sprintf(
-        "SELECT token_id, token_value FROM uo_api_token
+        "SELECT token_id, token_value, last_used FROM uo_api_token
         WHERE scope_type='user' AND scope_id='%s' AND revoked=0
         ORDER BY created_at DESC, token_id DESC
         LIMIT 1",
         DBEscapeString((string) $userId),
     ), true);
-    if (!empty($row)) {
-        return ['token_id' => (int) $row['token_id'], 'token' => $row['token_value']];
+    if (empty($row)) {
+        return null;
     }
-    return ApiTokenCreate("Scorekeeping app", 'user', (string) $userId);
+    return ['token_id' => (int) $row['token_id'], 'token' => $row['token_value'], 'last_used' => $row['last_used']];
 }
 
 /**
- * Revokes the logged-in user's active user-scoped tokens and creates a new
- * one, so a lost device stops working. Returns what ApiUserToken() does.
+ * Revokes the logged-in user's active user-scoped tokens. The rows stay so
+ * admins and history rows can still name them. Returns false for anyone but
+ * that user.
  */
-function ApiUserTokenReplace($userId)
+function ApiUserTokenRevoke($userId)
 {
     if (!isLoggedIn() || (string) $userId !== (string) $_SESSION['uid']) {
-        return null;
+        return false;
     }
     DBQuery(sprintf(
         "UPDATE uo_api_token SET revoked=1 WHERE scope_type='user' AND scope_id='%s' AND revoked=0",
         DBEscapeString((string) $userId),
     ));
+    return true;
+}
+
+/**
+ * Revokes the logged-in user's active user-scoped tokens and creates a new
+ * one, so a lost device stops working. Returns ['token_id' => int,
+ * 'token' => string], or null for anyone but that user.
+ */
+function ApiUserTokenReplace($userId)
+{
+    if (!ApiUserTokenRevoke($userId)) {
+        return null;
+    }
     return ApiTokenCreate("Scorekeeping app", 'user', (string) $userId);
 }

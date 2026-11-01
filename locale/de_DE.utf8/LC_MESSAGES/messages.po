@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-01 00:03+0200\n"
+"POT-Creation-Date: 2026-11-01 13:31+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -617,13 +617,13 @@ msgstr ""
 "Jeder, der einen Spiel- oder Feld-Scorekeeping-Link öffnet, kann für diese "
 "Spiele ohne Anmeldung Punkte erfassen."
 
-#: user/scorekeepingapp.php:24
+#: user/scorekeepingapp.php:32
 msgid ""
 "Anyone with this code can keep score with any scorekeeping link they have, "
-"until you replace the token."
+"until you replace or remove the token."
 msgstr ""
 "Jeder mit diesem Code kann mit jedem Scorekeeping-Link, den er besitzt, "
-"Punkte erfassen, bis das Token ersetzt wird."
+"Punkte erfassen, bis das Token ersetzt oder entfernt wird."
 
 #: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
@@ -1509,7 +1509,7 @@ msgstr "Erzeugen"
 msgid "Create new event"
 msgstr "Neue(s) Turnier/Saison"
 
-#: admin/apitokens.php:139
+#: admin/apitokens.php:139 user/scorekeepingapp.php:25
 msgid "Create token"
 msgstr "Token erzeugen"
 
@@ -3487,8 +3487,7 @@ msgid "Insufficient rights to import data"
 msgstr "Unzureichende Rechte zum Importieren von Daten"
 
 #: admin/apitokens.php:117 admin/spirit.php:418 admin/spirit.php:431
-#: user/scorekeepingapp.php:17 user/scorekeepinglink.php:28
-#: user/scoresheethistory.php:322
+#: user/scorekeepinglink.php:28 user/scoresheethistory.php:322
 msgid "Insufficient rights."
 msgstr "Unzureichende Rechte."
 
@@ -3679,7 +3678,7 @@ msgstr "Zuletzt geändert"
 msgid "Last name"
 msgstr "Nachname"
 
-#: admin/apitokens.php:177
+#: admin/apitokens.php:177 user/scorekeepingapp.php:34
 msgid "Last used"
 msgstr "Zuletzt verwendet"
 
@@ -4189,7 +4188,7 @@ msgstr "Nationale Mitgliedsnummer"
 msgid "Nationality"
 msgstr "Nationalität"
 
-#: admin/visitors.php:53 admin/visitors.php:54
+#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:33
 msgid "Never"
 msgstr "Nie"
 
@@ -4449,7 +4448,7 @@ msgstr "Kein Team ohne Gruppe"
 msgid "No token deleted."
 msgstr "Kein Token gelöscht."
 
-#: admin/apitokens.php:167
+#: admin/apitokens.php:167 user/scorekeepingapp.php:23
 msgid "No tokens created."
 msgstr "Keine Tokens erstellt."
 
@@ -5331,6 +5330,10 @@ msgstr "Alle Spiele entfernen"
 msgid "Remove cap"
 msgstr "Obergrenze entfernen"
 
+#: user/scorekeepingapp.php:38
+msgid "Remove token"
+msgstr "Token entfernen"
+
 #: lib/data.functions.php:201
 #, php-format
 msgid ""
@@ -5356,7 +5359,7 @@ msgstr "Passwort (Wdh.)"
 msgid "Replace link"
 msgstr "Link ersetzen"
 
-#: user/scorekeepingapp.php:27
+#: user/scorekeepingapp.php:37
 msgid "Replace token"
 msgstr "Token ersetzen"
 
@@ -5758,7 +5761,7 @@ msgstr "Speichern betrifft nur die ausgewählte Division."
 msgid "Saving failed. Please try again."
 msgstr "Das Speichern ist fehlgeschlagen. Bitte versuche es erneut."
 
-#: user/scorekeepingapp.php:23
+#: user/scorekeepingapp.php:31
 msgid ""
 "Scan this code in the scorekeeping app, then scan a scorekeeping link in the "
 "app to keep score."
@@ -6948,7 +6951,7 @@ msgstr ""
 "Der aktuelle Link funktioniert nicht mehr, und alle, die ihn geöffnet haben, "
 "verlieren den Zugriff. Fortfahren?"
 
-#: user/scorekeepingapp.php:25
+#: user/scorekeepingapp.php:35
 msgid ""
 "The current token stops working and the app must be set up again. Continue?"
 msgstr ""

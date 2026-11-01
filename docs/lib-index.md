@@ -5,7 +5,7 @@ Use this index to find existing shared helpers before adding new utility code or
 ## Root `lib/`
 
 - `lib/accreditation.functions.php`: player accreditation, license data, acknowledgements, and accreditation logs.
-- `lib/api.functions.php`: API token hashing, lookup, touch, CRUD, and rate limiting.
+- `lib/api.functions.php`: API token hashing, lookup, touch, CRUD, and rate limiting; the logged-in user's own scorekeeping app token (`ApiUserToken()`, `ApiUserTokenReplace()`, `ApiUserTokenRevoke()`).
 - `lib/auth.guard.php`: include-time auth guard that starts the session, redirects anonymous users, and opts login-gated requests out of the persistent cache (see `docs/persistent-cache.md`).
 - `lib/cache.functions.php`: request-local cache helpers for repeated deterministic lookups.
 - `lib/persistent-cache.functions.php`: cross-request TTL cache helpers (`CacheRememberFor`, `CacheForgetPersistent`, `CacheWipePersistent`) backed by files under `PERSISTENT_CACHE_DIR`.
