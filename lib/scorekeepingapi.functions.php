@@ -199,74 +199,6 @@ function ScorekeepingApiAbort()
 }
 
 /**
- * The stored receipt of an earlier request with this idempotency key.
- *
- * @param int $apiTokenId uo_api_token.token_id
- * @param int $linkTokenId uo_scorekeeper_token.token_id
- * @param int $gameId uo_game.game_id
- * @param string $key Client idempotency key
- * @return array{method: string, path: string, request_hash: string, status: int, response: array}|null
- */
-function ApiReceiptFind($apiTokenId, $linkTokenId, $gameId, $key)
-{
-    $row = DBQueryToRowUncached(sprintf(
-        "SELECT method, path, request_hash, status, response FROM uo_api_receipt
-		WHERE api_token=%d AND scorekeeper_token=%d AND game=%d AND idempotency_key='%s'",
-        (int) $apiTokenId,
-        (int) $linkTokenId,
-        (int) $gameId,
-        DBEscapeString((string) $key),
-    ));
-    if (!is_array($row)) {
-        return null;
-    }
-    $response = json_decode((string) $row['response'], true);
-    return [
-        'method' => (string) $row['method'],
-        'path' => (string) $row['path'],
-        'request_hash' => (string) $row['request_hash'],
-        'status' => (int) $row['status'],
-        'response' => is_array($response) ? $response : [],
-    ];
-}
-
-/**
- * Remember the answer to an idempotent request, in the transaction that made
- * its writes so the two stand or fall together.
- *
- * @param int $apiTokenId uo_api_token.token_id
- * @param int $linkTokenId uo_scorekeeper_token.token_id
- * @param int $gameId uo_game.game_id
- * @param string $key Client idempotency key
- * @param string $method HTTP method
- * @param string $path Request path
- * @param string $requestHash SHA-256 of the canonical request body
- * @param int $status HTTP status of the stored answer
- * @param array $response Body of the stored answer
- * @return void
- */
-function ApiReceiptStore($apiTokenId, $linkTokenId, $gameId, $key, $method, $path, $requestHash, $status, array $response)
-{
-    // Like the history IP, DisableVisitorLogging suppresses it (docs/privacy.md).
-    $userAgent = IsVisitorLoggingDisabled() ? ''
-        : substr((string) preg_replace('/[^\x20-\x7e]/', '', (string) ($_SERVER['HTTP_USER_AGENT'] ?? '')), 0, 255);
-    DBExecute(sprintf(
-        "INSERT INTO uo_api_receipt (api_token, scorekeeper_token, game, idempotency_key, method, path, request_hash, status, response, user_agent)
-		VALUES (%d, %d, %d, '%s', '%s', '%s', '%s', %d, '%s', NULLIF('%s', ''))",
-        (int) $apiTokenId,
-        (int) $linkTokenId,
-        (int) $gameId,
-        DBEscapeString((string) $key),
-        DBEscapeString(substr((string) $method, 0, 10)),
-        DBEscapeString(substr((string) $path, 0, 255)),
-        DBEscapeString((string) $requestHash),
-        (int) $status,
-        DBEscapeString((string) json_encode($response, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)),
-        DBEscapeString($userAgent),
-    ));
-}
-
-/**
  * Check an Idempotency-Key header value: 1 to 64 printable ASCII characters.
  *
  * @param string|null $key Header value, null when absent
@@ -493,15 +425,24 @@ function ScorekeepingApiWrite($gameId, array $request, array $rights, callable $
         }
 
         $requestHash = hash('sha256', (string) json_encode($request['body'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-        $receipt = ApiReceiptFind($request['api_token'], $request['link_token'], $gameId, $request['key']);
-        if ($receipt !== null) {
+        $receipt = DBQueryToRowUncached(sprintf(
+            "SELECT method, path, request_hash, status, response FROM uo_api_receipt
+			WHERE api_token=%d AND scorekeeper_token=%d AND game=%d AND idempotency_key='%s'",
+            (int) $request['api_token'],
+            (int) $request['link_token'],
+            $gameId,
+            DBEscapeString((string) $request['key']),
+        ));
+        if (is_array($receipt)) {
             if ($receipt['method'] !== $request['method'] || $receipt['path'] !== $request['path'] || $receipt['request_hash'] !== $requestHash) {
                 throw new ScorekeepingApiException(409, 'idempotency_conflict', 'The Idempotency-Key was already used for a different request.');
             }
+            $response = json_decode((string) $receipt['response'], true);
+            $response = is_array($response) ? $response : [];
             return [
-                'status' => $receipt['status'],
-                'body' => $receipt['response'],
-                'token' => (string) ($receipt['response']['data']['token'] ?? ''),
+                'status' => (int) $receipt['status'],
+                'body' => $response,
+                'token' => (string) ($response['data']['token'] ?? ''),
                 'replay' => true,
             ];
         }
@@ -530,7 +471,24 @@ function ScorekeepingApiWrite($gameId, array $request, array $rights, callable $
             'status' => 'ok',
             'data' => ['game_id' => $gameId, 'token' => $token, 'result' => $result] + $outcome['data'],
         ];
-        ApiReceiptStore($request['api_token'], $request['link_token'], $gameId, $request['key'], $request['method'], $request['path'], $requestHash, $outcome['status'], $body);
+        // The receipt commits with the writes, so the two stand or fall together.
+        // Like the history IP, DisableVisitorLogging suppresses the User-Agent (docs/privacy.md).
+        $userAgent = IsVisitorLoggingDisabled() ? ''
+            : substr((string) preg_replace('/[^\x20-\x7e]/', '', (string) ($_SERVER['HTTP_USER_AGENT'] ?? '')), 0, 255);
+        DBExecute(sprintf(
+            "INSERT INTO uo_api_receipt (api_token, scorekeeper_token, game, idempotency_key, method, path, request_hash, status, response, user_agent)
+			VALUES (%d, %d, %d, '%s', '%s', '%s', '%s', %d, '%s', NULLIF('%s', ''))",
+            (int) $request['api_token'],
+            (int) $request['link_token'],
+            $gameId,
+            DBEscapeString((string) $request['key']),
+            DBEscapeString(substr((string) $request['method'], 0, 10)),
+            DBEscapeString(substr((string) $request['path'], 0, 255)),
+            DBEscapeString($requestHash),
+            (int) $outcome['status'],
+            DBEscapeString((string) json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)),
+            DBEscapeString($userAgent),
+        ));
         return ['status' => $outcome['status'], 'body' => $body, 'token' => $token, 'replay' => false];
     });
 }
