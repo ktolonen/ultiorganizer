@@ -1200,7 +1200,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token or token not valid for the event",
+            "description": "Token not valid for the event",
             "content": {
               "application/json": {
                 "schema": {
@@ -1292,7 +1292,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, or game not covered by the link now",
+            "description": "Token not valid for the event, or game not covered by the link now",
             "content": {
               "application/json": {
                 "schema": {
@@ -1463,7 +1463,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -1678,7 +1678,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -1883,7 +1883,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -2073,7 +2073,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -2283,7 +2283,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -2488,7 +2488,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -2701,7 +2701,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -2906,7 +2906,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -3128,7 +3128,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -3333,7 +3333,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {
@@ -3518,7 +3518,7 @@
             }
           },
           "403": {
-            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "description": "Token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
             "content": {
               "application/json": {
                 "schema": {

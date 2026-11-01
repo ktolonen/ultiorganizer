@@ -117,7 +117,7 @@ The scope matters most for `hasAddMediaRight()`, which any logged-in session hol
 
 A row written by an anonymous Scorekeeper session through a scorekeeping link stores `user_id` `anonymous` and the link's token id in `scorekeeper_token`, the only attribution such a row has. The column has no foreign key, so the id still tells links apart after one is replaced. The history page shows it as `#<id>` next to the user.
 
-A row written by the scorekeeping app API (source `api`) also stores `user_id` `anonymous` and the link's token id, plus the id of the app API token it authenticated with in `api_token`. That column has no foreign key either, so the id survives deleting the token. The history page shows it as a second `#<id>` after the link id. `ScorekeeperApiActor()` holds both ids for the request; see `docs/permissions.md`.
+A row written by the scorekeeping app API (source `api`) stores the link's token id, plus the id of the app API token it authenticated with in `api_token`. Its `user_id` is the token's user for a `user`-scoped app token (`user/scorekeepingapp.php`), else `anonymous`. That column has no foreign key either, so the id survives deleting the token. The history page shows it as a second `#<id>` after the link id. `ScorekeeperApiActor()` holds both ids and the user for the request; see `docs/permissions.md`. The write's `uo_api_receipt` row also records the client `User-Agent` (`docs/api.md`).
 
 ## Viewing history
 
