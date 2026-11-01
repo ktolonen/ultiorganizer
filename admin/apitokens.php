@@ -159,7 +159,7 @@ foreach ($tokens as $token) {
     if ((int) $token['token_id'] === $setupQrId && empty($token['revoked'])) {
         echo "<h3>" . _("App setup QR") . ": " . utf8entities($token['label']) . "</h3>";
         echo "<div class='scorekeeping-qr'>" . ScorekeeperQrSvg(ScorekeeperAppSetupUrl($token['token_value']), 5) . "</div>";
-        echo "<p>" . _("Scan this code in the scorekeeping app. Anyone with the code can keep score with any scorekeeping link the token is valid for, until the token is revoked.") . "</p>";
+        echo "<p>" . _("Scan this code in the scorekeeping app. Anyone with the code can keep score with any scorekeeping link the token is valid for, until the token is removed.") . "</p>";
     }
 }
 echo "<h3>" . _("Existing tokens") . "</h3>";
