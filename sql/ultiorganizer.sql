@@ -347,7 +347,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(101, '2026-09-27 00:00:00'),
 	(102, '2026-10-03 00:00:00'),
 	(103, '2026-10-04 00:00:00'),
-	(104, '2026-10-17 00:00:00');
+	(104, '2026-10-17 00:00:00'),
+	(105, '2026-11-01 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -890,6 +891,7 @@ CREATE TABLE IF NOT EXISTS `uo_api_receipt` (
   `request_hash` char(64) NOT NULL,
   `status` smallint(5) NOT NULL,
   `response` text DEFAULT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_api_receipt_key` (`api_token`,`scorekeeper_token`,`game`,`idempotency_key`),

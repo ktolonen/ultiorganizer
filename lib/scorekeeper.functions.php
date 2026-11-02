@@ -178,6 +178,15 @@ function ScorekeeperTokenUrl($token)
 }
 
 /**
+ * The scorekeeping app's pairing link for an app token: the installation root,
+ * as the scorekeeping link QR codes carry it, and the token.
+ */
+function ScorekeeperAppSetupUrl($appToken)
+{
+    return "ultiorganizer-app://pair?root=" . rawurlencode(BASEURL) . "&token=" . rawurlencode((string) $appToken);
+}
+
+/**
  * The token row with the event it belongs to, or null.
  */
 function ScorekeeperTokenRow($tokenId)
@@ -309,6 +318,23 @@ function IsAnonymousScorekeepingAllowed($season)
 }
 
 /**
+ * Id of the scorekeeping link a token string (the 32 hex characters of the
+ * QR code) opens, or 0 when it is malformed or unknown. Reads the live table,
+ * so a rotated link no longer resolves.
+ */
+function ScorekeeperTokenIdFromLink($token)
+{
+    $token = ScorekeeperTokenNormalize($token);
+    if ($token === '') {
+        return 0;
+    }
+    return (int) DBQueryToValueUncached(sprintf(
+        "SELECT token_id FROM uo_scorekeeper_token WHERE token='%s'",
+        DBEscapeString($token),
+    ));
+}
+
+/**
  * Opens a scorekeeping link for this session.
  *
  * Returns ['status' => 'invalid'] for an unknown token, 'login' when the user
@@ -317,11 +343,7 @@ function IsAnonymousScorekeepingAllowed($season)
  */
 function ScorekeeperRedeemToken($token)
 {
-    $token = ScorekeeperTokenNormalize($token);
-    $tokenId = $token === '' ? 0 : (int) DBQueryToValueUncached(sprintf(
-        "SELECT token_id FROM uo_scorekeeper_token WHERE token='%s'",
-        DBEscapeString($token),
-    ));
+    $tokenId = ScorekeeperTokenIdFromLink($token);
     $row = $tokenId > 0 ? ScorekeeperTokenRow($tokenId) : null;
     if ($row === null) {
         unset($_SESSION['scorekeeper_pending_token']);
@@ -387,19 +409,21 @@ function ScorekeeperAddGrant($tokenId, $userId)
 
 /**
  * The request-local actor of the scorekeeping app API: the scorekeeping link
- * token and the app API token the request authenticated with. Call with ids
- * to set it, with 0 and 0 to clear it, and without arguments to read it.
- * Both ids are required: a link without an app token clears the actor.
+ * token and the app API token the request authenticated with, and the user a
+ * user-scoped app token belongs to. Call with ids to set it, with 0 and 0 to
+ * clear it, and without arguments to read it. Both ids are required: a link
+ * without an app token clears the actor.
  *
  * Setting it gives the request the logged-out visitor's session shape and
  * never starts a PHP session, so the scorekeeping link rules apply to the
- * request without cookies.
+ * request without cookies. The user only attributes history rows; it grants
+ * none of that user's rights.
  *
- * @return array{link: int, api: int} Zeros when no actor is set
+ * @return array{link: int, api: int, user: string} Zeros when no actor is set
  */
-function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null)
+function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null, string $userId = '')
 {
-    static $actor = ['link' => 0, 'api' => 0];
+    static $actor = ['link' => 0, 'api' => 0, 'user' => ''];
     static $savedSession = null;
     if ($linkTokenId === null && $apiTokenId === null) {
         return $actor;
@@ -422,7 +446,7 @@ function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null)
         }
         $savedSession = null;
     }
-    $actor = ['link' => $link, 'api' => $api];
+    $actor = ['link' => $link, 'api' => $api, 'user' => $link > 0 ? $userId : ''];
     CacheForgetNamespace("scorekeeper_grant");
     return $actor;
 }

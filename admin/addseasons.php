@@ -81,6 +81,8 @@ if (!empty($_POST['add'])) {
         $html .= "<p class='warning'>" . _("Event ID cannot be empty") . ".</p>";
     } elseif (!preg_match('/^[\p{L}\p{N}._-]+$/u', $_POST['season_id'])) {
         $html .= "<p class='warning'>" . _("Event ID may not have spaces or special characters") . ".</p>";
+    } elseif (mb_strlen($_POST['season_id']) > 10) {
+        $html .= "<p class='warning'>" . sprintf(_("Event ID can be at most %d characters"), 10) . ".</p>";
     } elseif (SeasonExists($sp['season_id'])) {
         $html .= "<p class='warning'>" . _("Event ID already exists") . ".</p>";
     } elseif (empty($_POST['seasonname'])) {
@@ -213,7 +215,7 @@ if (empty($seasonId)) {
 }
 
 $html .= "<table border='0'>";
-$html .= "<tr><td class='infocell'>" . _("Event ID") . ": </td><td><input class='input' name='season_id' $disabled value='" . utf8entities($sp['season_id']) . "'/></td></tr>";
+$html .= "<tr><td class='infocell'>" . _("Event ID") . ": </td><td><input class='input' name='season_id' maxlength='10' $disabled value='" . utf8entities($sp['season_id']) . "'/></td></tr>";
 $html .= "<tr rowspan='2'><td class='infocell'>" . _("Name") . ": </td>
 			<td>" . TranslatedField("seasonname", $sp['name']) . "</td>
 		</tr>\n";

@@ -204,3 +204,52 @@ function ActivateGettextLocale($locale, $candidateLocales = [])
     SetMessageLocale('C');
     return SetMessageLocale($carrierLocale) !== false;
 }
+
+/**
+ * The configured locale that best matches an Accept-Language header, or null.
+ * A tag matches its own locale (fi-FI), else the first configured locale of
+ * its language (fi, en-US); ranges are tried in q order.
+ *
+ * @param string $header Accept-Language value
+ * @param string[] $available Locale keys such as fi_FI.utf8
+ * @return string|null
+ */
+function AcceptLanguageLocale($header, $available)
+{
+    $ranges = [];
+    foreach (explode(',', (string) $header) as $i => $part) {
+        $pieces = explode(';', $part);
+        $tag = strtolower(str_replace('_', '-', trim($pieces[0])));
+        $q = 1.0;
+        foreach (array_slice($pieces, 1) as $param) {
+            if (preg_match('/^\s*q\s*=\s*([01](?:\.\d{0,3})?)\s*$/i', $param, $m)) {
+                $q = (float) $m[1];
+            }
+        }
+        if ($tag !== '' && $tag !== '*' && $q > 0) {
+            $ranges[] = [$q, $i, $tag];
+        }
+    }
+    usort($ranges, fn($a, $b) => [$b[0], $a[1]] <=> [$a[0], $b[1]]);
+
+    $tags = [];
+    foreach ($available as $locale) {
+        $tags[$locale] = strtolower(str_replace('_', '-', (string) preg_replace('/\..*$/', '', $locale)));
+    }
+    foreach ($ranges as $range) {
+        $match = array_search($range[2], $tags, true);
+        if ($match === false) {
+            $language = explode('-', $range[2])[0];
+            foreach ($tags as $locale => $localeTag) {
+                if (explode('-', $localeTag)[0] === $language) {
+                    $match = $locale;
+                    break;
+                }
+            }
+        }
+        if ($match !== false) {
+            return (string) $match;
+        }
+    }
+    return null;
+}

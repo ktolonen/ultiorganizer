@@ -5,7 +5,7 @@ Use this index to find existing shared helpers before adding new utility code or
 ## Root `lib/`
 
 - `lib/accreditation.functions.php`: player accreditation, license data, acknowledgements, and accreditation logs.
-- `lib/api.functions.php`: API token hashing, lookup, touch, CRUD, and rate limiting.
+- `lib/api.functions.php`: API token hashing, lookup, touch, CRUD, and rate limiting; the logged-in user's own scorekeeping app token (`ApiUserToken()`, `ApiUserTokenReplace()`, `ApiUserTokenRevoke()`).
 - `lib/auth.guard.php`: include-time auth guard that starts the session, redirects anonymous users, and opts login-gated requests out of the persistent cache (see `docs/persistent-cache.md`).
 - `lib/cache.functions.php`: request-local cache helpers for repeated deterministic lookups.
 - `lib/persistent-cache.functions.php`: cross-request TTL cache helpers (`CacheRememberFor`, `CacheForgetPersistent`, `CacheWipePersistent`) backed by files under `PERSISTENT_CACHE_DIR`.
@@ -15,7 +15,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/configuration.functions.php`: server config reads/writes, feature flags, customization discovery, and localization discovery.
 - `lib/country.functions.php`: country CRUD, dropdown helpers, team/country relations, and timezone list helpers.
 - `lib/data.functions.php`: JSON event snapshot export/import, whole-snapshot validation, FK-safe remapping, and player-profile matching.
-- `lib/database.php`: mysqli connection lifecycle, query/prepared-statement wrappers, result casting, and DB metadata helpers.
+- `lib/database.php`: mysqli connection lifecycle, query/prepared-statement wrappers, reentrant transaction helpers (`DBTransactionBegin()`, `DBTransactionRollbackAll()`), result casting, and DB metadata helpers.
 - `lib/database.maintenance.php`: maintenance flag parsing, runtime-state locks, blocked maintenance responses, and controlled automatic DB-upgrade coordination.
 - `lib/debug.functions.php`: lightweight debug print helpers.
 - `lib/game.functions.php`: game CRUD, results, scoresheet events, media links, player assignments, scheduling, live timing, and spirit table output.
@@ -30,8 +30,8 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/pool.functions.php`: pool/template CRUD, pool teams and games, standings-derived moves, playoff generation, swiss helpers, and CSV export.
 - `lib/privacy.functions.php`: privacy export, anonymization, deletion, and audit helpers for registered-user and player data.
 - `lib/reservation.functions.php`: reservation/field CRUD, scheduled-game lookups, unscheduled-team helpers, and delete checks.
-- `lib/scorekeeper.functions.php`: scorekeeping links for Scorekeeper: issuing, replacing and revoking tokens, the event's link list, the printable field sheet, opening a link, claiming pending tokens after login, the live coverage check behind `ScorekeeperGrantCovers()`, granted games and events, and the inline-SVG QR code.
-- `lib/scorekeepingapi.functions.php`: scorekeeping app API helpers: the game row lock (`GameLockForUpdate()`) and the upload concurrency token (`ScorekeeperUploadToken()`).
+- `lib/scorekeeper.functions.php`: scorekeeping links for Scorekeeper: issuing, replacing and revoking tokens, the event's link list, the printable field sheet, opening a link (`ScorekeeperTokenIdFromLink()` resolves the QR string to a token id), claiming pending tokens after login, the live coverage check behind `ScorekeeperGrantCovers()`, granted games and events, and the inline-SVG QR code.
+- `lib/scorekeepingapi.functions.php`: scorekeeping app API services: the typed `ScorekeepingApiException`, the locked write wrapper with deadlock retry (`ScorekeepingApiTransaction()`, `GameLockForUpdate()`), discovery (`ScorekeeperDiscoverGames()`), the entry context (`ScorekeeperEntryContext()`), the shared mutation wrapper (`ScorekeepingApiWrite()`: rights, idempotency receipt, forfeit refusal, resulting token), the request field checks (`ScorekeepingApiFields`, `ScorekeeperGameDataNormalize()`, `ScorekeeperLiveRequestNormalize()`), the complete upload (`ScorekeeperReplaceGameData()`), the live writes (`ScorekeeperAddGoal()`, `ScorekeeperDeleteLastGoal()`, `ScorekeeperAddStoppage()`, `ScorekeeperApplyScoreTap()`, `ScorekeeperReplaceRoster()`, `ScorekeeperUpdateMetadata()`, `ScorekeeperFinalize()`) and the concurrency token (`ScorekeeperUploadToken()`).
 - `lib/scoresheethistory.functions.php`: scoresheet change recording, snapshots, history listing and formatting, restore, and per-event deletion (see `docs/scoresheet-history.md`).
 - `lib/search.functions.php`: reusable search form builders and result renderers for seasons, series, pools, teams, users, players, reservations, and games.
 - `lib/season.functions.php`: season CRUD, season relations, reservations, admins/roles, readonly mode, deletion checks, `DeleteSeasonWithData` (superadmin, removes a season with all its data, used by the event simulator plugin), and event banner storage and rendering (`SeasonBannerHTML`, `UploadSeasonBanner`, `RemoveSeasonBanner`). Private-event helpers: `CanAccessSeason`, `FilterAccessibleSeasons`, `AccessibleSeasonIdListSql` (an `IN (...)` list for cross-event queries), and `RequestSeasonsFromView` (every event a request's id parameters name, used by the access and maintenance gates).
@@ -47,7 +47,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/timetable.functions.php`: timetable grouping/render helpers, conflict detection, move-time management, and timetable CSV export.
 - `lib/translation.functions.php`: DB-backed translation loading, CRUD, autocomplete translation helpers, and translated field widgets.
 - `lib/url.functions.php`: generic URL/media/mail CRUD for owners and game media lookups.
-- `lib/user.functions.php`: authentication, password hashing/reset, registration/email confirmation, session setup, user roles, permission checks, and responsibility helpers.
+- `lib/user.functions.php`: authentication, password hashing/reset, registration/email confirmation, session setup, user roles, permission checks, responsibility helpers, and deleting a user's app tokens (`UserApiTokensDelete()`).
 - `lib/version.functions.php`: Ultiorganizer, database, and customization version metadata helpers.
 - `lib/view.guard.php`: include-time view guard for routed pages.
 

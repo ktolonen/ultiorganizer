@@ -48,6 +48,8 @@ Exceptions:
 
 `SetGameComment()` (`lib/comment.functions.php`, game comments only) snapshots before its change, so a standalone comment edit has its own restore point.
 
+`PUT /api/v1/games/{id}/game-data` (`ScorekeeperReplaceGameData()`, `docs/api.md`) also force-captures before its first write, like a restore, so a complete upload is recoverable even while `DisableScoresheetHistory` is on; the mutators it then calls record their ordinary rows (source `api`) and take no further snapshot in the request. A replay of the same upload (same idempotency key) writes nothing, so it takes no snapshot. The live API writes (`docs/api.md`) take no forced snapshot: goal appends, the last-goal delete and score taps call the same per-point mutators as Scorekeeper, which skip the snapshot, and the roster, timeout, spirit stoppage, metadata and finalize writes take the ordinary once-per-request snapshot, as each Scorekeeper save does.
+
 `ScoresheetHistoryRestore()` force-captures the state it replaces, so a restore can be undone. That capture and the restore's audit row ignore both replay suppression and `DisableScoresheetHistory`: the setting governs routine volume, not the recoverability of a destructive action.
 
 ## Recording points
@@ -115,7 +117,7 @@ The scope matters most for `hasAddMediaRight()`, which any logged-in session hol
 
 A row written by an anonymous Scorekeeper session through a scorekeeping link stores `user_id` `anonymous` and the link's token id in `scorekeeper_token`, the only attribution such a row has. The column has no foreign key, so the id still tells links apart after one is replaced. The history page shows it as `#<id>` next to the user.
 
-A row written by the scorekeeping app API (source `api`) also stores `user_id` `anonymous` and the link's token id, plus the id of the app API token it authenticated with in `api_token`. That column has no foreign key either, so the id survives deleting the token. The history page shows it as a second `#<id>` after the link id. `ScorekeeperApiActor()` holds both ids for the request; see `docs/permissions.md`.
+A row written by the scorekeeping app API (source `api`) stores the link's token id, plus the id of the app API token it authenticated with in `api_token`. Its `user_id` is the token's user for a `user`-scoped app token (`user/scorekeepingapp.php`), else `anonymous`. That column has no foreign key either, so the id survives deleting the token. The history page shows it as a second `#<id>` after the link id. `ScorekeeperApiActor()` holds both ids and the user for the request; see `docs/permissions.md`. The write's `uo_api_receipt` row also records the client `User-Agent` (`docs/api.md`).
 
 ## Viewing history
 

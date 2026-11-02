@@ -72,7 +72,8 @@ future timers and do not reset the running clock.
 Superadmins can add installation-specific templates with their own signal schedules and editable
 signal texts. Action labels remain static gettext-backed interface strings. Signal texts are stored
 with the template and rendered through the database translation mechanism. Public users can choose a
-template and make local, unsaved timing adjustments for their browser.
+template and make local, unsaved timing adjustments for their browser. Apps read the same templates
+from `GET /api/v1/timekeeper/templates` (`docs/api.md`).
 
 ### Game clock
 

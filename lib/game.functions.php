@@ -1800,27 +1800,31 @@ function GameAddPlayer($gameId, $playerId, $number)
         }
         ScoresheetHistorySnapshotIfNeeded($gameId);
 
+        // A null number keeps an unnumbered player unnumbered (a restore preserves those).
+        $numberSql = $number === null ? "NULL" : (string) (int) $number;
         $query = sprintf(
             "INSERT INTO uo_played
 			(game, player, num, accredited) 
-			VALUES ('%s', '%s', '%s', %d)
-			ON DUPLICATE KEY UPDATE num=%d",
+			VALUES ('%s', '%s', %s, %d)
+			ON DUPLICATE KEY UPDATE num=%s",
             DBEscapeString($gameId),
             DBEscapeString($playerId),
-            DBEscapeString($number),
+            $numberSql,
             (int) isAccredited($playerId),
-            DBEscapeString($number),
+            $numberSql,
         );
 
         $result = DBQuery($query);
-        $query = sprintf(
-            "UPDATE uo_player SET num=%d WHERE player_id=%d",
-            (int) $number,
-            (int) $playerId,
-        );
+        if ($number !== null) {
+            $query = sprintf(
+                "UPDATE uo_player SET num=%d WHERE player_id=%d",
+                (int) $number,
+                (int) $playerId,
+            );
 
-        $result = DBQuery($query);
-        ScoresheetHistoryRecord($gameId, "played", "add", ['player' => (int) $playerId, 'num' => (int) $number]);
+            $result = DBQuery($query);
+        }
+        ScoresheetHistoryRecord($gameId, "played", "add", ['player' => (int) $playerId, 'num' => $number === null ? null : (int) $number]);
 
         return $result;
     } else {
@@ -1913,9 +1917,9 @@ function GameSetPlayerNumber($gameId, $playerId, $number)
         ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "UPDATE uo_played
-			SET num='%s', accredited=%d 
+			SET num=%s, accredited=%d 
 			WHERE game=%d AND player=%d",
-            DBEscapeString($number),
+            $number === null ? "NULL" : (string) (int) $number,
             (int) isAccredited($playerId),
             (int) $gameId,
             (int) $playerId,
@@ -1923,7 +1927,7 @@ function GameSetPlayerNumber($gameId, $playerId, $number)
 
         $result = DBQuery($query);
         if (DBAffectedRows() > 0) {
-            ScoresheetHistoryRecord($gameId, "played", "update", ['player' => (int) $playerId, 'num' => (int) $number]);
+            ScoresheetHistoryRecord($gameId, "played", "update", ['player' => (int) $playerId, 'num' => $number === null ? null : (int) $number]);
         }
 
         return $result;

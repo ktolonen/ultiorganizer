@@ -41,6 +41,9 @@ function api_get_path_parts()
  */
 function api_send_json($statusCode, $payload)
 {
+    // Read by the scorekeeping routes' shutdown handler, which turns a request
+    // that died without answering into a JSON 500.
+    $GLOBALS['api_response_sent'] = true;
     if (!headers_sent()) {
         header('Content-Type: application/json; charset=utf-8');
     }
@@ -1223,6 +1226,314 @@ function api_send_openapi()
 }
 
 /**
+ * Timekeeper templates with their caps and signals, texts in the locale that
+ * best matches Accept-Language. Any valid token reads them: the same data is
+ * on the public timekeeper/ page.
+ *
+ * @param array $parts
+ */
+function api_handle_timekeeper_templates($parts)
+{
+    global $locales;
+    if (count($parts) !== 2 || $parts[1] !== 'templates') {
+        api_not_found();
+    }
+    api_require_method('GET');
+
+    $available = is_array($locales) ? array_keys($locales) : [];
+    $locale = AcceptLanguageLocale((string) ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''), $available) ?? GetDefaultLocale();
+    loadDBTranslations($locale);
+    $set = TimekeeperTemplatesForClient();
+
+    header('Vary: Accept-Language');
+    header('Content-Language: ' . str_replace('_', '-', (string) preg_replace('/\..*$/', '', $locale)));
+    api_send_json(200, [
+        'status' => 'ok',
+        'data' => [
+            'default_template_id' => $set['defaultTemplateId'],
+            'templates' => array_values($set['templates']),
+        ],
+    ]);
+}
+
+/**
+ * The scorekeeping app route a request targets, or null. Plain games stays
+ * with api_handle_games(); any other games/... path is not found.
+ *
+ * @param array $parts
+ * @return array{operation: string, method: string, allow?: string}|null
+ */
+function api_scorekeeping_route($parts)
+{
+    $count = count($parts);
+    if ($count === 2 && $parts[0] === 'scorekeeping' && $parts[1] === 'games') {
+        return ['operation' => 'discovery', 'method' => 'GET'];
+    }
+    if ($count < 3 || $parts[0] !== 'games' || !ctype_digit((string) $parts[1])) {
+        return null;
+    }
+    if ($count === 3) {
+        $routes = [
+            'entry-context' => ['entry_context', 'GET'],
+            'game-data' => ['game_data', 'PUT'],
+            'goals' => ['goal', 'POST'],
+            'timeouts' => ['timeout', 'POST'],
+            'spirit-stoppages' => ['spirit_stoppage', 'POST'],
+            'score-taps' => ['score_tap', 'POST'],
+            'metadata' => ['metadata', 'PATCH'],
+            'finalize' => ['finalize', 'POST'],
+        ];
+        $route = $routes[$parts[2]] ?? null;
+        return $route === null ? null : ['operation' => $route[0], 'method' => $route[1]];
+    }
+    if ($count === 4 && $parts[2] === 'goals' && ctype_digit((string) $parts[3])) {
+        return ['operation' => 'delete_goal', 'method' => 'DELETE'];
+    }
+    if ($count === 4 && $parts[2] === 'rosters' && ($parts[3] === 'home' || $parts[3] === 'away')) {
+        return ['operation' => 'roster', 'method' => 'PUT'];
+    }
+    if ($count === 4 && $parts[2] === 'caps' && GameIsCapEventType($parts[3])) {
+        $remove = strtoupper($_SERVER['REQUEST_METHOD']) === 'DELETE';
+        return ['operation' => $remove ? 'remove_cap' : 'set_cap', 'method' => $remove ? 'DELETE' : 'PUT', 'allow' => 'PUT, DELETE'];
+    }
+    return null;
+}
+
+/**
+ * Answer any scorekeeping request that ends without a response -- a die() in
+ * a shared helper, a fatal error -- with a JSON 500 and a rolled-back
+ * transaction, never the 200 a bare die() would leave.
+ */
+function api_scorekeeping_arm_backstop()
+{
+    // A displayed fatal error would go out with a 200 before the handler runs.
+    ini_set('display_errors', '0');
+    ob_start();
+    register_shutdown_function(function () {
+        if (!empty($GLOBALS['api_response_sent'])) {
+            return;
+        }
+        ScorekeepingApiAbort();
+        $last = error_get_last();
+        error_log('Scorekeeping API request ended without a response' . ($last ? ': ' . $last['message'] : '.'));
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        if (!headers_sent()) {
+            // Not http_response_code(): after a fatal error PHP has set its own
+            // status line, which that function refuses to replace.
+            header('Content-Type: application/json; charset=utf-8', true, 500);
+            header('Cache-Control: no-store');
+        }
+        echo json_encode([
+            'status' => 'error',
+            'error' => ['code' => 'internal_error', 'message' => 'The request could not be completed.'],
+        ]);
+    });
+}
+
+/**
+ * Read the JSON request body: application/json only, at most 256 KiB.
+ *
+ * @return mixed The decoded body
+ * @throws ScorekeepingApiException 413, 415 or 400
+ */
+function api_scorekeeping_read_json_body()
+{
+    $limit = 256 * 1024;
+    $type = strtolower(trim(explode(';', (string) ($_SERVER['CONTENT_TYPE'] ?? ''))[0]));
+    if ($type !== 'application/json') {
+        throw new ScorekeepingApiException(415, 'unsupported_media_type', 'The body must be application/json.');
+    }
+    if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $limit) {
+        throw new ScorekeepingApiException(413, 'payload_too_large', 'The body is larger than 256 KiB.');
+    }
+    $stream = fopen('php://input', 'r');
+    $body = $stream === false ? '' : (string) stream_get_contents($stream, $limit + 1);
+    if (strlen($body) > $limit) {
+        throw new ScorekeepingApiException(413, 'payload_too_large', 'The body is larger than 256 KiB.');
+    }
+    try {
+        $decoded = json_decode($body, true, 16, JSON_THROW_ON_ERROR);
+    } catch (JsonException $e) {
+        throw new ScorekeepingApiException(400, 'invalid_json', 'The body is not valid JSON.');
+    }
+    return $decoded;
+}
+
+/**
+ * Normalize an If-Match header to the bare token it carries: quotes and a
+ * weak-validator prefix are stripped. A value that cannot be a token comes back
+ * as '*', which never matches.
+ *
+ * @param string $header
+ * @return string
+ */
+function api_scorekeeping_if_match_token($header)
+{
+    $value = trim($header);
+    if (stripos($value, 'W/') === 0) {
+        $value = substr($value, 2);
+    }
+    $value = trim($value, '"');
+    return preg_match('/^[0-9a-f]{64}$/', $value) ? $value : '*';
+}
+
+/**
+ * Handle the scorekeeping app routes: discovery, entry context, the complete
+ * game upload and the live writes. Authenticates with the app API token
+ * (Authorization: Bearer only) and the scorekeeping link token
+ * (X-Scorekeeping-Token only).
+ *
+ * @param array $parts
+ * @param array{operation: string, method: string, allow?: string} $route From api_scorekeeping_route()
+ */
+function api_handle_scorekeeping($parts, $route)
+{
+    ScorekeepingApiBootstrap();
+    api_scorekeeping_arm_backstop();
+    header('Cache-Control: no-store');
+
+    try {
+        $operation = $route['operation'];
+        $isDiscovery = $operation === 'discovery';
+        if (strtoupper($_SERVER['REQUEST_METHOD']) !== $route['method']) {
+            header('Allow: ' . ($route['allow'] ?? $route['method']));
+        }
+        api_require_method($route['method']);
+
+        $headers = api_get_headers();
+        $auth = trim((string) ($headers['Authorization'] ?? ''));
+        $appToken = stripos($auth, 'Bearer ') === 0 ? trim(substr($auth, 7)) : '';
+        if ($appToken === '') {
+            api_error(401, 'missing_token', 'API token required in the Authorization: Bearer header.');
+        }
+        $tokenRow = ApiTokenLookup($appToken);
+        if (!$tokenRow) {
+            api_error(401, 'invalid_token', 'Invalid API token.');
+        }
+        ApiTokenTouch($tokenRow['token_id']);
+        api_enforce_rate_limit($tokenRow['token_hash'], api_get_client_ip());
+
+        $linkToken = trim((string) ($_SERVER['HTTP_X_SCOREKEEPING_TOKEN'] ?? ''));
+        if ($linkToken === '') {
+            api_error(401, 'missing_scorekeeping_token', 'The X-Scorekeeping-Token header is required.');
+        }
+        $linkId = ScorekeeperTokenIdFromLink($linkToken);
+        $linkRow = $linkId > 0 ? ScorekeeperTokenRow($linkId) : null;
+        if ($linkRow === null || empty($linkRow['season'])) {
+            Log1("security", "fail", "", "", "invalid scorekeeping link");
+            api_error(401, 'invalid_scorekeeping_token', 'Unknown scorekeeping link.');
+        }
+        ScorekeeperApiActor(
+            $linkId,
+            (int) $tokenRow['token_id'],
+            $tokenRow['scope_type'] === 'user' ? (string) $tokenRow['scope_id'] : '',
+        );
+
+        $gameId = $isDiscovery ? 0 : (int) $parts[1];
+        $season = $linkRow['season'];
+        if (!$isDiscovery) {
+            $season = (string) GameSeason($gameId);
+            if ($season === '') {
+                api_error(404, 'game_not_found', 'Game not found.');
+            }
+        }
+        api_enforce_token_scope($tokenRow, $season);
+        if (IsSeasonInMaintenance($season)) {
+            header('Retry-After: 60');
+            api_error(503, 'event_maintenance', 'The event is under maintenance.');
+        }
+
+        if ($isDiscovery) {
+            $found = ScorekeeperDiscoverGames($season, $linkId);
+            api_send_json(200, [
+                'status' => 'ok',
+                'data' => [
+                    'event_id' => $season,
+                    'games' => $found['games'],
+                    'available_from' => $found['available_from'],
+                ],
+            ]);
+        }
+
+        if ($operation === 'entry_context') {
+            $context = ScorekeeperEntryContext($gameId);
+            header('ETag: "' . $context['token'] . '"');
+            api_send_json(200, ['status' => 'ok', 'data' => $context]);
+        }
+
+        $key = ScorekeepingApiIdempotencyKey(isset($_SERVER['HTTP_IDEMPOTENCY_KEY']) ? (string) $_SERVER['HTTP_IDEMPOTENCY_KEY'] : null);
+        $path = '/api/v1/games/' . $gameId . '/' . $parts[2];
+        $rights = ['events'];
+        switch ($operation) {
+            case 'game_data':
+                if (!isset($_SERVER['HTTP_IF_MATCH']) || trim((string) $_SERVER['HTTP_IF_MATCH']) === '') {
+                    api_error(428, 'precondition_required', 'The If-Match header with the token from the entry context is required.');
+                }
+                $ifMatch = api_scorekeeping_if_match_token((string) $_SERVER['HTTP_IF_MATCH']);
+                $body = ScorekeeperGameDataNormalize(api_scorekeeping_read_json_body());
+                $rights = ['events', 'players'];
+                $write = fn() => ScorekeeperReplaceGameData($gameId, $body, $ifMatch);
+                break;
+            case 'delete_goal':
+                $num = (int) $parts[3];
+                $path .= '/' . $num;
+                $body = null;
+                $write = fn() => ScorekeeperDeleteLastGoal($gameId, $num);
+                break;
+            case 'set_cap':
+            case 'remove_cap':
+                $type = $parts[3];
+                $path .= '/' . $type;
+                $body = $operation === 'set_cap' ? ScorekeeperLiveRequestNormalize('cap', api_scorekeeping_read_json_body()) : null;
+                $write = fn() => ScorekeeperChangeCap($gameId, $type, $body);
+                break;
+            case 'roster':
+                $side = $parts[3];
+                $path .= '/' . $side;
+                $body = ScorekeeperLiveRequestNormalize('roster', api_scorekeeping_read_json_body());
+                $rights = ['events', 'players'];
+                $write = fn() => ScorekeeperReplaceRoster($gameId, $side, $body);
+                break;
+            default:
+                $body = ScorekeeperLiveRequestNormalize($operation, api_scorekeeping_read_json_body());
+                $write = match ($operation) {
+                    'goal' => fn() => ScorekeeperAddGoal($gameId, $body),
+                    'timeout', 'spirit_stoppage' => fn() => ScorekeeperAddStoppage($gameId, $operation, $body),
+                    'score_tap' => fn() => ScorekeeperApplyScoreTap($gameId, $body),
+                    'metadata' => fn() => ScorekeeperUpdateMetadata($gameId, $body),
+                    'finalize' => fn() => ScorekeeperFinalize($gameId, $body),
+                };
+        }
+        $request = [
+            'api_token' => (int) $tokenRow['token_id'],
+            'link_token' => $linkId,
+            'key' => $key,
+            'method' => $route['method'],
+            'path' => $path,
+            'body' => $body,
+        ];
+        $outcome = ScorekeepingApiWrite($gameId, $request, $rights, $write);
+        header('ETag: "' . $outcome['token'] . '"');
+        if ($outcome['replay']) {
+            header('Idempotent-Replay: true');
+        }
+        api_send_json($outcome['status'], $outcome['body']);
+    } catch (ScorekeepingApiException $e) {
+        ScorekeepingApiAbort();
+        foreach ($e->headers as $header) {
+            header($header);
+        }
+        api_error($e->httpStatus, $e->apiCode, $e->getMessage(), $e->details);
+    } catch (Throwable $e) {
+        ScorekeepingApiAbort();
+        error_log('Scorekeeping API failure: ' . get_class($e) . ': ' . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
+        api_error(500, 'internal_error', 'The request could not be completed.');
+    }
+}
+
+/**
  * Route v1 API requests.
  *
  * @param array $parts
@@ -1238,9 +1549,22 @@ function api_v1_route($parts)
         api_send_openapi();
     }
 
+    // Scorekeeping routes authenticate themselves: app token from the
+    // Authorization header only, plus the scorekeeping link token.
+    $scorekeepingRoute = api_scorekeeping_route($parts);
+    if ($scorekeepingRoute !== null) {
+        api_handle_scorekeeping($parts, $scorekeepingRoute);
+        return;
+    }
+
     $tokenRow = api_require_token();
     $clientIp = api_get_client_ip();
     api_enforce_rate_limit($tokenRow['token_hash'], $clientIp);
+
+    // Only timekeeper has sub-paths here; the other handlers ignore extra segments.
+    if ($resource !== 'timekeeper' && count($parts) !== 1) {
+        api_not_found();
+    }
 
     switch ($resource) {
         case 'events':
@@ -1258,6 +1582,9 @@ function api_v1_route($parts)
             break;
         case 'gameplay':
             api_handle_gameplay($tokenRow);
+            break;
+        case 'timekeeper':
+            api_handle_timekeeper_templates($parts);
             break;
         case 'version':
             api_handle_version();

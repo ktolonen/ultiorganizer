@@ -244,6 +244,11 @@ function UserUpdateInfo($user_id, $olduser, $user, $name)
                 DBEscapeString($olduser),
             ));
             DBQuery(sprintf(
+                "UPDATE uo_api_token SET scope_id='%s' WHERE scope_type='user' AND scope_id='%s'",
+                DBEscapeString($user),
+                DBEscapeString($olduser),
+            ));
+            DBQuery(sprintf(
                 "UPDATE uo_event_log SET user_id='%s' WHERE user_id='%s'",
                 DBEscapeString($user),
                 DBEscapeString($olduser),
@@ -1580,6 +1585,30 @@ function GetTeamAdmins($teamId)
     }
 }
 
+/**
+ * Delete a user's user-scoped API tokens. Their scorekeeping API receipts stay
+ * with the game, like history rows, but lose the User-Agent first: without the
+ * tokens nothing ties the receipts to the user any more.
+ *
+ * @param string $userId uo_users.userid
+ * @return void
+ */
+function UserApiTokensDelete($userId)
+{
+    if (!hasEditUsersRight()) {
+        die('Insufficient rights to delete user');
+    }
+    DBQuery(sprintf(
+        "UPDATE uo_api_receipt r JOIN uo_api_token t ON (t.token_id=r.api_token)
+			SET r.user_agent=NULL WHERE t.scope_type='user' AND t.scope_id='%s'",
+        DBEscapeString((string) $userId),
+    ));
+    DBQuery(sprintf(
+        "DELETE FROM uo_api_token WHERE scope_type='user' AND scope_id='%s'",
+        DBEscapeString((string) $userId),
+    ));
+}
+
 function DeleteUser($userid)
 {
     if ($userid != "anonymous") {
@@ -1594,6 +1623,7 @@ function DeleteUser($userid)
                 "DELETE FROM uo_scorekeeper_grant WHERE userid='%s'",
                 DBEscapeString($userid),
             ));
+            UserApiTokensDelete($userid);
 
             $query = sprintf(
                 "DELETE FROM uo_users WHERE userid='%s'",

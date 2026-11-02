@@ -1653,6 +1653,14 @@ function upgrade104()
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 }
 
+function upgrade105()
+{
+    // The client that made a scorekeeping API write.
+    if (!hasColumn('uo_api_receipt', 'user_agent')) {
+        addColumn('uo_api_receipt', 'user_agent', "varchar(255) DEFAULT NULL AFTER `response`");
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {
