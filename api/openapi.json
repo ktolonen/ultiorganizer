@@ -1773,7 +1773,7 @@
     "/api/v1/games/{game_id}/goals/{num}": {
       "delete": {
         "summary": "Delete the last goal",
-        "description": "Deletes goal num while it is still the last goal, then lowers the result onto the remaining goals when the result was tracking them. A num that is no longer last (another device added a goal since) is 409 goal_changed. No body.",
+        "description": "Deletes goal num while it is still the last goal, then lowers the result onto the remaining goals when the result was tracking them. A final game is 409 game_final; correct one with the complete upload. A num that is no longer last (another device added a goal since) is 409 goal_changed. No body.",
         "security": [
           {
             "ApiTokenAuth": [],
@@ -1913,7 +1913,7 @@
             }
           },
           "409": {
-            "description": "idempotency_conflict, forfeit, or goal_changed",
+            "description": "idempotency_conflict, forfeit, game_final, or goal_changed",
             "content": {
               "application/json": {
                 "schema": {

@@ -1451,8 +1451,9 @@ function ScorekeeperAddGoal($gameId, array $goal)
 }
 
 /**
- * Delete a game's last goal, as the Scorekeeper delete page does, and lower
- * the result onto the remaining goals when it was tracking them.
+ * Delete a game's last goal and lower the result onto the remaining goals
+ * when it was tracking them. Unlike the Scorekeeper delete page, refused on a
+ * final game, as adding a goal is; the complete upload corrects one.
  *
  * The $write of ScorekeepingApiWrite(). Refused with 409 when goal $num is no
  * longer the last one, so a device cannot delete a goal another device added.
@@ -1465,6 +1466,9 @@ function ScorekeeperAddGoal($gameId, array $goal)
 function ScorekeeperDeleteLastGoal($gameId, $num)
 {
     $gameId = (int) $gameId;
+    if (ScorekeeperLockedGameState($gameId)['final']) {
+        throw new ScorekeepingApiException(409, 'game_final', 'The game has a final result.');
+    }
     $last = ScorekeeperLastGoalForUpdate($gameId);
     if ($last === null || $last['num'] !== (int) $num) {
         throw new ScorekeepingApiException(409, 'goal_changed', sprintf('Only the last goal can be deleted, and goal %d is no longer the last one.', (int) $num));

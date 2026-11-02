@@ -88,6 +88,10 @@ On Debian and Ubuntu, `session.gc_probability = 0` and a system timer cleans onl
 
 Scorekeeping links (`/scorekeeper/?t=...`) and Spiritkeeper team links (`/spiritkeeper/?token=...`) carry their secret in the URL, so the web server's access log records it; Ultiorganizer's own logs do not. Restrict who can read the access logs, or strip the query string from them.
 
+## Reverse proxies
+
+Ultiorganizer takes the client address from `REMOTE_ADDR` and ignores `X-Forwarded-For`, which any client can set. Behind a reverse proxy or load balancer, every request then comes from the proxy's address: API rate limits are shared by all clients of a token, and logs and scoresheet history record the proxy. Have the web server restore the client address from the trusted proxy only, for example with Apache `mod_remoteip` (`RemoteIPHeader` and `RemoteIPTrustedProxy`) or nginx `set_real_ip_from` and `real_ip_header`.
+
 ## Development checkout deployments
 
 Don't upload a full repository checkout to production unless the web server blocks private and development-only paths. The Apache `.htaccess` files are defense in depth that other servers may ignore.

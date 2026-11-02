@@ -316,7 +316,13 @@ if ($print) {
 } elseif (count($games)) {
     $html .= "<hr/>\n";
     $html .= "<p>";
-    $icalUrl = preg_replace('/^https?:/', 'webcal:', GetURLBase()) . "/?view=ical&$gamefilter=$id&time=$timefilter&order=$order";
+    $icalQuery = http_build_query([
+        'view' => 'ical',
+        $gamefilter === 'poolgroup' ? 'pools' : $gamefilter => $id,
+        'time' => $timefilter,
+        'order' => $order,
+    ]);
+    $icalUrl = preg_replace('/^https?:/', 'webcal:', GetURLBase()) . "/?" . $icalQuery;
     $html .= "<a href='" . utf8entities($icalUrl) . "'>" . _("Subscribe to calendar") . "</a> | ";
     $html .= "<a href='" . utf8entities($baseurl) . "&filter=onepage&group=$group' target='_blank' rel='noopener'>" . _("Grid (PDF)") . "</a> | ";
     $html .= "<a href='" . utf8entities($baseurl) . "&filter=season&group=$group' target='_blank' rel='noopener'>" . _("List (PDF)") . "</a> | ";
