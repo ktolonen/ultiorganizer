@@ -490,7 +490,11 @@ $streaming = false;
 $deleteHtml = "";
 if (isset($_POST['delete']) && !empty($_POST['deleteSeason'])) {
     $deleteId = (string) $_POST['deleteSeason'];
-    if (preg_match('/^SIM\d{3}$/', $deleteId) && DeleteSeasonWithData($deleteId)) {
+    $expected = (string) ($_SESSION['simEventToken'] ?? "");
+    unset($_SESSION['simEventToken']);
+    if ($expected === "" || !hash_equals($expected, (string) ($_POST['token'] ?? ""))) {
+        $deleteHtml .= "<p class='warning'>" . "This form was already submitted." . "</p>\n";
+    } elseif (preg_match('/^SIM\d{3}$/', $deleteId) && DeleteSeasonWithData($deleteId)) {
         $deleteHtml .= "<p>" . sprintf("Event %s deleted.", utf8entities($deleteId)) . "</p>\n";
     } else {
         $deleteHtml .= "<p class='warning'>" . "Event could not be deleted." . "</p>\n";
@@ -641,6 +645,7 @@ foreach (Seasons() as $season) {
 if (!empty($simEvents)) {
     $html .= $deleteHtml;
     $html .= "<form method='post' action='?view=plugins/simulate_event'>\n";
+    $html .= "<input type='hidden' name='token' value='" . $_SESSION['simEventToken'] . "'/>\n";
     $html .= "<p>" . "Simulated events" . ": <select class='dropdown' name='deleteSeason'>\n";
     foreach ($simEvents as $season) {
         $html .= "<option class='dropdown' value='" . utf8entities($season['season_id']) . "'>" . utf8entities($season['season_id'] . " " . $season['name']) . "</option>\n";
