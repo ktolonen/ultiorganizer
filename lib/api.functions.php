@@ -117,6 +117,13 @@ function ApiTokenSetRevoked($tokenId, $revoked)
 
 function ApiTokenDelete($tokenId)
 {
+    // As in UserApiTokensDelete(): once the token is gone, nothing ties its
+    // receipts' User-Agent to the user any more.
+    DBQuery(sprintf(
+        "UPDATE uo_api_receipt r JOIN uo_api_token t ON (t.token_id=r.api_token)
+			SET r.user_agent=NULL WHERE t.token_id=%d AND t.scope_type='user'",
+        (int) $tokenId,
+    ));
     $query = sprintf(
         "DELETE FROM uo_api_token WHERE token_id=%d",
         (int) $tokenId,
