@@ -84,8 +84,13 @@ A third-party scorekeeping app keeps score for a game by scanning the game's or 
 | `PUT /api/v1/games/{id}/game-data` | replace the whole scoresheet |
 | `POST /api/v1/games/{id}/goals` | add the next goal |
 | `DELETE /api/v1/games/{id}/goals/{num}` | delete the last goal |
+| `PATCH /api/v1/games/{id}/goals/{num}` | correct a goal's scorer, assist or Callahan flag |
 | `POST /api/v1/games/{id}/timeouts` | add a timeout |
+| `DELETE /api/v1/games/{id}/timeouts/{home\|away}/{num}` | delete a team's last timeout |
 | `POST /api/v1/games/{id}/spirit-stoppages` | add a spirit stoppage |
+| `DELETE /api/v1/games/{id}/spirit-stoppages/{home\|away}/{num}` | delete a team's last spirit stoppage |
+| `POST /api/v1/games/{id}/clock` | start, pause, resume, set or reset the game clock |
+| `PUT /api/v1/games/{id}/note` | set or clear the game note (user-scoped token) |
 | `POST /api/v1/games/{id}/score-taps` | add or take one point (result-only keeping) |
 | `PUT /api/v1/games/{id}/rosters/{home\|away}` | replace one team's game roster |
 | `PATCH /api/v1/games/{id}/metadata` | set the starting offence, halftime or official |
@@ -94,7 +99,7 @@ A third-party scorekeeping app keeps score for a game by scanning the game's or 
 
 **Two credentials.** Effective access is the app token's scope intersected with what the link covers; neither alone is enough.
 
-- The app token (`uo_api_token`, any unrevoked token) goes in `Authorization: Bearer`. These routes read nothing else: not `?token=`, `X-Api-Token` or `Token `. An event-scoped token only works for games of its own event (`403 event_scope_mismatch`). A `user`-scoped token works like an installation token, so the link alone decides which games are covered, the same as when a logged-in user opens the link in the browser. Its history rows carry the token's user as `user_id`; the request still gets none of that user's rights.
+- The app token (`uo_api_token`, any unrevoked token) goes in `Authorization: Bearer`. These routes read nothing else: not `?token=`, `X-Api-Token` or `Token `. An event-scoped token only works for games of its own event (`403 event_scope_mismatch`). A `user`-scoped token works like an installation token, so the link alone decides which games are covered, the same as when a logged-in user opens the link in the browser. Its history rows carry the token's user as `user_id`, and it may write the game note as that user, as a logged-in user with the link may in the browser; the request still gets none of that user's other rights.
 - The scorekeeping link token goes in the `X-Scorekeeping-Token` header, never in the URL or the body. An unknown or replaced link is `401 invalid_scorekeeping_token` and writes a `security` log event without the token.
 
 The QR code encodes `BASEURL/scorekeeper/?t=<32 hex>`. The app takes the part before `/scorekeeper/` as the installation root (the API is at `<root>/api/v1/`) and `t` as the link token. It should accept only `https` URLs (and `http://localhost` for development).
@@ -108,7 +113,13 @@ These routes work for private events and ignore the event's `api_public` and `an
 
 **Discovery.** `GET /scorekeeping/games` returns the link's event, the covered games (id, time, field, pool, home and away team ids and names, result state) and `available_from`. A game link returns one game, a field link the reservation's games. Outside the game day (`ScorekeeperOpenDays()`, with the 4 hour grace) the list is empty and `available_from` is the date of the game or reservation.
 
-**Entry context.** `GET /games/{id}/entry-context` is one consistent read (`START TRANSACTION WITH CONSISTENT SNAPSHOT`, no lock): the game, both teams' eligible players and game rosters, goals in order (`num`, `home_score` and `away_score` are server-derived), timeouts and spirit stoppages per side, result, starting offence, halftime, official, the rules (hidden goal times, timeouts per team, spirit stoppages, accreditation, bounds), and the state an upload keeps (cap events, forfeit, defence counts and referenced players). It has no game notes, contact data or history. `token` is also the strong `ETag`. Players on the game roster who belong to neither team of the fixture are not listed, and an upload drops them.
+**Entry context.** `GET /games/{id}/entry-context` is one consistent read (`START TRANSACTION WITH CONSISTENT SNAPSHOT`, no lock): the game, both teams' eligible players and game rosters, goals in order (`num`, `home_score` and `away_score` are server-derived), timeouts and spirit stoppages per side, the game clock, the game note, result, starting offence, halftime, official, the rules (hidden goal times, timeouts per team, spirit stoppages, accreditation, bounds), and the state an upload keeps (cap events, forfeit, defence counts and referenced players). It has no contact data or history.
+
+- `clock` is `null` while the event hides times. Otherwise `state` is `not_started`, `running`, `paused` or `stopped` (a game kept without a running clock, or final), and `elapsed` is the reading in seconds when the response was built; while running it advances one per second.
+- `note` is the game note for a user-scoped token, the only kind that may write one, and `null` otherwise or when there is none.
+- The strong `ETag` is `token`, a dash and 32 hex characters of a hash of the whole context, so it changes with anything in the context, the clock included, but not with a running clock's reading. `If-None-Match` with it answers `304 Not Modified` without a body while nothing changed; the request still counts against the rate limit. The upload's `If-Match` accepts either `token` or this `ETag`.
+
+Players on the game roster who belong to neither team of the fixture are not listed, and an upload drops them.
 
 **Concurrency token.** The token is the SHA-256 of what a complete upload replaces (fixture teams, rosters, goals, timeouts, spirit stoppages, result state, starting offence, halftime, official). Timer fields, defences, other events and notes are left out, so a running clock does not move it. Every successful write, live or upload, returns the resulting token as `ETag` and in the body, so the app can upload later without refetching.
 
@@ -150,7 +161,11 @@ A successful upload first force-captures a scoresheet history snapshot (even wit
 
 - `POST goals` takes `{side, scorer_id, assist_id, callahan, time}` and answers `201` with the stored `goal`. The server assigns `num` (last + 1) and the cumulative score, and raises the result to the new score unless a team's stored score is already higher, as the Scorekeeper goal form does. Scorer and assist must be on the side's game roster. `time` must not be earlier than the last goal (the browser form also refuses an equal time); when the event hides times it must be `null` and the server uses the last goal's time plus one second. A final game is `409 game_final`. A browser append that takes the same `num` at the same moment is retried once, then answered `409 goal_changed`.
 - `DELETE goals/{num}` deletes goal `num` only while it is still the last goal (`409 goal_changed` otherwise, such as after another device added one), then lowers the result onto the remaining goals when the result was tracking them. A final game is `409 game_final`; correct one with the complete upload.
+- `PATCH goals/{num}` takes any of `scorer_id`, `assist_id` and `callahan` and answers with the stored `goal`; the fields not sent keep their value. Side, time and the running score stay, and the complete upload changes those. The players follow the `POST goals` rules for the goal's side. A final game can be corrected, since the result does not change; an unknown `num` is `404 goal_not_found`.
 - `POST timeouts` and `POST spirit-stoppages` take `{side, time}` and answer `201` with the stored entry, numbered after the team's last one. The limits are `rules.timeouts_per_team` (`409 timeout_limit`) and 4 spirit stoppages per team (`409 spirit_stoppage_limit`); an event without spirit stoppages answers `409 spirit_stoppages_disabled`.
+- `DELETE timeouts/{side}/{num}` and `DELETE spirit-stoppages/{side}/{num}` delete the team's entry `num` only while it is still the team's last one (`409 timeout_changed` or `409 spirit_stoppage_changed` otherwise).
+- `POST clock` takes `{action}`, plus `elapsed` in seconds (up to 32767) for `set`, and answers with `clock` as in the entry context. As the Scorekeeper clock controls do: `start` needs a clock that is neither running nor paused (`409 clock_running`) and makes the game ongoing; `pause` needs a running clock (`409 clock_not_running`); `resume` and `set` need a paused one (`409 clock_not_paused`); `reset` needs a 0 - 0 score (`409 score_not_zero`) and returns the game to not started. A final game is `409 game_final`, and while the event hides times the clock is not kept (`409 times_hidden`). Clock changes are not part of the token.
+- `PUT note` takes `{text}` (trimmed, at most 4000 bytes) and answers with the stored `note`, `null` after an empty text clears it. It needs a user-scoped app token (`403 user_token_required`), because the browser offers notes only to a logged-in user, and the note and its event log rows are attributed to the token's user. Notes are not part of the token.
 - `POST score-taps` takes `{side, delta}` with `delta` 1 or -1 and changes the stored score in one statement, as the Scorekeeper result page's taps do: a game becomes ongoing, and one back at 0-0 before the clock starts returns to not started. A final game is `409 game_final`, a score outside 0 to 1000 `409 score_out_of_range`.
 - `PUT rosters/{home|away}` takes `{team_id, players}`, the players as in the upload. `team_id` must be the side's team (`409 fixture_changed`). Removing a player that a goal or the defence sheet refers to is `409 player_referenced` with their ids.
 - `PATCH metadata` takes any of `starting_offence`, `halftime` and `official`; only the fields sent change, and `null` clears one.
