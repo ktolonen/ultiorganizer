@@ -322,16 +322,17 @@ final class ScorekeepingApiFields
 /**
  * Run a scorekeeping API write under the game row lock.
  *
- * One transaction per attempt: lock timeout, game lock first, coverage
- * recheck with fresh grant data, then $work. A failure rolls back at every
- * nesting level and clears the request-local caches the attempt filled. A
- * deadlock or lock wait timeout is retried twice, then answered with 503.
- * Output the helpers print while $work runs is discarded and logged.
+ * One transaction per attempt: lock timeout, game lock first, then $work with
+ * the grant, snapshot and event caches cleared, so $work decides on fresh
+ * data. A failure rolls back at every nesting level and clears the
+ * request-local caches the attempt filled. A deadlock or lock wait timeout is
+ * retried twice, then answered with 503. Output the helpers print while
+ * $work runs is discarded and logged.
  *
  * @param int $gameId uo_game.game_id
  * @param callable $work Runs inside the transaction; its return value is returned
  * @return mixed
- * @throws ScorekeepingApiException 404 unknown game, 403 game not covered, 503 busy
+ * @throws ScorekeepingApiException 404 unknown game, 503 busy
  */
 function ScorekeepingApiTransaction($gameId, callable $work)
 {
@@ -352,9 +353,6 @@ function ScorekeepingApiTransaction($gameId, callable $work)
             CacheForgetNamespace("scoresheet_history_snapshot");
             // Maintenance and read-only flags may have changed while waiting for the lock.
             CacheForgetNamespace("season_info");
-            if (ScorekeeperGrantTokenId($gameId) <= 0) {
-                throw new ScorekeepingApiException(403, 'game_not_covered', 'The scorekeeping link does not cover this game now.');
-            }
             ob_start();
             $buffering = true;
             $result = $work();
@@ -390,9 +388,9 @@ function ScorekeepingApiTransaction($gameId, callable $work)
 
 /**
  * Run one idempotent scorekeeping API mutation: ScorekeepingApiTransaction(),
- * then under the lock the event state and rights recheck, the receipt lookup,
- * the forfeit refusal, $write, and in the same transaction the receipt of the
- * answer.
+ * then under the lock the receipt lookup, the link coverage, event state and
+ * rights recheck, the forfeit refusal, $write, and in the same transaction the
+ * receipt of the answer.
  *
  * An exact replay of a stored request returns its stored answer and writes
  * nothing; the same key with another method, path or body is a 409.
@@ -412,18 +410,9 @@ function ScorekeepingApiWrite($gameId, array $request, array $rights, callable $
 {
     $gameId = (int) $gameId;
     return ScorekeepingApiTransaction($gameId, function () use ($gameId, $request, $rights, $write) {
-        $season = (string) GameSeason($gameId);
-        if (IsSeasonInMaintenance($season)) {
-            throw new ScorekeepingApiException(503, 'event_maintenance', 'The event is under maintenance.', null, ['Retry-After: 60']);
-        }
-        if (isEventReadonly($season)) {
-            throw new ScorekeepingApiException(403, 'event_readonly', 'The event is read-only.');
-        }
-        if ((in_array('events', $rights, true) && !hasEditGameEventsRight($gameId))
-            || (in_array('players', $rights, true) && !hasEditGamePlayersRight($gameId))) {
-            throw new ScorekeepingApiException(403, 'forbidden', 'The scorekeeping link does not allow editing this game.');
-        }
-
+        // The receipt comes before the coverage, event state and rights checks,
+        // so a retry of a write that succeeded gets its answer even after the
+        // game day ended or the event became read-only.
         $requestHash = hash('sha256', (string) json_encode($request['body'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $receipt = DBQueryToRowUncached(sprintf(
             "SELECT method, path, request_hash, status, response FROM uo_api_receipt
@@ -445,6 +434,21 @@ function ScorekeepingApiWrite($gameId, array $request, array $rights, callable $
                 'token' => (string) ($response['data']['token'] ?? ''),
                 'replay' => true,
             ];
+        }
+
+        if (ScorekeeperGrantTokenId($gameId) <= 0) {
+            throw new ScorekeepingApiException(403, 'game_not_covered', 'The scorekeeping link does not cover this game now.');
+        }
+        $season = (string) GameSeason($gameId);
+        if (IsSeasonInMaintenance($season)) {
+            throw new ScorekeepingApiException(503, 'event_maintenance', 'The event is under maintenance.', null, ['Retry-After: 60']);
+        }
+        if (isEventReadonly($season)) {
+            throw new ScorekeepingApiException(403, 'event_readonly', 'The event is read-only.');
+        }
+        if ((in_array('events', $rights, true) && !hasEditGameEventsRight($gameId))
+            || (in_array('players', $rights, true) && !hasEditGamePlayersRight($gameId))) {
+            throw new ScorekeepingApiException(403, 'forbidden', 'The scorekeeping link does not allow editing this game.');
         }
 
         $forfeit = DBQueryToValueUncached(sprintf("SELECT forfeit FROM uo_game WHERE game_id=%d", $gameId));
