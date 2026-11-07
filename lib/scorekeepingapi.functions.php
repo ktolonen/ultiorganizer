@@ -1369,7 +1369,7 @@ function ScorekeeperLiveRequestNormalize($operation, $raw)
             } elseif (array_key_exists('elapsed', $raw)) {
                 $f->add('elapsed', 'Only the set action takes elapsed.');
             }
-            $body = ['action' => (string) $raw['action'], 'elapsed' => $elapsed];
+            $body = ['action' => is_string($raw['action']) ? $raw['action'] : '', 'elapsed' => $elapsed];
             break;
         case 'goal_fix':
             foreach (['scorer_id', 'assist_id'] as $field) {
