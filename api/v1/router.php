@@ -114,7 +114,7 @@ function api_get_headers()
 }
 
 /**
- * Extract the API token from headers or query string.
+ * Extract the API token from the request headers.
  *
  * @return string
  */
@@ -136,11 +136,6 @@ function api_get_token()
     }
     if (!empty($headers['X-Api-Key'])) {
         return trim($headers['X-Api-Key']);
-    }
-
-    $queryToken = iget('token');
-    if (!empty($queryToken)) {
-        return trim($queryToken);
     }
 
     return '';
@@ -207,6 +202,10 @@ function api_enforce_rate_limit($tokenHash, $clientIp)
 function api_require_token()
 {
     $token = api_get_token();
+    if ($token === '' && iget('token') !== '') {
+        // A token in the URL ends up in access and proxy logs.
+        api_error(401, 'missing_token', 'Send the API token in the Authorization: Bearer header; the token query parameter is not accepted.');
+    }
     if ($token === '') {
         api_error(401, 'missing_token', 'API token required.');
     }
@@ -517,8 +516,12 @@ function api_handle_divisions($tokenRow)
 
     $series = SeasonSeries($seasonId, true);
     $pools = SeasonPools($seasonId, false, true);
+    $publicPools = array_flip(SeasonPublicPoolIds($seasonId));
     $poolsBySeries = [];
     foreach ($pools as $pool) {
+        if (!isset($publicPools[(int) $pool['pool_id']])) {
+            continue;
+        }
         $seriesId = (int) $pool['series_id'];
         if (!isset($poolsBySeries[$seriesId])) {
             $poolsBySeries[$seriesId] = [];
@@ -962,6 +965,10 @@ function api_handle_gameplay($tokenRow)
     $seasonId = GameSeason($gameId);
     $seasonInfo = api_require_public_season($seasonId);
     api_enforce_token_scope($tokenRow, $seasonId);
+    // Same gate as /games: a game in a hidden pool or division is not found.
+    if (empty(TimetableGames($gameId, 'game', 'all', 'time', '', true))) {
+        api_error(404, 'game_not_found', 'Game not found.');
+    }
 
     $gameInfo = GameInfo($gameId);
     $poolInfo = PoolInfo($gameResult['pool']);
@@ -1127,7 +1134,7 @@ function api_handle_gameplay($tokenRow)
     $mediaEventRows = [];
     foreach ($mediaEvents as $event) {
         $mediaEventRows[] = [
-            'time' => isset($event['time']) ? (int) $event['time'] : null,
+            'time' => !$hideTimes && isset($event['time']) ? (int) $event['time'] : null,
             'team' => isset($event['ishome']) ? (intval($event['ishome']) ? 'home' : 'away') : null,
             'type' => $event['eventtype'] ?? null,
             'url' => $event['url'] ?? null,
@@ -1146,7 +1153,7 @@ function api_handle_gameplay($tokenRow)
             'name' => $entry['name'] ?? null,
             'owner' => $entry['mediaowner'] ?? null,
             'publisher' => $entry['publisher'] ?? null,
-            'time' => isset($entry['time']) ? (int) $entry['time'] : null,
+            'time' => !$hideTimes && isset($entry['time']) ? (int) $entry['time'] : null,
         ];
     }
 

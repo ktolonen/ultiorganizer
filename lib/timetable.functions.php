@@ -794,6 +794,26 @@ function TimetablePublicVisibilityCondition()
 }
 
 /**
+ * Ids of an event's pools that the public timetable shows, by the rule of
+ * TimetablePublicVisibilityCondition().
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return int[]
+ */
+function SeasonPublicPoolIds($seasonId)
+{
+    // The gp and ps aliases are the ones the visibility condition expects.
+    $rows = DBQueryToArray(sprintf(
+        "SELECT gp.pool FROM (SELECT pool_id AS pool, series FROM uo_pool) gp
+			JOIN uo_series ps ON (ps.series_id=gp.series)
+		WHERE ps.season='%s'%s",
+        DBEscapeString((string) $seasonId),
+        TimetablePublicVisibilityCondition(),
+    ));
+    return array_map('intval', array_column($rows, 'pool'));
+}
+
+/**
  * Half-open day range condition for a game time column.
  *
  * DATE_FORMAT(pp.time,'%Y-%m-%d') = <day> hides the column from the optimizer,

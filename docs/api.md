@@ -21,8 +21,10 @@ API structure, constraints and scope.
 
 - Public API endpoints expose event lists, divisions, teams, games, gameplay, Timekeeper templates, and version metadata.
 - Token authentication can be installation, event, or user scoped.
-- Event-scoped endpoints require the event to be marked visible in the public API. The same event flag also gates public `ext/` outputs, including generated external links, widgets, RSS feeds, XML helpers, and CSV exports.
-- `gameplay` follows the event's public visibility settings: spirit scores are `null` unless the event shows them, and goal, event and half-time times and the time-on-offence statistics are `null` when the event hides scoresheet times.
+- The token goes in a request header: `Authorization: Bearer` (preferred), `Authorization: Token`, `X-Api-Token` or `X-Api-Key`. A `?token=` query parameter is refused with `401 missing_token`, because URLs end up in access and proxy logs.
+- Event-scoped endpoints require the event to be marked visible in the public API.
+- Games, pools and divisions follow the public timetable's visibility: a pool hidden from the public schedule (or a follower of a hidden playoff root) and an invalid division are left out of `divisions` and `games`, and `gameplay` answers `404 game_not_found` for their games. The same event flag also gates public `ext/` outputs, including generated external links, widgets, RSS feeds, XML helpers, and CSV exports.
+- `gameplay` follows the event's public visibility settings: spirit scores are `null` unless the event shows them, and goal, event, media and half-time times and the time-on-offence statistics are `null` when the event hides scoresheet times.
 - Historical data outside those endpoint shapes is not part of the current v1 surface.
 
 ## Documentation
