@@ -196,12 +196,26 @@ function CanViewGameComment($gameId, $seasoninfo = null)
     return is_array($seasoninfo) && !empty($seasoninfo['showgamecomments']);
 }
 
+/**
+ * The user a game note is written as: the scorekeeping app API actor's user
+ * (a user-scoped app token) while that actor is set, else the logged-in user.
+ *
+ * @return string uo_users.userid, or '' when there is none
+ */
+function GameCommentUser()
+{
+    if (function_exists('ScorekeeperApiActorIsSet') && ScorekeeperApiActorIsSet()) {
+        return (string) ScorekeeperApiActor()['user'];
+    }
+    return function_exists('isLoggedIn') && isLoggedIn() ? (string) $_SESSION['uid'] : '';
+}
+
 function CanCreateGameComment($gameId)
 {
-    if (!function_exists('hasEditGameEventsRight') || !function_exists('isLoggedIn')) {
+    if (!function_exists('hasEditGameEventsRight')) {
         return false;
     }
-    return isLoggedIn() && hasEditGameEventsRight($gameId);
+    return GameCommentUser() !== '' && hasEditGameEventsRight($gameId);
 }
 
 function SpiritCommentTypeForTeam($gameResult, $teamId)
@@ -245,10 +259,11 @@ function CanCreateSpiritComment($gameResult, $spiritTeamId)
 
 function CanManageGameComment($gameId, $type)
 {
-    if (!function_exists('hasEditGameEventsRight') || !function_exists('isLoggedIn')) {
+    if (!function_exists('hasEditGameEventsRight')) {
         return false;
     }
-    if (!isLoggedIn()) {
+    $user = GameCommentUser();
+    if ($user === '') {
         return false;
     }
     if (hasEditGameEventsRight($gameId)) {
@@ -260,7 +275,7 @@ function CanManageGameComment($gameId, $type)
         return false;
     }
     $meta = GameCommentMeta($gameId, $type);
-    return (!empty($meta['created_by']) && isset($_SESSION['uid']) && $_SESSION['uid'] === $meta['created_by']);
+    return !empty($meta['created_by']) && $user === $meta['created_by'];
 }
 
 function CanManageSpiritComment($gameId, $type)
@@ -285,12 +300,19 @@ function CanManageSpiritComment($gameId, $type)
 
 function LogGameCommentEvent($gameId, $type, $eventType)
 {
-    if (!function_exists('Log1')) {
+    if (!function_exists('LogEvent')) {
         return;
     }
-    $key = CommentKeyForType($type);
-    $label = CommentLabelForType($type);
-    Log1("game", $eventType, $gameId, $key, $label, "comments");
+    // LogEvent() would take the session's uid, which is 'anonymous' for the app API.
+    LogEvent([
+        'category' => "game",
+        'type' => $eventType,
+        'id1' => $gameId,
+        'id2' => CommentKeyForType($type),
+        'description' => CommentLabelForType($type),
+        'source' => "comments",
+        'user_id' => GameCommentUser(),
+    ]);
 }
 
 function CommentRequestedChange($type, $id, $comment, $delete = false)

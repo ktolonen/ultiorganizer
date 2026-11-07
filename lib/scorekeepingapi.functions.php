@@ -14,6 +14,7 @@ require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/reservation.functions.php';
 require_once __DIR__ . '/team.functions.php';
 require_once __DIR__ . '/accreditation.functions.php';
+require_once __DIR__ . '/comment.functions.php';
 
 /**
  * Lock a game row for the rest of the open transaction.
@@ -322,16 +323,17 @@ final class ScorekeepingApiFields
 /**
  * Run a scorekeeping API write under the game row lock.
  *
- * One transaction per attempt: lock timeout, game lock first, coverage
- * recheck with fresh grant data, then $work. A failure rolls back at every
- * nesting level and clears the request-local caches the attempt filled. A
- * deadlock or lock wait timeout is retried twice, then answered with 503.
- * Output the helpers print while $work runs is discarded and logged.
+ * One transaction per attempt: lock timeout, game lock first, then $work with
+ * the grant, snapshot and event caches cleared, so $work decides on fresh
+ * data. A failure rolls back at every nesting level and clears the
+ * request-local caches the attempt filled. A deadlock or lock wait timeout is
+ * retried twice, then answered with 503. Output the helpers print while
+ * $work runs is discarded and logged.
  *
  * @param int $gameId uo_game.game_id
  * @param callable $work Runs inside the transaction; its return value is returned
  * @return mixed
- * @throws ScorekeepingApiException 404 unknown game, 403 game not covered, 503 busy
+ * @throws ScorekeepingApiException 404 unknown game, 503 busy
  */
 function ScorekeepingApiTransaction($gameId, callable $work)
 {
@@ -352,9 +354,6 @@ function ScorekeepingApiTransaction($gameId, callable $work)
             CacheForgetNamespace("scoresheet_history_snapshot");
             // Maintenance and read-only flags may have changed while waiting for the lock.
             CacheForgetNamespace("season_info");
-            if (ScorekeeperGrantTokenId($gameId) <= 0) {
-                throw new ScorekeepingApiException(403, 'game_not_covered', 'The scorekeeping link does not cover this game now.');
-            }
             ob_start();
             $buffering = true;
             $result = $work();
@@ -390,9 +389,9 @@ function ScorekeepingApiTransaction($gameId, callable $work)
 
 /**
  * Run one idempotent scorekeeping API mutation: ScorekeepingApiTransaction(),
- * then under the lock the event state and rights recheck, the receipt lookup,
- * the forfeit refusal, $write, and in the same transaction the receipt of the
- * answer.
+ * then under the lock the receipt lookup, the link coverage, event state and
+ * rights recheck, the forfeit refusal, $write, and in the same transaction the
+ * receipt of the answer.
  *
  * An exact replay of a stored request returns its stored answer and writes
  * nothing; the same key with another method, path or body is a 409.
@@ -412,18 +411,9 @@ function ScorekeepingApiWrite($gameId, array $request, array $rights, callable $
 {
     $gameId = (int) $gameId;
     return ScorekeepingApiTransaction($gameId, function () use ($gameId, $request, $rights, $write) {
-        $season = (string) GameSeason($gameId);
-        if (IsSeasonInMaintenance($season)) {
-            throw new ScorekeepingApiException(503, 'event_maintenance', 'The event is under maintenance.', null, ['Retry-After: 60']);
-        }
-        if (isEventReadonly($season)) {
-            throw new ScorekeepingApiException(403, 'event_readonly', 'The event is read-only.');
-        }
-        if ((in_array('events', $rights, true) && !hasEditGameEventsRight($gameId))
-            || (in_array('players', $rights, true) && !hasEditGamePlayersRight($gameId))) {
-            throw new ScorekeepingApiException(403, 'forbidden', 'The scorekeeping link does not allow editing this game.');
-        }
-
+        // The receipt comes before the coverage, event state and rights checks,
+        // so a retry of a write that succeeded gets its answer even after the
+        // game day ended or the event became read-only.
         $requestHash = hash('sha256', (string) json_encode($request['body'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         $receipt = DBQueryToRowUncached(sprintf(
             "SELECT method, path, request_hash, status, response FROM uo_api_receipt
@@ -445,6 +435,21 @@ function ScorekeepingApiWrite($gameId, array $request, array $rights, callable $
                 'token' => (string) ($response['data']['token'] ?? ''),
                 'replay' => true,
             ];
+        }
+
+        if (ScorekeeperGrantTokenId($gameId) <= 0) {
+            throw new ScorekeepingApiException(403, 'game_not_covered', 'The scorekeeping link does not cover this game now.');
+        }
+        $season = (string) GameSeason($gameId);
+        if (IsSeasonInMaintenance($season)) {
+            throw new ScorekeepingApiException(503, 'event_maintenance', 'The event is under maintenance.', null, ['Retry-After: 60']);
+        }
+        if (isEventReadonly($season)) {
+            throw new ScorekeepingApiException(403, 'event_readonly', 'The event is read-only.');
+        }
+        if ((in_array('events', $rights, true) && !hasEditGameEventsRight($gameId))
+            || (in_array('players', $rights, true) && !hasEditGamePlayersRight($gameId))) {
+            throw new ScorekeepingApiException(403, 'forbidden', 'The scorekeeping link does not allow editing this game.');
         }
 
         $forfeit = DBQueryToValueUncached(sprintf("SELECT forfeit FROM uo_game WHERE game_id=%d", $gameId));
@@ -599,13 +604,18 @@ function ScorekeeperDiscoverGames($season, $linkTokenId)
  * a complete upload replaces, the rules, the state an upload must preserve,
  * and the concurrency token. No game notes, contact data or history.
  *
- * Needs the scorekeeping API actor set. Takes no lock.
+ * Needs the scorekeeping API actor set. Takes no lock. The clock is null while
+ * the event hides times, and the note is only read for a user-scoped token,
+ * the only kind that may write it.
  *
  * @param int $gameId uo_game.game_id
+ * @param string|null $validator Set to the entry context's ETag value: the
+ *     upload token, a dash and 32 hex characters of a hash of the whole
+ *     context, so any change to it, the clock included, gives a new value
  * @return array<string, mixed>
  * @throws ScorekeepingApiException 404 unknown game, 403 game not covered
  */
-function ScorekeeperEntryContext($gameId)
+function ScorekeeperEntryContext($gameId, &$validator = null)
 {
     $gameId = (int) $gameId;
     DisablePersistentCacheForRequest();
@@ -724,6 +734,12 @@ function ScorekeeperEntryContext($gameId)
         $halftime = (int) ($stored['halftime'] ?? 0);
         $spiritTimeouts = $spiritEnabled ? $stoppages($snapshot['spirit_timeouts']) : ['home' => [], 'away' => []];
         $token = ScorekeeperUploadToken($gameId, $snapshot);
+        $clock = $hideTime ? null : ScorekeeperClockState($stored);
+        $note = null;
+        if (ScorekeeperApiActor()['user'] !== '') {
+            $note = (string) ($snapshot['comment'] ?? '');
+            $note = $note === '' ? null : $note;
+        }
 
         $context = [
             'game' => [
@@ -748,6 +764,8 @@ function ScorekeeperEntryContext($gameId)
             'goals' => $goals,
             'timeouts' => $stoppages($snapshot['timeouts']),
             'spirit_stoppages' => $spiritTimeouts,
+            'clock' => $clock === null ? null : ['state' => $clock['state'], 'elapsed' => $clock['elapsed']],
+            'note' => $note,
             'metadata' => [
                 'starting_offence' => $offence,
                 'halftime' => $halftime > 0 ? $halftime : null,
@@ -773,6 +791,12 @@ function ScorekeeperEntryContext($gameId)
             ],
             'token' => $token,
         ];
+        // The running clock's reading changes every second; its basis does not.
+        $hashed = $context;
+        if ($clock !== null) {
+            $hashed['clock'] = ['state' => $clock['state'], 'basis' => $clock['basis']];
+        }
+        $validator = $token . '-' . substr(hash('sha256', (string) json_encode($hashed, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)), 0, 32);
         DBTransactionCommit();
         return $context;
     } catch (Throwable $e) {
@@ -1249,6 +1273,9 @@ function ScorekeeperUpdateMetadata($gameId, array $meta)
  * - metadata: at least one of starting_offence, halftime, official
  * - finalize: home, away
  * - cap: time, point_cap (1 to 255)
+ * - clock: action (start, pause, resume, set, reset), elapsed only and required for set
+ * - goal_fix: at least one of scorer_id, assist_id, callahan
+ * - note: text, at most COMMENT_MAX_LENGTH bytes after trimming; empty clears
  *
  * @param string $operation One of the operations above
  * @param mixed $raw The decoded JSON body
@@ -1267,11 +1294,19 @@ function ScorekeeperLiveRequestNormalize($operation, $raw)
         'metadata' => [],
         'finalize' => ['home', 'away'],
         'cap' => ['time', 'point_cap'],
+        'clock' => ['action'],
+        'goal_fix' => [],
+        'note' => ['text'],
     ];
     if (!isset($required[$operation])) {
         throw new LogicException('Unknown scorekeeping operation ' . $operation . '.');
     }
-    $optional = $operation === 'metadata' ? ['starting_offence', 'halftime', 'official'] : [];
+    $optional = match ($operation) {
+        'metadata' => ['starting_offence', 'halftime', 'official'],
+        'clock' => ['elapsed'],
+        'goal_fix' => ['scorer_id', 'assist_id', 'callahan'],
+        default => [],
+    };
     if (!$f->keys($raw, '', $required[$operation], $optional)) {
         $f->throwIfAny('invalid_body', 'The request body is not valid.');
     }
@@ -1318,6 +1353,44 @@ function ScorekeeperLiveRequestNormalize($operation, $raw)
                 'time' => $f->int($raw['time'], 'time', 0, SCOREKEEPING_API_MAX_CAP_TIME),
                 'point_cap' => $f->int($raw['point_cap'], 'point_cap', 1, 255),
             ];
+            break;
+        case 'clock':
+            $actions = ['start', 'pause', 'resume', 'set', 'reset'];
+            if (!in_array($raw['action'], $actions, true)) {
+                $f->add('action', 'Must be one of ' . implode(', ', $actions) . '.');
+            }
+            $elapsed = null;
+            if ($raw['action'] === 'set') {
+                if (!array_key_exists('elapsed', $raw)) {
+                    $f->add('elapsed', 'Required field is missing.');
+                } else {
+                    $elapsed = $f->int($raw['elapsed'], 'elapsed', 0, SCOREKEEPING_API_MAX_GOAL_TIME);
+                }
+            } elseif (array_key_exists('elapsed', $raw)) {
+                $f->add('elapsed', 'Only the set action takes elapsed.');
+            }
+            $body = ['action' => is_string($raw['action']) ? $raw['action'] : '', 'elapsed' => $elapsed];
+            break;
+        case 'goal_fix':
+            foreach (['scorer_id', 'assist_id'] as $field) {
+                if (array_key_exists($field, $raw)) {
+                    $body[$field] = $f->int($raw[$field], $field, 1, 2147483647, true);
+                }
+            }
+            if (array_key_exists('callahan', $raw)) {
+                $body['callahan'] = $f->bool($raw['callahan'], 'callahan');
+            }
+            if ($body === [] && $f->errors === []) {
+                $f->add('', 'Send at least one of scorer_id, assist_id and callahan.');
+            }
+            break;
+        case 'note':
+            if (!is_string($raw['text'])) {
+                $f->add('text', 'Must be a string.');
+            } elseif (strlen(trim($raw['text'])) > COMMENT_MAX_LENGTH) {
+                $f->add('text', sprintf('Must be at most %d bytes.', COMMENT_MAX_LENGTH));
+            }
+            $body = ['text' => is_string($raw['text']) ? trim($raw['text']) : ''];
             break;
     }
     $f->throwIfAny('invalid_body', 'The request body is not valid.');
@@ -1708,6 +1781,230 @@ function ScorekeeperChangeCap($gameId, $type, ?array $cap)
     }
     ScorekeeperMust(GameSetCapEvent($gameId, $type, $cap['time'], $cap['point_cap']), 'cap');
     return ['status' => 200, 'data' => ['cap' => ['type' => $type, 'time' => $cap['time'], 'point_cap' => $cap['point_cap']]]];
+}
+
+/**
+ * The game clock as the scorekeeping app sees it, from a game row with
+ * hasstarted, isongoing and the timer columns.
+ *
+ * state is not_started (no game yet), running, paused, or stopped (a game
+ * without a running clock: kept without one, reset, or final). elapsed is the
+ * clock reading in seconds now; basis does not move while the clock runs, so
+ * a validator can hash it.
+ *
+ * @param array<string, mixed> $row
+ * @return array{state: string, elapsed: int, basis: int}
+ */
+function ScorekeeperClockState(array $row)
+{
+    $start = (int) ($row['timer_start'] ?? 0);
+    if ((int) $row['isongoing'] !== 1 || $start <= 0) {
+        return ['state' => (int) $row['hasstarted'] > 0 || $start > 0 ? 'stopped' : 'not_started', 'elapsed' => 0, 'basis' => 0];
+    }
+    $pauseStart = (int) ($row['timer_pause_start'] ?? 0);
+    // The run's effective start while running, the frozen reading while paused.
+    $basis = $start + (int) $row['timer_paused_duration'];
+    if ($pauseStart > 0) {
+        $basis = max(0, $pauseStart - $basis);
+        return ['state' => 'paused', 'elapsed' => $basis, 'basis' => $basis];
+    }
+    return ['state' => 'running', 'elapsed' => max(0, time() - $basis), 'basis' => $basis];
+}
+
+/**
+ * Start, pause, resume, set or reset the game clock, as the Scorekeeper clock
+ * controls do: start needs a clock that is not running, pause a running one,
+ * resume and set a paused one, and reset a 0-0 score. Refused on a final game
+ * and while the event hides times, when the Scorekeeper keeps no clock.
+ *
+ * The $write of ScorekeepingApiWrite().
+ *
+ * @param int $gameId uo_game.game_id
+ * @param array{action: string, elapsed: ?int} $change Output of ScorekeeperLiveRequestNormalize('clock', ...)
+ * @return array{status: int, data: array}
+ * @throws ScorekeepingApiException
+ */
+function ScorekeeperChangeClock($gameId, array $change)
+{
+    $gameId = (int) $gameId;
+    if (!empty(SeasonInfo(GameSeason($gameId))['hide_time_on_scoresheet'])) {
+        throw new ScorekeepingApiException(409, 'times_hidden', 'The game clock is not kept while the event hides times.');
+    }
+    $readRow = fn() => DBQueryToRowUncached(sprintf(
+        "SELECT hasstarted, isongoing, homescore, visitorscore, timer_start, timer_pause_start, timer_paused_duration
+		FROM uo_game WHERE game_id=%d",
+        $gameId,
+    ));
+    $row = $readRow();
+    if ((int) $row['hasstarted'] > 0 && (int) $row['isongoing'] === 0) {
+        throw new ScorekeepingApiException(409, 'game_final', 'The game has a final result.');
+    }
+    $state = ScorekeeperClockState($row)['state'];
+    $refuse = fn($code, $message) => new ScorekeepingApiException(409, $code, $message);
+    switch ($change['action']) {
+        case 'start':
+            if ($state === 'running' || $state === 'paused') {
+                throw $refuse('clock_running', 'The game clock is already running.');
+            }
+            ScorekeeperMust(GameTimeStart($gameId), 'clock');
+            break;
+        case 'pause':
+            if ($state !== 'running') {
+                throw $refuse('clock_not_running', 'The game clock is not running.');
+            }
+            ScorekeeperMust(GameTimePause($gameId), 'clock');
+            break;
+        case 'resume':
+        case 'set':
+            if ($state !== 'paused') {
+                throw $refuse('clock_not_paused', 'The game clock is not paused.');
+            }
+            ScorekeeperMust($change['action'] === 'resume' ? GameTimeResume($gameId) : GameTimeSetElapsed($gameId, $change['elapsed']), 'clock');
+            break;
+        case 'reset':
+            if ((int) $row['homescore'] !== 0 || (int) $row['visitorscore'] !== 0) {
+                throw $refuse('score_not_zero', 'The game clock can only be reset at 0 - 0.');
+            }
+            ScorekeeperMust(GameTimeReset($gameId), 'clock');
+            break;
+    }
+    $clock = ScorekeeperClockState($readRow());
+    return ['status' => 200, 'data' => ['clock' => ['state' => $clock['state'], 'elapsed' => $clock['elapsed']]]];
+}
+
+/**
+ * Delete a team's last timeout or spirit stoppage. Refused with 409 when
+ * number $num is no longer the team's last one, as for goals.
+ *
+ * The $write of ScorekeepingApiWrite().
+ *
+ * @param int $gameId uo_game.game_id
+ * @param string $kind 'timeout' or 'spirit_stoppage'
+ * @param string $side 'home' or 'away'
+ * @param int $num The number the client believes is the team's last
+ * @return array{status: int, data: array}
+ * @throws ScorekeepingApiException
+ */
+function ScorekeeperDeleteLastStoppage($gameId, $kind, $side, $num)
+{
+    $gameId = (int) $gameId;
+    $isHome = $side === 'home' ? 1 : 0;
+    $last = DBQueryToValueUncached(sprintf(
+        "SELECT MAX(num) FROM %s WHERE game=%d AND ishome=%d FOR UPDATE",
+        $kind === 'timeout' ? 'uo_timeout' : 'uo_spirit_timeout',
+        $gameId,
+        $isHome,
+    ));
+    if ($last === null || (int) $last !== (int) $num) {
+        throw new ScorekeepingApiException(
+            409,
+            $kind . '_changed',
+            sprintf('Only the team\'s last %s can be deleted, and number %d is not it.', $kind === 'timeout' ? 'timeout' : 'spirit stoppage', (int) $num),
+        );
+    }
+    if ($kind === 'timeout') {
+        ScorekeeperMust(GameRemoveTimeout($gameId, (int) $num, $isHome), 'timeout');
+    } else {
+        ScorekeeperMust(GameRemoveSpiritTimeout($gameId, (int) $num, $isHome), 'spirit stoppage');
+    }
+    return ['status' => 200, 'data' => ['deleted' => ['side' => $side, 'num' => (int) $num]]];
+}
+
+/**
+ * Correct the scorer, assist or Callahan flag of a recorded goal. Side, time
+ * and the running score stay; the complete upload changes those. Allowed on a
+ * final game, since the result does not change.
+ *
+ * The $write of ScorekeepingApiWrite().
+ *
+ * @param int $gameId uo_game.game_id
+ * @param int $num uo_goal.num
+ * @param array{scorer_id?: ?int, assist_id?: ?int, callahan?: bool} $fields Output of ScorekeeperLiveRequestNormalize('goal_fix', ...)
+ * @return array{status: int, data: array}
+ * @throws ScorekeepingApiException
+ */
+function ScorekeeperCorrectGoal($gameId, $num, array $fields)
+{
+    $gameId = (int) $gameId;
+    $row = DBQueryToRowUncached(sprintf(
+        "SELECT num, scorer, assist, iscallahan, ishomegoal, time, homescore, visitorscore FROM uo_goal WHERE game=%d AND num=%d FOR UPDATE",
+        $gameId,
+        (int) $num,
+    ));
+    if (!is_array($row)) {
+        throw new ScorekeepingApiException(404, 'goal_not_found', sprintf('Goal %d does not exist.', (int) $num));
+    }
+    $side = (int) $row['ishomegoal'] === 1 ? 'home' : 'away';
+    $goal = $fields + [
+        'scorer_id' => $row['scorer'] === null ? null : (int) $row['scorer'],
+        'assist_id' => $row['assist'] === null ? null : (int) $row['assist'],
+        'callahan' => (int) $row['iscallahan'] === 1,
+    ];
+
+    $state = ScorekeeperLockedGameState($gameId);
+    $teamId = $side === 'home' ? $state['home_team'] : $state['away_team'];
+    $roster = [];
+    foreach (DBQueryToArrayUncached(sprintf(
+        "SELECT pl.player FROM uo_played pl INNER JOIN uo_player p ON (p.player_id=pl.player) WHERE pl.game=%d AND p.team=%d",
+        $gameId,
+        (int) $teamId,
+    )) as $player) {
+        $roster[(int) $player['player']] = true;
+    }
+    $f = new ScorekeepingApiFields();
+    foreach (['scorer_id', 'assist_id'] as $field) {
+        if (array_key_exists($field, $fields) && $goal[$field] !== null && !isset($roster[$goal[$field]])) {
+            $f->add($field, 'The player is not on the ' . $side . ' game roster.');
+        }
+    }
+    ScorekeeperGoalPlayersCheck($goal, '', $f);
+    if ($f->errors !== []) {
+        throw new ScorekeepingApiException(400, 'validation_failed', 'The goal does not match the game.', $f->errors);
+    }
+    ScorekeeperMust(GameCorrectScorePlayers($gameId, (int) $num, $goal['scorer_id'], $goal['assist_id'], $goal['callahan']), 'goal');
+
+    $hideTime = !empty(SeasonInfo(GameSeason($gameId))['hide_time_on_scoresheet']);
+    return [
+        'status' => 200,
+        'data' => [
+            'goal' => [
+                'num' => (int) $num,
+                'side' => $side,
+                'scorer_id' => $goal['scorer_id'],
+                'assist_id' => $goal['assist_id'],
+                'callahan' => $goal['callahan'],
+                'time' => $hideTime ? null : (int) $row['time'],
+                'home_score' => (int) $row['homescore'],
+                'away_score' => (int) $row['visitorscore'],
+            ],
+        ],
+    ];
+}
+
+/**
+ * Set or clear the game note, as the Scorekeeper note page does. Needs a
+ * user-scoped app token: like the browser, which offers notes only to a
+ * logged-in user, an app without a user cannot write one. The note is
+ * attributed to the token's user.
+ *
+ * The $write of ScorekeepingApiWrite().
+ *
+ * @param int $gameId uo_game.game_id
+ * @param string $text The note; an empty one clears it
+ * @return array{status: int, data: array}
+ * @throws ScorekeepingApiException
+ */
+function ScorekeeperSetGameNote($gameId, $text)
+{
+    $gameId = (int) $gameId;
+    if (ScorekeeperApiActor()['user'] === '') {
+        throw new ScorekeepingApiException(403, 'user_token_required', 'Game notes need a personal (user-scoped) app token.');
+    }
+    if (!SetGameComment(COMMENT_TYPE_GAME, $gameId, $text, $text === '')) {
+        throw new ScorekeepingApiException(403, 'forbidden', 'The game note cannot be changed with this token.');
+    }
+    $note = CommentRaw(COMMENT_TYPE_GAME, $gameId);
+    return ['status' => 200, 'data' => ['note' => $note === '' ? null : $note]];
 }
 
 /**

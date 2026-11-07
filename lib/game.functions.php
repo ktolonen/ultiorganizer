@@ -2283,6 +2283,100 @@ function GameAddTimeout($gameId, $number, $time, $home)
     }
 }
 
+/**
+ * Delete one team's timeout number $num. Does not renumber the rest, so
+ * callers delete only the team's last one.
+ *
+ * @param int $gameId uo_game.game_id
+ * @param int $number uo_timeout.num
+ * @param int $home 1 for the home team, 0 for the visitor
+ * @return bool Whether a timeout was deleted
+ */
+function GameRemoveTimeout($gameId, $number, $home)
+{
+    return GameRemoveStoppageRow($gameId, 'uo_timeout', 'timeout', $number, $home);
+}
+
+/**
+ * Delete one team's spirit stoppage number $num, as GameRemoveTimeout() does.
+ *
+ * @return bool Whether a spirit stoppage was deleted
+ */
+function GameRemoveSpiritTimeout($gameId, $number, $home)
+{
+    return GameRemoveStoppageRow($gameId, 'uo_spirit_timeout', 'spirit_timeout', $number, $home);
+}
+
+/**
+ * Shared by GameRemoveTimeout() and GameRemoveSpiritTimeout(), so both apply
+ * the same rights check, snapshot and history row.
+ */
+function GameRemoveStoppageRow($gameId, $table, $target, $number, $home)
+{
+    if (!hasEditGameEventsRight($gameId)) {
+        die('Insufficient rights to edit game');
+    }
+    $where = sprintf("game=%d AND num=%d AND ishome=%d", (int) $gameId, (int) $number, $home ? 1 : 0);
+    $time = DBQueryToValueUncached("SELECT time FROM $table WHERE $where");
+    if ($time === null) {
+        return false;
+    }
+    ScoresheetHistorySnapshotIfNeeded($gameId);
+    DBQuery("DELETE FROM $table WHERE $where");
+    if (DBAffectedRows() < 1) {
+        return false;
+    }
+    ScoresheetHistoryRecord($gameId, $target, "remove", [
+        'num' => (int) $number,
+        'time' => (int) $time,
+        'home' => $home ? 1 : 0,
+    ]);
+    return true;
+}
+
+/**
+ * Correct the scorer, assist and Callahan flag of goal $num, leaving its side,
+ * time and running score alone.
+ *
+ * @param int $gameId uo_game.game_id
+ * @param int $num uo_goal.num
+ * @param int|null $scorer uo_player.player_id, null for unknown
+ * @param int|null $assist uo_player.player_id, null for none or unknown
+ * @param bool $callahan
+ * @return bool Whether the goal exists
+ */
+// No snapshot here either -- see GameRemoveScore().
+function GameCorrectScorePlayers($gameId, $num, $scorer, $assist, $callahan)
+{
+    if (!hasEditGameEventsRight($gameId)) {
+        die('Insufficient rights to edit game');
+    }
+    $sqlId = fn($id) => $id === null ? "NULL" : (string) (int) $id;
+    $where = sprintf("game=%d AND num=%d", (int) $gameId, (int) $num);
+    $goal = DBQueryToRowUncached("SELECT homescore, visitorscore FROM uo_goal WHERE $where");
+    if (!$goal) {
+        return false;
+    }
+    DBQuery(sprintf(
+        "UPDATE uo_goal SET scorer=%s, assist=%s, iscallahan=%d WHERE %s",
+        $sqlId($scorer),
+        $sqlId($assist),
+        $callahan ? 1 : 0,
+        $where,
+    ));
+    // An unchanged correction is a replay away, and records nothing.
+    if (DBAffectedRows() > 0) {
+        ScoresheetHistoryRecord($gameId, "goal", "update", [
+            'num' => (int) $num,
+            'scorer' => $scorer === null ? null : (int) $scorer,
+            'assist' => $assist === null ? null : (int) $assist,
+            'score' => (int) $goal['homescore'] . "-" . (int) $goal['visitorscore'],
+            'callahan' => $callahan ? 1 : 0,
+        ]);
+    }
+    return true;
+}
+
 function GameRemoveAllSpiritTimeouts($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {

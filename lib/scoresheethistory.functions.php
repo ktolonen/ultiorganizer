@@ -661,11 +661,17 @@ function ScoresheetHistoryFormatDetail($row)
     if ($target == "timeout" && $action == "clear") {
         return sprintf(_("Timeouts removed: %d"), (int) ($detail['removed'] ?? 0));
     }
+    if ($target == "timeout" && $action == "remove") {
+        return sprintf(_("Timeouts removed: %d"), 1);
+    }
     if ($target == "timeout") {
         return sprintf("%s %d", _("Timeout"), (int) ($detail['num'] ?? 0));
     }
     if ($target == "spirit_timeout" && $action == "clear") {
         return sprintf(_("Spirit stoppages removed: %d"), (int) ($detail['removed'] ?? 0));
+    }
+    if ($target == "spirit_timeout" && $action == "remove") {
+        return sprintf(_("Spirit stoppages removed: %d"), 1);
     }
     if ($target == "spirit_timeout") {
         return sprintf("%s %d", _("Spirit stoppage"), (int) ($detail['num'] ?? 0));

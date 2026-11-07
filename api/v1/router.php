@@ -1289,18 +1289,26 @@ function api_scorekeeping_route($parts)
             'score-taps' => ['score_tap', 'POST'],
             'metadata' => ['metadata', 'PATCH'],
             'finalize' => ['finalize', 'POST'],
+            'clock' => ['clock', 'POST'],
+            'note' => ['note', 'PUT'],
         ];
         $route = $routes[$parts[2]] ?? null;
         return $route === null ? null : ['operation' => $route[0], 'method' => $route[1]];
     }
+    $method = strtoupper($_SERVER['REQUEST_METHOD']);
     if ($count === 4 && $parts[2] === 'goals' && ctype_digit((string) $parts[3])) {
-        return ['operation' => 'delete_goal', 'method' => 'DELETE'];
+        $fix = $method === 'PATCH';
+        return ['operation' => $fix ? 'goal_fix' : 'delete_goal', 'method' => $fix ? 'PATCH' : 'DELETE', 'allow' => 'PATCH, DELETE'];
+    }
+    if ($count === 5 && ($parts[2] === 'timeouts' || $parts[2] === 'spirit-stoppages')
+        && ($parts[3] === 'home' || $parts[3] === 'away') && ctype_digit((string) $parts[4])) {
+        return ['operation' => 'delete_stoppage', 'method' => 'DELETE'];
     }
     if ($count === 4 && $parts[2] === 'rosters' && ($parts[3] === 'home' || $parts[3] === 'away')) {
         return ['operation' => 'roster', 'method' => 'PUT'];
     }
     if ($count === 4 && $parts[2] === 'caps' && GameIsCapEventType($parts[3])) {
-        $remove = strtoupper($_SERVER['REQUEST_METHOD']) === 'DELETE';
+        $remove = $method === 'DELETE';
         return ['operation' => $remove ? 'remove_cap' : 'set_cap', 'method' => $remove ? 'DELETE' : 'PUT', 'allow' => 'PUT, DELETE'];
     }
     return null;
@@ -1370,7 +1378,8 @@ function api_scorekeeping_read_json_body()
 
 /**
  * Normalize an If-Match header to the bare token it carries: quotes and a
- * weak-validator prefix are stripped. A value that cannot be a token comes back
+ * weak-validator prefix are stripped, and so is the suffix the entry
+ * context's ETag adds to the token. A value that cannot be a token comes back
  * as '*', which never matches.
  *
  * @param string $header
@@ -1383,7 +1392,28 @@ function api_scorekeeping_if_match_token($header)
         $value = substr($value, 2);
     }
     $value = trim($value, '"');
-    return preg_match('/^[0-9a-f]{64}$/', $value) ? $value : '*';
+    return preg_match('/^([0-9a-f]{64})(-[0-9a-f]{32})?$/', $value, $m) ? $m[1] : '*';
+}
+
+/**
+ * Whether an If-None-Match header lists the ETag value $etag (or is '*').
+ *
+ * @param string $header
+ * @param string $etag Unquoted
+ * @return bool
+ */
+function api_scorekeeping_none_match($header, $etag)
+{
+    foreach (explode(',', $header) as $candidate) {
+        $candidate = trim($candidate);
+        if (stripos($candidate, 'W/') === 0) {
+            $candidate = substr($candidate, 2);
+        }
+        if ($candidate === '*' || trim($candidate, '"') === $etag) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -1447,7 +1477,8 @@ function api_handle_scorekeeping($parts, $route)
             }
         }
         api_enforce_token_scope($tokenRow, $season);
-        if (IsSeasonInMaintenance($season)) {
+        // A write checks maintenance itself, after its stored answer, so a retry still gets that answer.
+        if (($isDiscovery || $operation === 'entry_context') && IsSeasonInMaintenance($season)) {
             header('Retry-After: 60');
             api_error(503, 'event_maintenance', 'The event is under maintenance.');
         }
@@ -1465,8 +1496,13 @@ function api_handle_scorekeeping($parts, $route)
         }
 
         if ($operation === 'entry_context') {
-            $context = ScorekeeperEntryContext($gameId);
-            header('ETag: "' . $context['token'] . '"');
+            $context = ScorekeeperEntryContext($gameId, $validator);
+            header('ETag: "' . $validator . '"');
+            if (api_scorekeeping_none_match((string) ($_SERVER['HTTP_IF_NONE_MATCH'] ?? ''), (string) $validator)) {
+                $GLOBALS['api_response_sent'] = true;
+                http_response_code(304);
+                exit;
+            }
             api_send_json(200, ['status' => 'ok', 'data' => $context]);
         }
 
@@ -1488,6 +1524,20 @@ function api_handle_scorekeeping($parts, $route)
                 $path .= '/' . $num;
                 $body = null;
                 $write = fn() => ScorekeeperDeleteLastGoal($gameId, $num);
+                break;
+            case 'goal_fix':
+                $num = (int) $parts[3];
+                $path .= '/' . $num;
+                $body = ScorekeeperLiveRequestNormalize('goal_fix', api_scorekeeping_read_json_body());
+                $write = fn() => ScorekeeperCorrectGoal($gameId, $num, $body);
+                break;
+            case 'delete_stoppage':
+                $kind = $parts[2] === 'timeouts' ? 'timeout' : 'spirit_stoppage';
+                $side = $parts[3];
+                $num = (int) $parts[4];
+                $path .= '/' . $side . '/' . $num;
+                $body = null;
+                $write = fn() => ScorekeeperDeleteLastStoppage($gameId, $kind, $side, $num);
                 break;
             case 'set_cap':
             case 'remove_cap':
@@ -1511,6 +1561,8 @@ function api_handle_scorekeeping($parts, $route)
                     'score_tap' => fn() => ScorekeeperApplyScoreTap($gameId, $body),
                     'metadata' => fn() => ScorekeeperUpdateMetadata($gameId, $body),
                     'finalize' => fn() => ScorekeeperFinalize($gameId, $body),
+                    'clock' => fn() => ScorekeeperChangeClock($gameId, $body),
+                    'note' => fn() => ScorekeeperSetGameNote($gameId, $body['text']),
                 };
         }
         $request = [
