@@ -2778,7 +2778,8 @@ function GameChangeName($gameId, $name)
 {
     $gameinfo = GameInfo($gameId);
     if (hasEditGamesRight($gameinfo['series'])) {
-        if (empty($gameinfo['name'])) {
+        $nameRef = DBQueryToValue(sprintf("SELECT name FROM uo_game WHERE game_id=%d", (int) $gameId));
+        if (empty($nameRef)) {
             $query = sprintf(
                 "INSERT INTO uo_scheduling_name 
 				(name) VALUES ('%s')",
@@ -2797,7 +2798,7 @@ function GameChangeName($gameId, $name)
                 "UPDATE uo_scheduling_name SET
 				name='%s' WHERE scheduling_id=%d",
                 DBEscapeString($name),
-                (int) $gameinfo['name'],
+                (int) $nameRef,
             );
             $result = DBQuery($query);
         }
