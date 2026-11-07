@@ -2317,7 +2317,7 @@ function GameRemoveStoppageRow($gameId, $table, $target, $number, $home)
         die('Insufficient rights to edit game');
     }
     $where = sprintf("game=%d AND num=%d AND ishome=%d", (int) $gameId, (int) $number, $home ? 1 : 0);
-    $time = DBQueryToValue("SELECT time FROM $table WHERE $where");
+    $time = DBQueryToValueUncached("SELECT time FROM $table WHERE $where");
     if ($time === null) {
         return false;
     }
@@ -2353,7 +2353,7 @@ function GameCorrectScorePlayers($gameId, $num, $scorer, $assist, $callahan)
     }
     $sqlId = fn($id) => $id === null ? "NULL" : (string) (int) $id;
     $where = sprintf("game=%d AND num=%d", (int) $gameId, (int) $num);
-    $goal = DBQueryToRow("SELECT homescore, visitorscore FROM uo_goal WHERE $where");
+    $goal = DBQueryToRowUncached("SELECT homescore, visitorscore FROM uo_goal WHERE $where");
     if (!$goal) {
         return false;
     }
