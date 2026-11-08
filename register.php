@@ -10,7 +10,8 @@ $message = "";
 $title = _("Register");
 $html .= file_get_contents('script/disable_enter.js.inc');
 
-if (IsPublicRegistrationDisabled() && empty($_GET['token'])) {
+// With registration disabled, only confirming an already issued token is allowed.
+if (IsPublicRegistrationDisabled() && (empty($_GET['token']) || !empty($_POST['save']))) {
     header("location:?view=frontpage");
     exit;
 }

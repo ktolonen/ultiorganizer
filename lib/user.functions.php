@@ -1710,6 +1710,10 @@ function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $me
     if (function_exists('IsEmailDisabled') && IsEmailDisabled()) {
         return false;
     }
+    $anonymous = ($_SESSION['uid'] ?? 'anonymous') === 'anonymous';
+    if ($anonymous && function_exists('IsPublicRegistrationDisabled') && IsPublicRegistrationDisabled()) {
+        return false;
+    }
 
     Log1("user", "add", $newUsername, "", "register request");
     DeleteExpiredAccountTokens();
