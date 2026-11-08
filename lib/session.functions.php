@@ -118,6 +118,9 @@ function startSecureSession()
     session_name(sessionCookieName());
     session_start();
     enforceSessionInstanceBinding();
+    if (function_exists('RefreshSessionUserRoles')) {
+        RefreshSessionUserRoles();
+    }
 }
 
 /**

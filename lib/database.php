@@ -232,6 +232,11 @@ function OpenConnection()
     }
 
     DBHandleMaintenanceState();
+
+    // Pages that start the session before connecting refresh roles here.
+    if (session_status() === PHP_SESSION_ACTIVE && function_exists('RefreshSessionUserRoles')) {
+        RefreshSessionUserRoles();
+    }
 }
 
 /**

@@ -289,6 +289,35 @@ function UserChangePassword($user_id, $passwd)
     }
 }
 
+/**
+ * Build the session's userproperties map from uo_userproperties rows.
+ * A "name:target" value nests under its name, e.g. userrole => seasonadmin => [HRN2026 => prop_id].
+ */
+function UserPropertiesFromRows($rows)
+{
+    $properties = [];
+    foreach ($rows as $property) {
+        $propname = $property['name'];
+        $propvalue = explode(":", $property['value']);
+        $propid = $property['prop_id'];
+        if (!isset($properties[$propname])) {
+            $properties[$propname] = [];
+        }
+        if (count($propvalue) == 1) {
+            $properties[$propname][$propvalue[0]] = $propid;
+        } else {
+            if (isset($properties[$propname][$propvalue[0]])) {
+                $nextVal = $properties[$propname][$propvalue[0]];
+                $nextVal[$propvalue[1]] = $propid;
+            } else {
+                $nextVal = [$propvalue[1] => $propid];
+            }
+            $properties[$propname][$propvalue[0]] = $nextVal;
+        }
+    }
+    return $properties;
+}
+
 function SetUserSessionData($user_id)
 {
     unset($_SESSION['userproperties']);
@@ -300,28 +329,44 @@ function SetUserSessionData($user_id)
         "SELECT prop_id, name, value FROM uo_userproperties WHERE userid='%s'",
         DBEscapeString($user_id),
     );
-    $rows = DBQueryToArray($query);
+    $_SESSION['userproperties'] = UserPropertiesFromRows(DBQueryToArray($query));
+}
 
-    $_SESSION['userproperties'] = [];
+/**
+ * Reload the logged-in session's roles from the database, once per request.
+ *
+ * Roles are copied into the session at login, so without this a role revoked
+ * by an administrator stayed usable until the holder logged out. Logs the
+ * session out when its account no longer exists. Runs as soon as both the
+ * session and the database connection are available, whichever comes last.
+ *
+ * @return void
+ */
+function RefreshSessionUserRoles()
+{
+    static $done = false;
+    global $mysqlconnectionref;
+    if ($done || session_status() !== PHP_SESSION_ACTIVE || !isLoggedIn() || !($mysqlconnectionref instanceof mysqli)) {
+        return;
+    }
+    $done = true;
 
-    foreach ($rows as $property) {
-        $propname = $property['name'];
-        $propvalue = explode(":", $property['value']);
-        $propid = $property['prop_id'];
-        if (!isset($_SESSION['userproperties'][$propname])) {
-            $_SESSION['userproperties'][$propname] = [];
-        }
-        if (count($propvalue) == 1) {
-            $_SESSION['userproperties'][$propname][$propvalue[0]] = $propid;
-        } else {
-            if (isset($_SESSION['userproperties'][$propname][$propvalue[0]])) {
-                $nextVal = $_SESSION['userproperties'][$propname][$propvalue[0]];
-                $nextVal[$propvalue[1]] = $propid;
-            } else {
-                $nextVal = [$propvalue[1] => $propid];
-            }
-            $_SESSION['userproperties'][$propname][$propvalue[0]] = $nextVal;
-        }
+    $rows = DBQueryToArrayUncached(sprintf(
+        "SELECT p.prop_id, p.name, p.value FROM uo_users u
+        LEFT JOIN uo_userproperties p ON (p.userid=u.userid AND p.name='userrole')
+        WHERE u.userid='%s'",
+        DBEscapeString($_SESSION['uid']),
+    ));
+    if (empty($rows)) {
+        ClearUserSessionData();
+        return;
+    }
+
+    $roles = UserPropertiesFromRows(array_filter($rows, static fn($row) => $row['prop_id'] !== null));
+    if (isset($roles['userrole'])) {
+        $_SESSION['userproperties']['userrole'] = $roles['userrole'];
+    } else {
+        unset($_SESSION['userproperties']['userrole']);
     }
 }
 
