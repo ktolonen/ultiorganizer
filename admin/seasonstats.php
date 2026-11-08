@@ -7,6 +7,10 @@ include_once 'lib/statistical.functions.php';
 $LAYOUT_ID = SEASONSTATISTICS;
 $html = "";
 
+if (!isSuperAdmin()) {
+    Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
+
 $season_stats = AllSeasonStatistics();
 $series_stats = ALLSeriesStatistics();
 //common page

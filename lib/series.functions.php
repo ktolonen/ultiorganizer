@@ -4,6 +4,7 @@ require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
 require_once __DIR__ . '/club.functions.php';
+require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/country.functions.php';
 
 
@@ -758,6 +759,19 @@ function AddSeriesEnrolledTeam($seriesId, $userid, $name, $club, $country)
         die("Can not enroll for anonymous");
     }
     if ($userid == $_SESSION['uid'] || hasEditTeamsRight($seriesId)) {
+        if (!hasEditTeamsRight($seriesId)) {
+            $season = DBQueryToRow(sprintf(
+                "SELECT s.season_id, s.enrollopen, s.event_readonly FROM uo_series ser
+                JOIN uo_season s ON (s.season_id=ser.season) WHERE ser.series_id=%d",
+                (int) $seriesId,
+            ));
+            if (
+                empty($season) || !intval($season['enrollopen']) || !empty($season['event_readonly'])
+                || !CanAccessSeason($season['season_id'])
+            ) {
+                die("Enrollment is closed for this event");
+            }
+        }
         $query = sprintf(
             "INSERT INTO uo_enrolledteam (series, userid, name, clubname, countryname, enroll_time)
 				VALUES (%d, '%s', '%s', '%s', '%s', now())",
@@ -830,6 +844,19 @@ function ConfirmEnrolledTeam($seriesId, $id)
             return null;
         }
 
+        // Claim the pending enrollment first so a replayed or concurrent
+        // confirmation cannot create a second team.
+        DBTransactionBegin();
+        DBQuery(sprintf(
+            "UPDATE uo_enrolledteam SET status=1 WHERE id=%d AND series=%d AND COALESCE(status, 0)=0",
+            (int) $id,
+            (int) $seriesId,
+        ));
+        if (DBAffectedRows() !== 1) {
+            DBTransactionRollback();
+            return null;
+        }
+
         $clubId = ClubId($teaminfo['clubname']);
         $countryId = CountryId($teaminfo['countryname']);
 
@@ -888,12 +915,7 @@ function ConfirmEnrolledTeam($seriesId, $id)
 
         $seriesInfo = SeriesInfo($seriesId);
         AddSeasonUserRole($teaminfo['userid'], "teamadmin:" . $teamId, $seriesInfo['season']);
-        $query = sprintf(
-            "UPDATE uo_enrolledteam SET status=1 WHERE id=%d",
-            (int) $id,
-        );
-
-        DBQuery($query);
+        DBTransactionCommit();
 
         Log1("enrolment", "confirm", $seriesId, $teamId);
         return $teamId;
