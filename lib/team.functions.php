@@ -1313,7 +1313,7 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1, $regId
             DBEscapeString($firstname),
             DBEscapeString($lastname),
             (int) $profileId,
-            $accreditationId,
+            DBEscapeString((string) $accreditationId),
             (int) $teamId,
         );
 
