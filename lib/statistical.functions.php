@@ -209,13 +209,14 @@ function AlltimeScoreboard($season, $seriestype)
 function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "", $sorting = "")
 {
 
-    //SELECT SUM(ps.goals) as goalstotal, SUM(passes) as passestotal, SUM(ps.games) as gamestotal, MAX(ser.series_id) as last_series, MAX(t.team_id) as last_team, SUM(COALESCE(ps.goals,0) + COALESCE(ps.passes,0)) AS total FROM uo_player_stats ps LEFT JOIN uo_series ser ON(ser.series_id=ps.series) LEFT JOIN uo_season s ON(s.season_id=ps.season) LEFT JOIN uo_team t ON(t.team_id=ps.team) LEFT JOIN uo_player p ON(p.player_id=ps.player_id) LEFT JOIN uo_player_profile pp ON(pp.profile_id=ps.profile_id) GROUP BY ps.profile_id ORDER BY total DESC, SUM(ps.games) ASC LIMIT 100
+    // The latest division and team come from one row, the most recent event by
+    // start time, so they always belong together.
     $query = "SELECT ps.profile_id,
 			SUM(ps.goals) as goalstotal, SUM(passes) as passestotal, SUM(ps.callahans) as callahanstotal,
-			SUM(ps.games) as gamestotal, MAX(ser.series_id) as last_series,
-			 MAX(t.team_id) as last_team,
-			SUM(COALESCE(ps.goals,0) + COALESCE(ps.passes,0)) AS total,
-			MAX(s.season_id)
+			SUM(ps.games) as gamestotal,
+			SUBSTRING_INDEX(GROUP_CONCAT(CONCAT(ser.series_id, ':', t.team_id)
+				ORDER BY s.starttime DESC, ser.series_id DESC, t.team_id DESC), ',', 1) AS last_participation,
+			SUM(COALESCE(ps.goals,0) + COALESCE(ps.passes,0)) AS total
 			FROM uo_player_stats ps 
 			LEFT JOIN uo_series ser ON(ser.series_id=ps.series)
 			LEFT JOIN uo_season s ON(s.season_id=ps.season)
@@ -278,7 +279,15 @@ function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "
     }
     $query .= sprintf(" LIMIT %d", (int) $limit);
 
-    return DBQueryToArray($query);
+    $rows = DBQueryToArray($query);
+    foreach ($rows as &$row) {
+        $parts = explode(':', (string) $row['last_participation']);
+        $row['last_series'] = $parts[0] !== '' ? $parts[0] : null;
+        $row['last_team'] = $parts[1] ?? null;
+        unset($row['last_participation']);
+    }
+    unset($row);
+    return $rows;
 }
 
 function SeasonSpiritTopTeamsBySeriesType($seasonId, $seriesType, $limit = 3)
@@ -332,7 +341,12 @@ function CalcSeasonStats($season)
         $season_info = SeasonInfo($season);
         $teams = SeasonTeams($season);
         $teams_total = count($teams);
-        $allgames = SeasonAllGames($season);
+        // Only completed games count: a scheduled game has no result yet and an
+        // ongoing one only a provisional score.
+        $allgames = array_filter(
+            SeasonAllGames($season),
+            static fn($game) => $game['hasstarted'] > 0 && !$game['isongoing'],
+        );
         $games_total = count($allgames);
         $goals_total = 0;
         $defenses_total = 0;
@@ -400,7 +414,7 @@ function CalcSeriesStats($season)
             $teams = SeriesTeams($series['series_id']);
             $teams_total = count($teams);
             $allgames = SeriesAllGames($series['series_id']);
-            $games_total = count($allgames);
+            $games_total = 0;
             $goals_total = 0;
             $home_wins = 0;
             $defenses_total = 0;
@@ -416,6 +430,10 @@ function CalcSeriesStats($season)
 
             foreach ($allgames as $game) {
                 $game_info = GameResult($game['game']);
+                if (empty($game_info) || $game_info['hasstarted'] <= 0 || $game_info['isongoing']) {
+                    continue;
+                }
+                $games_total++;
                 $goals_total += $game_info['homescore'] + $game_info['visitorscore'];
                 if ($game_info['homescore'] > $game_info['visitorscore']) {
                     $home_wins++;

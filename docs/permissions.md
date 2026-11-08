@@ -6,6 +6,7 @@ The permission model: storage, roles, helpers, and where they are enforced.
 
 - Permissions are stored in `uo_userproperties`.
 - `SetUserSessionData()` in [lib/user.functions.php](../lib/user.functions.php) loads those rows into `$_SESSION['userproperties']`.
+- `RefreshSessionUserRoles()` reloads the `userrole` part once per request (from `startSecureSession()` or `OpenConnection()`, whichever runs last), so roles granted or revoked by someone else apply to sessions already logged in. A session whose account no longer exists is logged out. Other properties keep their login-time values.
 - Rows are split on `:` and stored as nested arrays keyed by property name, then by role/value.
 - Examples:
   `userrole = superadmin` becomes `$_SESSION['userproperties']['userrole']['superadmin']`
