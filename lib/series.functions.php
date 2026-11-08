@@ -830,6 +830,19 @@ function ConfirmEnrolledTeam($seriesId, $id)
             return null;
         }
 
+        // Claim the pending enrollment first so a replayed or concurrent
+        // confirmation cannot create a second team.
+        DBTransactionBegin();
+        DBQuery(sprintf(
+            "UPDATE uo_enrolledteam SET status=1 WHERE id=%d AND series=%d AND COALESCE(status, 0)=0",
+            (int) $id,
+            (int) $seriesId,
+        ));
+        if (DBAffectedRows() !== 1) {
+            DBTransactionRollback();
+            return null;
+        }
+
         $clubId = ClubId($teaminfo['clubname']);
         $countryId = CountryId($teaminfo['countryname']);
 
@@ -888,12 +901,7 @@ function ConfirmEnrolledTeam($seriesId, $id)
 
         $seriesInfo = SeriesInfo($seriesId);
         AddSeasonUserRole($teaminfo['userid'], "teamadmin:" . $teamId, $seriesInfo['season']);
-        $query = sprintf(
-            "UPDATE uo_enrolledteam SET status=1 WHERE id=%d",
-            (int) $id,
-        );
-
-        DBQuery($query);
+        DBTransactionCommit();
 
         Log1("enrolment", "confirm", $seriesId, $teamId);
         return $teamId;
