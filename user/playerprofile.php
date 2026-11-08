@@ -79,7 +79,10 @@ $pp = [
 if (isset($_POST['save'])) {
     $backurl = utf8entities($_POST['backurl']);
 
-    if (isset($_POST['accreditationId'])) {
+    if (CUSTOMIZATIONS == "slkl" && !isSuperAdmin()) {
+        $storedProfile = PlayerProfile($player['profile_id']);
+        $pp['accreditation_id'] = $storedProfile['accreditation_id'] ?? "";
+    } elseif (isset($_POST['accreditationId'])) {
         $pp['accreditation_id'] = $_POST['accreditationId'];
     } else {
         $pp['accreditation_id'] = "";
@@ -188,7 +191,7 @@ if (CUSTOMIZATIONS == "slkl") {
     if (isSuperAdmin()) {
         $html .= "<td><input class='input' maxlength='10' size='10' name='accreditationId' value='" . utf8entities($pp['accreditation_id']) . "'/></td>";
     } else {
-        $html .= "<td>" . $pp['accreditation_id'] . "";
+        $html .= "<td>" . utf8entities($pp['accreditation_id']);
         $html .= "<input class='input' hidden='hidden' maxlength='10' size='10' name='accreditationId' value='" . utf8entities($pp['accreditation_id']) . "'/></td>";
     }
     $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
