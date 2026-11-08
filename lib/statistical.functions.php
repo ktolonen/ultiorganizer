@@ -341,7 +341,12 @@ function CalcSeasonStats($season)
         $season_info = SeasonInfo($season);
         $teams = SeasonTeams($season);
         $teams_total = count($teams);
-        $allgames = SeasonAllGames($season);
+        // Only completed games count: a scheduled game has no result yet and an
+        // ongoing one only a provisional score.
+        $allgames = array_filter(
+            SeasonAllGames($season),
+            static fn($game) => $game['hasstarted'] > 0 && !$game['isongoing'],
+        );
         $games_total = count($allgames);
         $goals_total = 0;
         $defenses_total = 0;
@@ -409,7 +414,7 @@ function CalcSeriesStats($season)
             $teams = SeriesTeams($series['series_id']);
             $teams_total = count($teams);
             $allgames = SeriesAllGames($series['series_id']);
-            $games_total = count($allgames);
+            $games_total = 0;
             $goals_total = 0;
             $home_wins = 0;
             $defenses_total = 0;
@@ -425,6 +430,10 @@ function CalcSeriesStats($season)
 
             foreach ($allgames as $game) {
                 $game_info = GameResult($game['game']);
+                if (empty($game_info) || $game_info['hasstarted'] <= 0 || $game_info['isongoing']) {
+                    continue;
+                }
+                $games_total++;
                 $goals_total += $game_info['homescore'] + $game_info['visitorscore'];
                 if ($game_info['homescore'] > $game_info['visitorscore']) {
                     $home_wins++;
