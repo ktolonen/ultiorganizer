@@ -45,6 +45,19 @@ function updateUserPasswordHash($userId, $password)
     DBQuery($query);
 }
 
+/**
+ * Invalidate every outstanding password reset link of a login name.
+ * Reset rows are keyed by login name, so any change to the password or to
+ * who owns the name must drop them.
+ */
+function DeletePasswordResetRequests($userId)
+{
+    DBQuery(sprintf(
+        "DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
+        DBEscapeString($userId),
+    ));
+}
+
 function verifyUserPassword($password, $storedHash, $userId = null)
 {
     if ($storedHash === null || $storedHash === '') {
@@ -253,6 +266,7 @@ function UserUpdateInfo($user_id, $olduser, $user, $name)
                 DBEscapeString($user),
                 DBEscapeString($olduser),
             ));
+            DeletePasswordResetRequests($olduser);
         }
         //update session data only if user is current use
         if ($olduser == $_SESSION['uid']) {
@@ -269,6 +283,7 @@ function UserChangePassword($user_id, $passwd)
 
     if ($user_id == $_SESSION['uid'] || hasEditUsersRight()) {
         updateUserPasswordHash($user_id, $passwd);
+        DeletePasswordResetRequests($user_id);
     } else {
         die('Insufficient rights to change user info');
     }
@@ -1624,6 +1639,7 @@ function DeleteUser($userid)
                 DBEscapeString($userid),
             ));
             UserApiTokensDelete($userid);
+            DeletePasswordResetRequests($userid);
 
             $query = sprintf(
                 "DELETE FROM uo_users WHERE userid='%s'",
@@ -2209,11 +2225,7 @@ function UserResetPassword($userId)
     if (!empty($email)) {
         DeleteExpiredAccountTokens();
         $token = uuidSecure();
-        $query = sprintf(
-            "DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
-            DBEscapeString($userId),
-        );
-        DBQuery($query);
+        DeletePasswordResetRequests($userId);
 
         $query = sprintf(
             "INSERT INTO uo_passwordresetrequest (userid, token) VALUES ('%s', '%s')",
@@ -2278,12 +2290,7 @@ function ConfirmPasswordReset($token, $newPassword)
 
     updateUserPasswordHash($userId, $newPassword);
     Log1("user", "change", $userId, "", "confirm password reset");
-
-    $query = sprintf(
-        "DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
-        DBEscapeString($userId),
-    );
-    DBQuery($query);
+    DeletePasswordResetRequests($userId);
 
     return true;
 }
