@@ -74,7 +74,11 @@ function CacheRememberFor($namespace, $key, $ttlSeconds, $resolver, $shouldStore
     if ($lock === false) {
         // Lock file could not be opened (permission/disk issue, not contention).
         // Returning stale data here could keep stale forever if the lock file
-        // cannot be created again; compute fresh instead.
+        // cannot be created again; compute fresh instead. A full disk or inode
+        // quota lands here, so sweep too or the cache could never shrink.
+        if (random_int(1, 1000) === 1) {
+            PersistentCacheCollectGarbage();
+        }
         return $resolver();
     }
 
@@ -82,20 +86,24 @@ function CacheRememberFor($namespace, $key, $ttlSeconds, $resolver, $shouldStore
         // Re-read inside lock: another worker may have refreshed just before us.
         $recheck = PersistentCacheRead($filePath);
         if ($recheck !== null && time() < $recheck['expires']) {
-            flock($lock, LOCK_UN);
-            fclose($lock);
-            return $recheck['payload'];
-        }
-
-        $value = $resolver();
-        if ($shouldStore === null || $shouldStore($value)) {
-            PersistentCacheWrite($filePath, $value, $ttl);
+            $value = $recheck['payload'];
         } else {
-            // A previously populated query can become empty. Remove its expired
-            // entry and the per-key lock so empty misses leave no files behind.
-            @unlink($filePath);
-            @unlink($lockFile);
+            $value = $resolver();
+            if ($shouldStore === null || $shouldStore($value)) {
+                PersistentCacheWrite($filePath, $value, $ttl);
+                if (random_int(1, 1000) === 1) {
+                    PersistentCacheCollectGarbage();
+                }
+            } else {
+                // A previously populated query can become empty. Remove its
+                // expired entry so empty misses leave no files behind.
+                @unlink($filePath);
+            }
         }
+        // Lock files are only needed while a worker recomputes; keeping one per
+        // key doubles the file count forever. A worker that opened the old inode
+        // and locks it after this unlink re-reads the fresh entry above.
+        @unlink($lockFile);
         flock($lock, LOCK_UN);
         fclose($lock);
         return $value;
@@ -191,7 +199,70 @@ function CacheWipePersistent()
             ++$count;
         }
     }
+    foreach (array_merge(glob($dir . '/*.lock'), glob($dir . '/*.tmp.*'), [$dir . '/gc.mutex']) as $file) {
+        if (is_file($file)) {
+            @unlink($file);
+        }
+    }
     return $count;
+}
+
+/**
+ * Delete expired cache entries and leftover lock and temp files.
+ *
+ * Entries are only overwritten when the same query runs again, so without a
+ * sweep every distinct query leaves a file behind for good. A .cache file's
+ * mtime holds its expiry time (see PersistentCacheWrite()); lock and temp files
+ * use their creation time. Files more than $graceSeconds past that are removed.
+ * Only one worker sweeps at a time, and a sweep stops after $budgetSeconds so a
+ * very large backlog is cleared over several sweeps.
+ *
+ * @param int   $graceSeconds  Keep expired entries this long for stale reads
+ * @param float $budgetSeconds Wall-clock limit for one sweep
+ * @return int|null Files removed, or null when another sweep is running or the
+ *                  cache directory is not available
+ */
+function PersistentCacheCollectGarbage($graceSeconds = 60, $budgetSeconds = 1.0)
+{
+    $dir = PersistentCacheDir();
+    if ($dir === null) {
+        return null;
+    }
+    $gcLock = @fopen($dir . '/gc.mutex', 'c');
+    if ($gcLock === false) {
+        return null;
+    }
+    if (!flock($gcLock, LOCK_EX | LOCK_NB)) {
+        fclose($gcLock);
+        return null;
+    }
+
+    $handle = @opendir($dir);
+    $removed = 0;
+    if ($handle !== false) {
+        $deadline = microtime(true) + $budgetSeconds;
+        $cutoff = time() - $graceSeconds;
+        $seen = 0;
+        while (($name = readdir($handle)) !== false) {
+            if (++$seen % 200 === 0 && microtime(true) > $deadline) {
+                break;
+            }
+            if (!str_ends_with($name, '.cache') && !str_ends_with($name, '.lock')
+                && !str_contains($name, '.tmp.')) {
+                continue;
+            }
+            $path = $dir . '/' . $name;
+            $mtime = @filemtime($path);
+            if ($mtime !== false && $mtime < $cutoff && is_file($path) && @unlink($path)) {
+                ++$removed;
+            }
+        }
+        closedir($handle);
+    }
+
+    flock($gcLock, LOCK_UN);
+    fclose($gcLock);
+    return $removed;
 }
 
 // --- Internal helpers ---
@@ -257,9 +328,12 @@ function PersistentCacheRead($filePath)
 
 function PersistentCacheWrite($filePath, $value, $ttl)
 {
-    $raw = serialize(['expires' => time() + $ttl, 'payload' => $value]);
+    $expires = time() + $ttl;
+    $raw = serialize(['expires' => $expires, 'payload' => $value]);
     $tmp = $filePath . '.tmp.' . getmypid();
     if (@file_put_contents($tmp, $raw, LOCK_EX) !== false) {
+        // The mtime records the expiry so the garbage collector need not read files.
+        @touch($tmp, $expires);
         if (!@rename($tmp, $filePath)) {
             @unlink($tmp);
         }
