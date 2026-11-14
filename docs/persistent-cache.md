@@ -92,8 +92,12 @@ CacheRememberFor(
 // Delete one cached entry. Pass $key = null to clear the whole namespace.
 CacheForgetPersistent(string $namespace, mixed $key = null): void
 
-// Remove all cache files. Returns file count removed.
+// Remove all cache files. Returns the number of .cache files removed.
 CacheWipePersistent(): int
+
+// Remove expired entries and leftover lock/temp files. Returns files removed,
+// or null when another sweep is running.
+PersistentCacheCollectGarbage(int $graceSeconds = 60, float $budgetSeconds = 1.0): ?int
 
 // Disable the persistent cache for the rest of this request (live-entry apps).
 DisablePersistentCacheForRequest(): void
@@ -111,8 +115,27 @@ IsPersistentCacheBypassed(): bool
   same row could return the cached pre-write value. This is rare in GET handlers
   and bounded to the TTL window in any case.
 - **Con:** every distinct SELECT whose result is admitted becomes a cache file.
-  Under heavy use the cache directory grows; clean it periodically with
-  `CacheWipePersistent()` or filesystem TTL tooling.
+  Garbage collection (below) bounds the directory to roughly the entries
+  written in the last minute plus the sweep interval.
+
+## Garbage collection
+
+An entry is only overwritten when the same query runs again, so crawlers that
+visit many distinct pages would otherwise leave files behind until the disk
+quota fills. About one cache write in 1000 runs `PersistentCacheCollectGarbage()`
+on the install's cache directory, as does about one failed lock-file open in
+1000, so a cache that has already filled the disk can still shrink. It deletes:
+
+- `.cache` files more than 60 seconds past their expiry. `PersistentCacheWrite()`
+  sets each file's mtime to its expiry time, so the sweep never reads contents.
+- `.lock` and `*.tmp.<pid>` files created more than 60 seconds ago (left by
+  older versions or by workers that died mid-write).
+
+A non-blocking lock on `gc.mutex` lets only one worker sweep at a time, and a
+sweep stops after one second, so a large backlog is cleared over several
+sweeps. No cron job is needed. An operator who wants one anyway can run
+`find <PERSISTENT_CACHE_DIR> -type f -mmin +10 -delete`, and the admin
+wipe button in Server configuration still clears everything at once.
 
 ## Cache admission
 
@@ -152,7 +175,8 @@ as the key components.
 On cache miss or expiry, the helper tries to acquire a non-blocking exclusive
 lock (`flock LOCK_EX|LOCK_NB`) on a sibling `.lock` file. The winner recomputes
 and writes; competing workers return the stale payload if available, or fall
-through to the resolver if no stale file exists.
+through to the resolver if no stale file exists. The winner deletes the lock
+file when done, so lock files exist only while an entry is being recomputed.
 
 ## Serialisation
 
@@ -165,4 +189,5 @@ serialisation is safe.
 
 Writes go to a `*.tmp.<pid>` file first, then `rename()` atomically replaces the
 destination, so readers never see partial data. If `rename()` fails the
-temporary file is removed.
+temporary file is removed. Before the rename, the file's mtime is set to the
+entry's expiry time for garbage collection.
