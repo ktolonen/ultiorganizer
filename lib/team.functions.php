@@ -800,7 +800,12 @@ GROUP BY tot.pool,tot.team_id",
         DBEscapeString($poolId),
     );
 
-    return DBQueryToRow($query);
+    $row = DBQueryToRow($query);
+    if ($row === null) {
+        // A team without a finished game in the pool has nothing to sum yet.
+        return ['pool' => $poolId, 'team_id' => $teamId, 'games' => 0, 'margin' => 0, 'victorypoints' => 0, 'oppvp' => 0, 'score' => 0];
+    }
+    return $row;
 }
 
 
