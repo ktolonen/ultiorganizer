@@ -920,7 +920,7 @@ function ConfirmEnrolledTeam($seriesId, $id)
         Log1("enrolment", "confirm", $seriesId, $teamId);
         return $teamId;
     } else {
-        die("Insufficient rights to delete enrolled teams for other users");
+        die("Insufficient rights to confirm enrolled teams");
     }
 }
 

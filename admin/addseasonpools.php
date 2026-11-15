@@ -8,10 +8,20 @@ $html = "";
 $template = 0;
 $addmore = false;
 
-$poolId = intval($_GET["pool"]);
-$info = PoolInfo($poolId);
-$season = $info['season'];
-$seriesId = $info['series'];
+$poolId = intval($_GET["pool"] ?? 0);
+$info = $poolId ? PoolInfo($poolId) : null;
+if ($info) {
+    $season = $info['season'];
+    $seriesId = $info['series'];
+} else {
+    $poolId = 0;
+    $seriesId = intval($_GET['series'] ?? 0);
+    $season = SeriesSeasonId($seriesId);
+    if (empty($season)) {
+        header("location:?view=admin/seasons");
+        exit();
+    }
+}
 
 //pool parameters
 $pp = [
