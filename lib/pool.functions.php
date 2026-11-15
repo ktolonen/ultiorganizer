@@ -3057,30 +3057,35 @@ function SeriesRanking($series_id)
 
         // Teams sharing an activerank all sit on the first placing of the tie and
         // take the next placings' slots, so each placing yields one row and the
-        // tied rows carry the shared overall standing.
+        // tied rows carry the shared overall standing. A moved placing still
+        // takes its slot of a tie, so later placings stay aligned.
         $tied = [];
+        $isTie = false;
         $tiedStanding = null;
         for ($i = 1; $i <= $totalteams; $i++) {
-            if (!isset($movedPlacings[$i])) {
-                if (empty($tied)) {
-                    $tied = PoolTeamsFromStandings($ppool['pool_id'], $i);
-                    $tiedStanding = count($tied) > 1 ? count($ranking) + 1 : null;
-                }
-                $team = array_shift($tied) ?? ['team_id' => null, 'name' => '', 'activerank' => null, 'flagfile' => null];
-                if ($tiedStanding !== null) {
-                    $team['standing'] = $tiedStanding;
-                }
-                $gamesleft = 1;
-                if (isset($team['team_id'])) {
-                    $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']));
-                }
+            if (empty($tied)) {
+                $tied = PoolTeamsFromStandings($ppool['pool_id'], $i);
+                $isTie = count($tied) > 1;
+                $tiedStanding = null;
+            }
+            $team = array_shift($tied) ?? ['team_id' => null, 'name' => '', 'activerank' => null, 'flagfile' => null];
+            if (isset($movedPlacings[$i])) {
+                continue;
+            }
+            if ($isTie) {
+                $tiedStanding ??= count($ranking) + 1;
+                $team['standing'] = $tiedStanding;
+            }
+            $gamesleft = 1;
+            if (isset($team['team_id'])) {
+                $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']));
+            }
 
-                if ($ppool['played'] || ($ppool['type'] == 2 && $gamesleft == 0)) {
-                    $team['placement'] = $i;
-                    $ranking[] = $team;
-                } else {
-                    $ranking[] = null;
-                }
+            if ($ppool['played'] || ($ppool['type'] == 2 && $gamesleft == 0)) {
+                $team['placement'] = $i;
+                $ranking[] = $team;
+            } else {
+                $ranking[] = null;
             }
         }
     }

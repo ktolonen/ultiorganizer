@@ -13,12 +13,15 @@
     var j;
     var row;
     var input;
+    var minutes;
     while (document.getElementById("move" + i + "_0")) {
       row = [];
       j = 0;
       input = document.getElementById("move" + i + "_" + j);
       while (input) {
-        row.push(input.value.replace(/[^0-9]/g, ""));
+        // The same integer the server's (int) cast reads from an unpacked post.
+        minutes = parseInt(input.value, 10);
+        row.push(isNaN(minutes) ? "0" : String(minutes));
         input.removeAttribute("name");
         j++;
         input = document.getElementById("move" + i + "_" + j);
