@@ -84,7 +84,7 @@ Otherwise:
 
 `SolveStandingsAccordingSwissdraw` sweeps the sorted list and assigns `activerank`. Teams that compare equal share the same rank.
 
-Move resolution and BYE handling for swiss draw live in `lib/swissdraw.functions.php`. `GenerateSwissdrawPools()` sets the generated round pools to move all games (`mvgames = 0`), so each round carries in its teams' earlier games and ranks on the whole draw so far; the first swiss pool keeps its own setting.
+Move resolution and BYE handling for swiss draw live in `lib/swissdraw.functions.php`. `GenerateSwissdrawPools()` sets the generated round pools to move all games (`mvgames = 0`), so each round carries in its teams' earlier games and ranks on the whole draw so far; the first swiss pool keeps its own setting. The last generated round is marked as a placement pool, so the event standings read the final placings from it.
 
 ## Cross-match pool (type 4)
 
