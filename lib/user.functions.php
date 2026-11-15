@@ -801,7 +801,11 @@ function hasEditPlayerProfileRight($playerId)
         isset($_SESSION['userproperties']['userrole']['superadmin']) ||
         isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
         isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
-        isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]);
+        (isset($_SESSION['userproperties']['userrole']['teamadmin'][$team])
+            && !ProfileHasPlayersOutsideTeams(
+                $playerInfo['profile_id'],
+                array_keys($_SESSION['userproperties']['userrole']['teamadmin']),
+            ));
     if (!$hasEditRight) {
         return false;
     }
@@ -809,6 +813,32 @@ function hasEditPlayerProfileRight($playerId)
         return false;
     }
     return true;
+}
+
+/**
+ * Whether a player profile is linked to a player in a team outside the given ones.
+ *
+ * A team admin can link an own player to any existing profile, so the team role
+ * alone must not open a profile that other teams' players share.
+ *
+ * @param int|string|null $profileId
+ * @param array<int|string> $teamIds
+ */
+function ProfileHasPlayersOutsideTeams($profileId, $teamIds)
+{
+    if (empty($profileId)) {
+        return false;
+    }
+    $teamList = implode(",", array_map('intval', $teamIds));
+    if ($teamList === "") {
+        $teamList = "0";
+    }
+    $query = sprintf(
+        "SELECT COUNT(*) FROM uo_player WHERE profile_id=%d AND team NOT IN (%s)",
+        (int) $profileId,
+        $teamList,
+    );
+    return (int) DBQueryToValue($query) > 0;
 }
 
 function hasEditPlayersRight($team)
