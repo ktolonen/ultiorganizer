@@ -60,6 +60,11 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
         if (!$isValidDateTime($res['date'], $res['endtime'])) {
             $inputErrors[] = _("The end time is not in a valid format.");
         }
+        if (empty($inputErrors)
+            && strtotime(ToInternalTimeFormat($res['date'] . " " . $res['endtime']))
+                <= strtotime(ToInternalTimeFormat($res['date'] . " " . $res['starttime']))) {
+            $inputErrors[] = _("The end time must be after the start time.");
+        }
     }
 
     $locationInfo = ((int) $res['location'] > 0) ? LocationInfo($res['location']) : null;
