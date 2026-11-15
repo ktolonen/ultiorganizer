@@ -803,8 +803,25 @@ GROUP BY tot.pool,tot.team_id",
     $row = DBQueryToRow($query);
     if ($row === null) {
         // A team without a finished game in the pool has nothing to sum yet.
-        return ['pool' => $poolId, 'team_id' => $teamId, 'games' => 0, 'margin' => 0, 'victorypoints' => 0, 'oppvp' => 0, 'score' => 0];
+        return ['pool' => $poolId, 'team_id' => $teamId, 'games' => 0, 'margin' => 0, 'victorypoints' => 0, 'oppvp' => 0, 'score' => 0, 'spirit' => 0];
     }
+
+    // Spirit tie-break: average spirit points the team received per rated,
+    // non-forfeited game in the pool.
+    $query = sprintf(
+        "SELECT AVG(s.points) FROM (
+            SELECT ssc.game_id, SUM(ssc.value * sct.factor) AS points
+            FROM uo_spirit_score ssc
+            INNER JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
+            INNER JOIN uo_game g ON (g.game_id = ssc.game_id)
+            INNER JOIN uo_game_pool gp ON (gp.game = g.game_id)
+            WHERE ssc.team_id=%d AND gp.pool=%d AND g.isongoing=0 AND g.hasstarted>0 AND g.forfeit=0
+            GROUP BY ssc.game_id
+        ) s",
+        (int) $teamId,
+        (int) $poolId,
+    );
+    $row['spirit'] = (float) DBQueryToValue($query);
     return $row;
 }
 
