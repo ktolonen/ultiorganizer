@@ -88,6 +88,8 @@ The spirit score is the average spirit points the team received per rated, non-f
 
 Move resolution and BYE handling for swiss draw live in `lib/swissdraw.functions.php`. `GenerateSwissdrawPools()` sets the generated round pools to move all games (`mvgames = 0`), so each round carries in its teams' earlier games and ranks on the whole draw so far; the first swiss pool keeps its own setting. The last generated round is marked as a placement pool, so the event standings read the final placings from it.
 
+A generated round is filled on Manage moves (`admin/serieteams.php`), which resolves ties and pairs teams without rematches (`CheckSwissdrawMoves()`). Pool standings (`admin/seasonstandings.php`) offers no Confirm moves for a swiss continuation pool, because a plain move by placing leaves tied teams out.
+
 ## Cross-match pool (type 4)
 
 `ResolveCrossMatchPoolStandings` is structurally similar to the playoff resolver but uses the initial ordering `activerank ASC, rank ASC`. Teams are paired and ranked by head-to-head wins, and when both teams in a pair have no remaining games `TeamMove($teamId, $poolId)` is called (without the playoff resolver's `true` flag) to advance them.

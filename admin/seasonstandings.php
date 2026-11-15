@@ -87,7 +87,10 @@ if (!empty($_POST['undoFromPlacing'])) {
 }
 
 if (!empty($_POST['confirmMoves'])) {
-    PoolConfirmMoves($_POST['PoolId']);
+    $confirmPool = PoolInfo((int) $_POST['PoolId']);
+    if ($confirmPool && !($confirmPool['type'] == 3 && intval($confirmPool['continuingpool']))) {
+        PoolConfirmMoves($_POST['PoolId']);
+    }
 }
 
 if (!empty($_POST['setVisible'])) {
@@ -515,8 +518,10 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId)
 
     $html .= "<tr><th colspan='4'>";
     if ($type == "to") {
+        // A swiss round pairs teams on Manage moves, which resolves ties and avoids rematches.
+        $swissRound = $poolinfo['type'] == 3 && intval($poolinfo['continuingpool']);
         if (PoolIsMoveFromPoolsPlayed($poolId)) {
-            if (!PoolIsAllMoved($poolId)) {
+            if (!PoolIsAllMoved($poolId) && !$swissRound) {
                 $html .= "<input class='button' type='submit' name='confirmMoves' value='" . _("Confirm moves") .
                   "' onclick='setConfirm(" . $poolId . ")'/>&nbsp;";
             } else {
