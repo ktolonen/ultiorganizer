@@ -470,10 +470,10 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId)
 {
     $html = "<table class='admintable' style='width:100%; margin-left:0pt'>";
     if ($type == "to") {
-        $html .= "<tr><th colspan='5'>" . _("Moves to") . " " . $poolinfo['name'] . "</th></tr>\n";
+        $html .= "<tr><th colspan='5'>" . _("Moves to") . " " . utf8entities($poolinfo['name']) . "</th></tr>\n";
         $html .= "<tr><th>" . _("From pool") . "</th><th>" . _("Pos") . "</th><th>" . _("To") . "</th>";
     } else {
-        $html .= "<tr><th colspan='5'>" . _("Moves from") . " " . $poolinfo['name'] . "</th></tr>\n";
+        $html .= "<tr><th colspan='5'>" . _("Moves from") . " " . utf8entities($poolinfo['name']) . "</th></tr>\n";
         $html .= "<tr><th>" . _("From") . "</th><th>" . _("To pool") . "</th><th>" . _("Pos") . "</th>";
     }
     $html .= "<th>" . _("Team") . "</th><th></th></tr>\n";

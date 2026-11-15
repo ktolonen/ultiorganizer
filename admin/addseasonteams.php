@@ -83,7 +83,7 @@ if (!empty($_POST['save']) || !empty($_POST['add'])) {
                 PoolAddTeam($tp['pool'], $teamId, $tp['rank']);
             }
 
-            $html .= "<p>" . $tp['name'] . " " . _("added") . ".</p><hr/>";
+            $html .= "<p>" . utf8entities($tp['name']) . " " . _("added") . ".</p><hr/>";
             $teamId = 0;
             $tp['name'] = "";
             $tp['club'] = "";

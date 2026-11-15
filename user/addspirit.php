@@ -157,7 +157,7 @@ if ($season['spiritmode'] > 0) {
         if ($allowQuickEntry && isset($_POST['homespirit']) && trim($_POST['homespirit']) !== "") {
             $quickHomePoints = ParseQuickSpiritScore($_POST['homespirit'], $quickCategories);
             if ($quickHomePoints === false) {
-                $score_feedback = sprintf(_("Invalid quick score for %s. "), $game_result['hometeamname']);
+                $score_feedback = sprintf(_("Invalid quick score for %s. "), utf8entities($game_result['hometeamname']));
             } else {
                 $homeSavedFromQuick = GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $quickHomePoints, $categories);
                 if (!$homeSavedFromQuick) {
@@ -169,7 +169,7 @@ if ($season['spiritmode'] > 0) {
         if ($allowQuickEntry && isset($_POST['awayspirit']) && trim($_POST['awayspirit']) !== "") {
             $quickVisitorPoints = ParseQuickSpiritScore($_POST['awayspirit'], $quickCategories);
             if ($quickVisitorPoints === false) {
-                $score_feedback = sprintf(_("Invalid quick score for %s. "), $game_result['visitorteamname']);
+                $score_feedback = sprintf(_("Invalid quick score for %s. "), utf8entities($game_result['visitorteamname']));
             } else {
                 $visitorSavedFromQuick = GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $quickVisitorPoints, $categories);
                 if (!$visitorSavedFromQuick) {
@@ -184,7 +184,7 @@ if ($season['spiritmode'] > 0) {
                 if (isset($_POST['homecat' . $cat])) {
                     $points[$cat] = $_POST['homecat' . $cat];
                 } else {
-                    $score_feedback = sprintf(_("Missing score for %s. "), $game_result['hometeamname']);
+                    $score_feedback = sprintf(_("Missing score for %s. "), utf8entities($game_result['hometeamname']));
                 }
             }
             if (!GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories)) {
@@ -197,7 +197,7 @@ if ($season['spiritmode'] > 0) {
                 if (isset($_POST['viscat' . $cat])) {
                     $points[$cat] = $_POST['viscat' . $cat];
                 } else {
-                    $score_feedback = sprintf(_("Missing score for %s. "), $game_result['visitorteamname']);
+                    $score_feedback = sprintf(_("Missing score for %s. "), utf8entities($game_result['visitorteamname']));
                 }
             }
             if (!GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories)) {
