@@ -56,7 +56,7 @@ After ranks are written, the resolver also triggers automatic pool moves:
 For each pair, it counts wins from completed (`isongoing = 0`) non-tie games between the two teams within this pool:
 
 - The team with more wins gets the lower (better) `activerank`.
-- If both have equal wins, current positions are kept.
+- If both have equal wins, current positions are kept. A final draw is accepted, so the result pages (`user/addresult`, Scorekeeper result and end game) warn when it is saved in a playoff or cross-match pool (`GameNeedsWinner()`).
 - When both teams have no remaining games in the pool, both are advanced via `TeamMove($teamId, $poolId, true)`.
 
 If the pool has an odd number of teams, the last team is given the highest (worst) `activerank` and is moved if eligible.
