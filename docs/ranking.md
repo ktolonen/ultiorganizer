@@ -82,7 +82,7 @@ Otherwise:
 4. Total points scored (desc)
 5. Spirit score (desc)
 
-The spirit score is the average spirit points the team received per rated, non-forfeited game in the pool (`TeamVictoryPointsByPool`).
+The spirit score is the average spirit points the team received per rated, non-forfeited game in the pool (`TeamVictoryPointsByPool`). Saving or deleting spirit points re-resolves every swiss pool that holds the finished game (`RefreshGameSpiritData()`), so the tie-break follows late spirit entries.
 
 `SolveStandingsAccordingSwissdraw` sweeps the sorted list and assigns `activerank`. Teams that compare equal share the same rank.
 

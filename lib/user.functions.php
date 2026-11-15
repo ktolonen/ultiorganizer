@@ -838,33 +838,16 @@ function hasEditPlayerProfilePrivateRight($playerId, $profileId = null)
     ) {
         return true;
     }
-    return !ProfileHasPlayersOutsideTeams(
-        $profileId,
-        array_keys($_SESSION['userproperties']['userrole']['teamadmin'] ?? []),
-    );
-}
-
-/**
- * Whether a player profile is linked to a player in a team outside the given ones.
- *
- * @param int|string|null $profileId
- * @param array<int|string> $teamIds
- */
-function ProfileHasPlayersOutsideTeams($profileId, $teamIds)
-{
     if (empty($profileId)) {
-        return false;
+        return true;
     }
-    $teamList = implode(",", array_map('intval', $teamIds));
-    if ($teamList === "") {
-        $teamList = "0";
-    }
-    $query = sprintf(
+    $teamList = implode(",", array_map('intval', array_keys($_SESSION['userproperties']['userrole']['teamadmin'] ?? [])));
+    $outside = DBQueryToValue(sprintf(
         "SELECT COUNT(*) FROM uo_player WHERE profile_id=%d AND team NOT IN (%s)",
         (int) $profileId,
-        $teamList,
-    );
-    return (int) DBQueryToValue($query) > 0;
+        $teamList === "" ? "0" : $teamList,
+    ));
+    return (int) $outside === 0;
 }
 
 function hasEditPlayersRight($team)
