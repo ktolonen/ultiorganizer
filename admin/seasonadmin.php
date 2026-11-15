@@ -49,7 +49,7 @@ $html .=  "<tr><td><b>" . _("Spirit score") . "</b></td><td style='white-space: 
 $html .=  "<tr><td><b>" . _("Time") . "</b></td><td>" . ShortDate($info['starttime']);
 $html .=  " - " . ShortDate($info['endtime']) . "</td></tr>\n";
 $enrollment = intval($info['enrollopen']) ? _("open") : _("closed");
-$html .=  "<tr><td><b>" . _("Enrollment") . "</b></td><td>" . $enrollment . " (" . ShortDate($info['enroll_deadline']) . ")</td></tr>\n";
+$html .=  "<tr><td><b>" . _("Enrollment") . "</b></td><td>" . $enrollment . (isEmptyDate($info['enroll_deadline']) ? "" : " (" . ShortDate($info['enroll_deadline']) . ")") . "</td></tr>\n";
 
 $html .=  "<tr><td><b>" . _("Timezone") . "</b></td><td>" . utf8entities($info['timezone']);
 if (class_exists("DateTime") && !empty($info['timezone'])) {

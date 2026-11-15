@@ -59,46 +59,28 @@ $html .= "<h2>" . utf8entities(U_($seasonInfo['name'])) . ": " . _("Spirit Setti
 $html .= "<p><a href='?view=admin/spirit&amp;season=" . urlencode($seasonId) . "'>&raquo; " . _("Back to Spirit tools") . "</a></p>";
 $html .= "<p>" . _("These settings control how spirit scores are collected, shown, and locked for this event.") . "</p>";
 $html .= "<form method='post' action='?view=admin/spiritsettings&amp;season=" . urlencode($seasonId) . "'>";
-$html .= "<table border='0'>";
-
-$html .= "<tr>";
-$html .= "<td class='infocell'>" . _("Spirit mode") . ": </td>";
-$spiritModeDisabledSelected = ((int) $spiritSettings['spiritmode'] === 0) ? " selected='selected'" : "";
-$html .= "<td><select class='dropdown' name='spiritmode'>";
-$html .= "<option value='0'" . $spiritModeDisabledSelected . ">" . utf8entities(SpiritModeDisabledName()) . "</option>";
+$spiritSelect = "<select class='dropdown' id='spiritmode' name='spiritmode'>";
+$spiritSelect .= "<option value='0'" . ($spiritSettings['spiritmode'] === 0 ? " selected='selected'" : "") . ">" . utf8entities(SpiritModeDisabledName()) . "</option>";
 foreach (SpiritCategoryModeRows() as $mode) {
     $selected = ($spiritSettings['spiritmode'] === (int) $mode['mode']) ? " selected='selected'" : "";
-    $html .= "<option value='" . (int) $mode['mode'] . "'" . $selected . ">" . utf8entities(_($mode['name'])) . "</option>";
+    $spiritSelect .= "<option value='" . (int) $mode['mode'] . "'" . $selected . ">" . utf8entities(_($mode['name'])) . "</option>";
 }
-$html .= "</select></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Selects the spirit scoring model used by the event. Set this to empty to disable spirit scoring entirely.") . "</span></td></tr>";
+$spiritSelect .= "</select>";
 
-$html .= "<tr>";
-$html .= "<td class='infocell'>" . _("Spirit scores visible") . ": </td>";
-$html .= "<td><input class='input' type='checkbox' name='showspiritpoints' value='1'" . ($spiritSettings['showspiritpoints'] ? " checked='checked'" : "") . "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see spirit scores for this event. Event admins can still review spirit data regardless of this flag.") . "</span></td></tr>";
+$html .= "<div class='settings-form'>\n";
+$html .= "<fieldset class='settings-group'><legend>" . _("Spirit") . "</legend>\n";
+$html .= SettingsRow(_("Spirit mode"), $spiritSelect, _("Selects the spirit scoring model used by the event. Set this to empty to disable spirit scoring entirely."), "spiritmode");
+$html .= SettingsCheckRow('lockteamspiritonsubmit', _("Lock spirit after submit"), (bool) $spiritSettings['lockteamspiritonsubmit'], _("When enabled, team-side users can submit their own complete spirit score once, but cannot later edit or delete that team's spirit score or spirit comment. Event admins still bypass the lock."));
+$html .= "</fieldset>\n";
 
-$html .= "<tr>";
-$html .= "<td class='infocell'>" . _("Spirit comments visible") . ": </td>";
-$html .= "<td><input class='input' type='checkbox' name='showspiritcomments' value='1'" . ($spiritSettings['showspiritcomments'] ? " checked='checked'" : "") . "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see spirit comments when spirit scores themselves are visible for the game.") . "</span></td></tr>";
+$html .= "<fieldset class='settings-group'><legend>" . _("Visibility") . "</legend>\n";
+$html .= SettingsCheckRow('showspiritpoints', _("Spirit scores visible"), (bool) $spiritSettings['showspiritpoints'], _("Allows non-admin users to see spirit scores for this event. Event admins can still review spirit data regardless of this flag."));
+$html .= SettingsCheckRow('showspiritcomments', _("Spirit comments visible"), (bool) $spiritSettings['showspiritcomments'], _("Allows non-admin users to see spirit comments when spirit scores themselves are visible for the game."));
+$html .= SettingsCheckRow('showspiritcommentstoteams', _("Show spirit comments to teams"), (bool) $spiritSettings['showspiritcommentstoteams'], _("Lets a team see the spirit comment it gave and received in Spiritkeeper once both teams have submitted, without making comments public."));
+$html .= SettingsCheckRow('showspiritpointsonlyoncomplete', _("Hide spirit until complete"), (bool) $spiritSettings['showspiritpointsonlyoncomplete'], _("When enabled, non-admin spirit views and spirit-based averages only include games where both teams have submitted complete spirit scores."));
+$html .= "</fieldset>\n";
+$html .= "</div>\n";
 
-$html .= "<tr>";
-$html .= "<td class='infocell'>" . _("Show spirit comments to teams") . ": </td>";
-$html .= "<td><input class='input' type='checkbox' name='showspiritcommentstoteams' value='1'" . ($spiritSettings['showspiritcommentstoteams'] ? " checked='checked'" : "") . "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Lets a team see the spirit comment it gave and received in Spiritkeeper once both teams have submitted, without making comments public.") . "</span></td></tr>";
-
-$html .= "<tr>";
-$html .= "<td class='infocell'>" . _("Hide spirit until complete") . ": </td>";
-$html .= "<td><input class='input' type='checkbox' name='showspiritpointsonlyoncomplete' value='1'" . ($spiritSettings['showspiritpointsonlyoncomplete'] ? " checked='checked'" : "") . "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When enabled, non-admin spirit views and spirit-based averages only include games where both teams have submitted complete spirit scores.") . "</span></td></tr>";
-
-$html .= "<tr>";
-$html .= "<td class='infocell'>" . _("Lock spirit after submit") . ": </td>";
-$html .= "<td><input class='input' type='checkbox' name='lockteamspiritonsubmit' value='1'" . ($spiritSettings['lockteamspiritonsubmit'] ? " checked='checked'" : "") . "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When enabled, team-side users can submit their own complete spirit score once, but cannot later edit or delete that team's spirit score or spirit comment. Event admins still bypass the lock.") . "</span></td></tr>";
-
-$html .= "</table>";
 $html .= "<p><input class='button' type='submit' name='save' value='" . _("Save Spirit Settings") . "'/></p>";
 $html .= "</form>";
 
