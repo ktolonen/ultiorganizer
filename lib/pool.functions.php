@@ -3041,9 +3041,21 @@ function SeriesRanking($series_id)
             $totalteams = count($teams);
         }
 
+        // Teams sharing an activerank all sit on the first placing of the tie and
+        // take the next placings' slots, so each placing yields one row and the
+        // tied rows carry the shared overall standing.
+        $tied = [];
+        $tiedStanding = null;
         for ($i = 1; $i <= $totalteams; $i++) {
             if (!isset($movedPlacings[$i])) {
-                $team = PoolTeamFromStandings($ppool['pool_id'], $i);
+                if (empty($tied)) {
+                    $tied = PoolTeamsFromStandings($ppool['pool_id'], $i);
+                    $tiedStanding = count($tied) > 1 ? count($ranking) + 1 : null;
+                }
+                $team = array_shift($tied) ?? ['team_id' => null, 'name' => '', 'activerank' => null, 'flagfile' => null];
+                if ($tiedStanding !== null) {
+                    $team['standing'] = $tiedStanding;
+                }
                 $gamesleft = 1;
                 if (isset($team['team_id'])) {
                     $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']));

@@ -107,7 +107,7 @@ An unresolved placeholder (a `uo_scheduling_name` moved in through `uo_moveteams
 
 `?view=teams&list=bystandings` renders one table with a placement column (`Gold`, `Silver`, `Bronze` in bold, then `4th`, `5th`, ...) and one column per series, from `SeriesFinalStandings($series_id)`. Per division it is all-or-nothing: confirmed manual placements are used when they cover every team (`HasCompleteManualFinalStandings`), otherwise the live order from `SeriesRanking($series_id)` with an "Automatic final standings, not confirmed" note in the header. Teams may share a placement cell. Disqualified teams go in a last row, shown only when there are any. International seasons show country flags.
 
-`SeriesRanking` aggregates the series' pools through the placement-pool walk used by `TeamSeriesStanding` and `lib/series.functions.php`, so pool `activerank` values feed it.
+`SeriesRanking` aggregates the series' pools through the placement-pool walk used by `TeamSeriesStanding` and `lib/series.functions.php`, so pool `activerank` values feed it. Teams that share an `activerank` in a placement pool each get a row, all with the tie's first placement as `standing`.
 
 Manual placements live in `uo_team_final_standing` and are edited per division in `admin/finalstandings.php` (seeded by the upgrade from existing `uo_team_stats`). The pre-fill order is the saved placements, else season points, else the live placement-pool order, else the team list. Every team must get a placement or a disqualification; shared placements are valid. Clearing reverts the division to live standings. The page warns when scheduled games are incomplete.
 
