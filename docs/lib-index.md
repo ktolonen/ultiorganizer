@@ -40,7 +40,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/session.functions.php`: secure session start/regenerate/destroy helpers and HTTPS detection.
 - `lib/spirit.functions.php`: spirit mode/category config, submission/token flows, visibility rules, Spiritkeeper helpers, aggregates, rebuilds, and CSV export.
 - `lib/standings.functions.php`: pool standings resolution, tie-breakers, swiss ranking, manual final standings, and standings lookup helpers. `RecalculatePoolStandings` is the rights-checked entry point for admin-triggered recalculation.
-- `lib/statistical.functions.php`: precomputed season/series/team/player stats reads and stat rebuild routines.
+- `lib/statistical.functions.php`: precomputed season/series/team/player stats reads, player participation counts grouped by division (`SeasonPlayedPlayerCounts()`), and stat rebuild routines.
 - `lib/swissdraw.functions.php`: swissdraw move resolution, duplicate-game avoidance, tie handling, and playoff/BYE checks.
 - `lib/team.functions.php`: team/roster CRUD, team stats, team profile/media, standings/move views, and CSV export.
 - `lib/timekeeper.functions.php`: Timekeeper template definitions (actions, signals, caps), superadmin template CRUD and signal storage, and the client template payload (`TimekeeperTemplatesForClient`).

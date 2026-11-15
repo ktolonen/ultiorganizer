@@ -130,6 +130,9 @@ Gated by the `CALCSEASONSTATISTICS` permission. **Calculate** runs, each with `s
 5. `CalcPlayerStats($season)`: players without a profile id are skipped after the admin confirms their count
 6. `SetEventReadonly($season)`
 
+Event and division calculations use grouped player counts and load division game
+results in one query, so these calculations do not issue a read for every player or game.
+
 `IsSeasonStatsCalculated($season)` switches the page between **Calculate** and the totals with **Recalculate** and **Undo** (`DeleteSeasonStats($season)`, which also re-opens the event). The page reports how many divisions have confirmed final standings and warns about the rest.
 
 After calculation it shows a drag-and-drop list per division (SortableJS) from `SeasonTeamStatistics($season)`. **Save final standings** POSTs `team1:team2:...|team4:...` (team ids per division, divisions separated by `|`) to `?view=admin/saveteamstandings`, which updates the manual final standings and the team-stats rows.
