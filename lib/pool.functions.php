@@ -2255,11 +2255,24 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
  *
  * @param int $frompool - move is from pool
  * @param int $fromplacing - move is from position
+ * @return string|null scheduling name that generated games still use, or null
  */
 function PoolDeleteMove($frompool, $fromplacing)
 {
     $poolInfo = PoolInfo($frompool);
     if (hasEditTeamsRight($poolInfo['series'])) {
+        // Generated games keep the move's scheduling name and are not updated
+        // by a later move, so report the name for the page to warn about.
+        $usedName = DBQueryToValue(sprintf(
+            "SELECT sn.name FROM uo_moveteams mt
+                INNER JOIN uo_scheduling_name sn ON (sn.scheduling_id=mt.scheduling_id)
+            WHERE mt.frompool=%d AND mt.fromplacing=%d
+                AND EXISTS (SELECT 1 FROM uo_game g
+                    WHERE g.scheduling_name_home=mt.scheduling_id OR g.scheduling_name_visitor=mt.scheduling_id)",
+            (int) $frompool,
+            (int) $fromplacing,
+        ));
+
         $query = sprintf(
             "DELETE FROM uo_moveteams WHERE frompool=%d AND fromplacing=%d",
             (int) $frompool,
@@ -2268,6 +2281,7 @@ function PoolDeleteMove($frompool, $fromplacing)
 
         DBQuery($query);
         CacheForgetNamespace('pool_moved_placings');
+        return $usedName === null ? null : (string) $usedName;
     } else {
         die('Insufficient rights to move teams');
     }
