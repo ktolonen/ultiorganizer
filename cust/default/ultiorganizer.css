@@ -1508,3 +1508,123 @@ tr.state-diff>td {
 		overflow-x: visible;
 	}
 }
+
+.settings-form {
+	max-width: 900px;
+}
+
+.settings-group {
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	margin: 0 0 16px;
+	padding: 4px 16px 6px;
+	background: var(--surface);
+}
+
+.settings-group legend {
+	font-size: 10pt;
+	font-weight: bold;
+	color: var(--text);
+	padding: 0 6px;
+}
+
+.settings-row {
+	display: grid;
+	grid-template-columns: 220px minmax(0, 1fr);
+	column-gap: 16px;
+	align-items: start;
+	padding: 7px 0;
+	border-top: 1px solid var(--surface-muted);
+	font-size: 9pt;
+}
+
+.settings-group legend + .settings-row {
+	border-top: 0;
+}
+
+.settings-label {
+	padding-top: 3px;
+	font-weight: bold;
+	color: var(--text);
+}
+
+.settings-control input[type="text"],
+.settings-control input:not([type]),
+.settings-control select,
+.settings-control textarea {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 340px;
+	font-size: 9pt;
+}
+
+.settings-control textarea {
+	max-width: none;
+}
+
+.settings-control input[size="12"] {
+	width: 110px;
+}
+
+.settings-control #seasonnameAutocomplete,
+.settings-control #seasonname {
+	max-width: 100%;
+}
+
+.settings-hint {
+	display: block;
+	margin-top: 3px;
+	color: var(--text-muted);
+	line-height: 1.35;
+}
+
+.settings-hint a {
+	font-size: inherit;
+}
+
+.settings-check .settings-control {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.settings-check input[type="checkbox"] {
+	flex: 0 0 auto;
+	margin: 3px 0 0;
+}
+
+.settings-check .settings-hint {
+	margin-top: 2px;
+}
+
+@media (max-width: 800px) {
+	.settings-row {
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: 4px;
+	}
+
+	.settings-check {
+		grid-template-columns: auto minmax(0, 1fr);
+		column-gap: 10px;
+		row-gap: 0;
+	}
+
+	.settings-check .settings-control {
+		display: contents;
+	}
+
+	.settings-check input[type="checkbox"] {
+		grid-column: 1;
+		grid-row: 1;
+	}
+
+	.settings-check .settings-label {
+		grid-column: 2;
+		grid-row: 1;
+	}
+
+	.settings-check .settings-hint {
+		grid-column: 2;
+		grid-row: 2;
+	}
+}

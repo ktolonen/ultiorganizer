@@ -68,7 +68,9 @@ if (!count($result)) {
 }
 $hiddenIndex = 1;
 
-echo "<h2>" . _("Enrolling ends") . " " . ShortDate($seasonInfo['enroll_deadline']) . "</h2>\n";
+if (!isEmptyDate($seasonInfo['enroll_deadline'])) {
+    echo "<h2>" . _("Enrolling ends") . " " . ShortDate($seasonInfo['enroll_deadline']) . "</h2>\n";
+}
 foreach ($result as $row) {
     echo "<form method='post' action='?" . utf8entities($_SERVER['QUERY_STRING']) . "'>\n";
     echo "<h2>" . utf8entities(U_($row['name'])) . "</h2>\n";

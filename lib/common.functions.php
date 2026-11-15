@@ -1763,3 +1763,28 @@ function TableLegend(array $pairs)
     }
     return "<caption class='table-legend'>" . implode(" | ", $parts) . "</caption>";
 }
+
+/**
+ * One labelled row of a grouped settings form (see .settings-* in the default skin).
+ * $label, $control and $hint are HTML; $for is the id of the labelled control.
+ */
+function SettingsRow(string $label, string $control, string $hint = "", string $for = "", string $class = ""): string
+{
+    $forAttr = $for !== "" ? " for='" . utf8entities($for) . "'" : "";
+    $row = "<div class='settings-row " . $class . "'>";
+    $row .= "<label class='settings-label'" . $forAttr . ">" . $label . "</label>";
+    $row .= "<div class='settings-control'>" . $control;
+    if ($hint !== "") {
+        $row .= "<span class='settings-hint'>" . $hint . "</span>";
+    }
+    return $row . "</div></div>\n";
+}
+
+/**
+ * Settings row for a checkbox; the box's id and name are both $name.
+ */
+function SettingsCheckRow(string $name, string $label, bool $checked, string $hint = ""): string
+{
+    $box = "<input type='checkbox' id='" . utf8entities($name) . "' name='" . utf8entities($name) . "' value='1'" . ($checked ? " checked='checked'" : "") . "/>";
+    return SettingsRow($label, $box, $hint, $name, "settings-check");
+}
