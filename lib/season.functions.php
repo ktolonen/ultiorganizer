@@ -121,6 +121,60 @@ function CurrentSeasons()
     return FilterAccessibleSeasons($seasons);
 }
 
+/** uo_season.scorekeeping_app: who may use the scorekeeping app in an event. */
+const SCOREKEEPING_APP_OFF = 0;
+const SCOREKEEPING_APP_ADMINS = 1;
+const SCOREKEEPING_APP_USERS = 2;
+
+/**
+ * Whether the scorekeeping app may keep score in an event. $userId is the
+ * user an app token belongs to; null stands for a token an admin issued in
+ * API Tokens, which the "event admins" mode allows. Reads roles from the
+ * database, so it also works for the API actor's logged-out session.
+ */
+function ScorekeepingAppAllowed($season, ?string $userId): bool
+{
+    $mode = (int) DBQueryToValueUncached(sprintf(
+        "SELECT scorekeeping_app FROM uo_season WHERE season_id='%s'",
+        DBEscapeString((string) $season),
+    ));
+    if ($mode === SCOREKEEPING_APP_USERS) {
+        return true;
+    }
+    if ($mode !== SCOREKEEPING_APP_ADMINS) {
+        return false;
+    }
+    if ($userId === null) {
+        return true;
+    }
+    return (int) DBQueryToValueUncached(sprintf(
+        "SELECT COUNT(*) FROM uo_userproperties
+			WHERE userid='%s' AND name='userrole' AND value IN ('superadmin', 'seasonadmin:%s')",
+        DBEscapeString($userId),
+        DBEscapeString((string) $season),
+    )) > 0;
+}
+
+/**
+ * Whether the logged-in user sees the Scorekeeping app page: a current event
+ * lets all logged-in users use the app, or lets its admins and the user is one.
+ */
+function CanSetUpScorekeepingApp(): bool
+{
+    if (!isLoggedIn()) {
+        return false;
+    }
+    $seasons = CacheRemember('current_seasons', 'scorekeeping_app', function () {
+        return DBQueryToArray("SELECT season_id, scorekeeping_app FROM uo_season WHERE iscurrent=1 AND scorekeeping_app>0");
+    });
+    foreach ($seasons as $season) {
+        if ((int) $season['scorekeeping_app'] === SCOREKEEPING_APP_USERS || isSeasonAdmin($season['season_id'])) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /**
  * Returns current season name.
  * @see CurrentSeason()
@@ -1237,6 +1291,7 @@ function DeleteSeasonWithData($seasonId)
  *     api_public: mixed,
  *     showgamecomments: mixed,
  *     anonymous_scorekeeping: mixed,
+ *     scorekeeping_app: mixed,
  *     require_accreditation: mixed,
  *     timezone: mixed
  * } $params uo_season fields
@@ -1255,8 +1310,8 @@ function AddSeason($seasonId, $params, $comment = null)
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
 			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints, showspiritcomments,
-			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, hometeammode, event_readonly, maintenance_mode, public_event, api_public, showgamecomments, anonymous_scorekeeping, require_accreditation, timezone)
-			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
+			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, hometeammode, event_readonly, maintenance_mode, public_event, api_public, showgamecomments, anonymous_scorekeeping, scorekeeping_app, require_accreditation, timezone)
+			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
             DBEscapeString($seasonId),
             DBEscapeString($params['name']),
             DBEscapeString($params['type']),
@@ -1284,6 +1339,7 @@ function AddSeason($seasonId, $params, $comment = null)
             (int) $params['api_public'],
             (int) $params['showgamecomments'],
             (int) $params['anonymous_scorekeeping'],
+            (int) $params['scorekeeping_app'],
             (int) $params['require_accreditation'],
             DBEscapeString($params['timezone']),
         );
@@ -1347,6 +1403,7 @@ function AddSeason($seasonId, $params, $comment = null)
  *     api_public: mixed,
  *     showgamecomments: mixed,
  *     anonymous_scorekeeping: mixed,
+ *     scorekeeping_app: mixed,
  *     require_accreditation: mixed,
  *     timezone: mixed
  * } $params uo_season fields
@@ -1363,7 +1420,7 @@ function SetSeason($seasonId, $params, $comment = null)
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
 			spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d,
-			use_season_points=%d, hide_time_on_scoresheet=%d, hometeammode=%d, event_readonly=%d, maintenance_mode=%d, public_event=%d, api_public=%d, showgamecomments=%d, anonymous_scorekeeping=%d, require_accreditation=%d, timezone='%s'
+			use_season_points=%d, hide_time_on_scoresheet=%d, hometeammode=%d, event_readonly=%d, maintenance_mode=%d, public_event=%d, api_public=%d, showgamecomments=%d, anonymous_scorekeeping=%d, scorekeeping_app=%d, require_accreditation=%d, timezone='%s'
 			WHERE season_id='%s'",
             DBEscapeString($seasonId),
             DBEscapeString($params['name']),
@@ -1392,6 +1449,7 @@ function SetSeason($seasonId, $params, $comment = null)
             (int) $params['api_public'],
             (int) $params['showgamecomments'],
             (int) $params['anonymous_scorekeeping'],
+            (int) $params['scorekeeping_app'],
             (int) $params['require_accreditation'],
             DBEscapeString($params['timezone']),
             DBEscapeString($seasonId),

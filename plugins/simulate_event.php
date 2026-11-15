@@ -290,6 +290,7 @@ function simEventCreate($in, $progress)
         "api_public" => 0,
         "showgamecomments" => 0,
         "anonymous_scorekeeping" => 0,
+        "scorekeeping_app" => 0,
         "require_accreditation" => 0,
         "timezone" => GetDefTimeZone(),
     ];

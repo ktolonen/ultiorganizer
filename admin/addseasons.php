@@ -36,6 +36,7 @@ $sp = [
     "api_public" => 0,
     "showgamecomments" => 0,
     "anonymous_scorekeeping" => 0,
+    "scorekeeping_app" => 0,
     "require_accreditation" => 0,
     "iscurrent" => 0,
     "enrollopen" => 0,
@@ -87,6 +88,7 @@ if (!empty($_POST['add'])) {
     $sp['public_event'] = !empty($_POST['public_event']);
     $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
     $sp['anonymous_scorekeeping'] = !empty($_POST['anonymous_scorekeeping']);
+    $sp['scorekeeping_app'] = max(SCOREKEEPING_APP_OFF, min(SCOREKEEPING_APP_USERS, (int) ($_POST['scorekeeping_app'] ?? 0)));
     $sp['require_accreditation'] = !empty($_POST['require_accreditation']);
     $comment = $_POST['comment'];
 
@@ -158,6 +160,7 @@ if (!empty($_POST['add'])) {
         $sp['public_event'] = !empty($_POST['public_event']);
         $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
         $sp['anonymous_scorekeeping'] = !empty($_POST['anonymous_scorekeeping']);
+        $sp['scorekeeping_app'] = max(SCOREKEEPING_APP_OFF, min(SCOREKEEPING_APP_USERS, (int) ($_POST['scorekeeping_app'] ?? 0)));
         $sp['require_accreditation'] = !empty($_POST['require_accreditation']);
         $sp['timezone'] = $_POST['timezone'];
         $comment = $_POST['comment'];
@@ -204,6 +207,7 @@ if ($seasonId) {
     $sp['public_event'] = isset($info['public_event']) ? $info['public_event'] : 0;
     $sp['showgamecomments'] = isset($info['showgamecomments']) ? $info['showgamecomments'] : 0;
     $sp['anonymous_scorekeeping'] = isset($info['anonymous_scorekeeping']) ? $info['anonymous_scorekeeping'] : 0;
+    $sp['scorekeeping_app'] = isset($info['scorekeeping_app']) ? (int) $info['scorekeeping_app'] : 0;
     $sp['require_accreditation'] = isset($info['require_accreditation']) ? $info['require_accreditation'] : 0;
     $sp['timezone'] = $info['timezone'];
     $comment = CommentRaw(1, $info['season_id']);
@@ -296,6 +300,12 @@ $homeSelect .= "<option value='1'" . ((int) $sp['hometeammode'] === 1 ? " select
 $homeSelect .= "</select>";
 $html .= "<fieldset class='settings-group'><legend>" . _("Games") . "</legend>\n";
 $html .= SettingsRow(_("Home team assignment"), $homeSelect, _("Applies to games created from pools. Existing games are not changed."), "hometeammode");
+$appSelect = "<select class='dropdown' id='scorekeeping_app' name='scorekeeping_app'>\n";
+foreach ([SCOREKEEPING_APP_OFF => _("Not in use"), SCOREKEEPING_APP_ADMINS => _("Event admins"), SCOREKEEPING_APP_USERS => _("All logged-in users")] as $mode => $label) {
+    $appSelect .= "<option value='" . $mode . "'" . ((int) $sp['scorekeeping_app'] === $mode ? " selected='selected'" : "") . ">" . utf8entities($label) . "</option>\n";
+}
+$appSelect .= "</select>";
+$html .= SettingsRow(_("Scorekeeping app"), $appSelect, _("Who can set up the scorekeeping app and keep score with it in this event."), "scorekeeping_app");
 $html .= SettingsCheckRow('anonymous_scorekeeping', _("Scorekeeping links work without logging in"), !empty($sp['anonymous_scorekeeping']), _("Anyone with a game or field scorekeeping link can record scores. Share the links only with your scorekeepers."));
 $html .= SettingsCheckRow('hide_time_on_scoresheet', _("Hide time on scoresheet"), !empty($sp['hide_time_on_scoresheet']), _("Goals are recorded and shown without times."));
 $html .= SettingsCheckRow('require_accreditation', _("Require accreditation"), !empty($sp['require_accreditation']), _("Only accredited players can be added to game rosters."));

@@ -1477,6 +1477,9 @@ function api_handle_scorekeeping($parts, $route)
             }
         }
         api_enforce_token_scope($tokenRow, $season);
+        if (!ScorekeepingAppAllowed($season, $tokenRow['scope_type'] === 'user' ? (string) $tokenRow['scope_id'] : null)) {
+            api_error(403, 'scorekeeping_app_not_allowed', 'The event does not allow this scorekeeping app token.');
+        }
         // A write checks maintenance itself, after its stored answer, so a retry still gets that answer.
         if (($isDiscovery || $operation === 'entry_context') && IsSeasonInMaintenance($season)) {
             header('Retry-After: 60');

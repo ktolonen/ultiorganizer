@@ -1661,6 +1661,15 @@ function upgrade105()
     }
 }
 
+function upgrade106()
+{
+    // Who may use the scorekeeping app in an event: 0 off, 1 event admins,
+    // 2 all logged-in users.
+    if (!hasColumn('uo_season', 'scorekeeping_app')) {
+        addColumn('uo_season', 'scorekeeping_app', "tinyint(1) NOT NULL DEFAULT 0 AFTER `anonymous_scorekeeping`");
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {
