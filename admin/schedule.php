@@ -13,7 +13,7 @@ $title = _("Scheduling");
 if (isset($_GET['reservations'])) {
     $reservations = explode(",", $_GET['reservations']);
 } else {
-    $reservations = array_flip($_SESSION['userproperties']['userrole']['resadmin']);
+    $reservations = array_flip($_SESSION['userproperties']['userrole']['resadmin'] ?? []);
 }
 $reservationData = ReservationInfoArray($reservations);
 $numOfreservations = count($reservations);
