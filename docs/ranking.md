@@ -56,7 +56,7 @@ After ranks are written, the resolver also triggers automatic pool moves:
 For each pair, it counts wins from completed (`isongoing = 0`) non-tie games between the two teams within this pool:
 
 - The team with more wins gets the lower (better) `activerank`.
-- If both have equal wins, current positions are kept.
+- If both have equal wins, current positions are kept. A final draw is accepted, so the result pages (`user/addresult`, Scorekeeper result and end game) warn when it is saved in a playoff or cross-match pool (`GameNeedsWinner()`).
 - When both teams have no remaining games in the pool, both are advanced via `TeamMove($teamId, $poolId, true)`.
 
 If the pool has an odd number of teams, the last team is given the highest (worst) `activerank` and is moved if eligible.
@@ -82,9 +82,13 @@ Otherwise:
 4. Total points scored (desc)
 5. Spirit score (desc)
 
+The spirit score is the average spirit points the team received per rated, non-forfeited game in the pool (`TeamVictoryPointsByPool`). Saving or deleting spirit points re-resolves every swiss pool that holds the finished game (`RefreshGameSpiritData()`), so the tie-break follows late spirit entries.
+
 `SolveStandingsAccordingSwissdraw` sweeps the sorted list and assigns `activerank`. Teams that compare equal share the same rank.
 
-Move resolution and BYE handling for swiss draw live in `lib/swissdraw.functions.php`.
+Move resolution and BYE handling for swiss draw live in `lib/swissdraw.functions.php`. `GenerateSwissdrawPools()` sets the generated round pools to move all games (`mvgames = 0`), so each round carries in its teams' earlier games and ranks on the whole draw so far; the first swiss pool keeps its own setting. The last generated round is marked as a placement pool, so the event standings read the final placings from it.
+
+A generated round is filled on Manage moves (`admin/serieteams.php`), which resolves ties and pairs teams without rematches (`CheckSwissdrawMoves()`). Pool standings (`admin/seasonstandings.php`) offers no Confirm moves for a swiss continuation pool, because a plain move by placing leaves tied teams out.
 
 ## Cross-match pool (type 4)
 
@@ -107,7 +111,7 @@ An unresolved placeholder (a `uo_scheduling_name` moved in through `uo_moveteams
 
 `?view=teams&list=bystandings` renders one table with a placement column (`Gold`, `Silver`, `Bronze` in bold, then `4th`, `5th`, ...) and one column per series, from `SeriesFinalStandings($series_id)`. Per division it is all-or-nothing: confirmed manual placements are used when they cover every team (`HasCompleteManualFinalStandings`), otherwise the live order from `SeriesRanking($series_id)` with an "Automatic final standings, not confirmed" note in the header. Teams may share a placement cell. Disqualified teams go in a last row, shown only when there are any. International seasons show country flags.
 
-`SeriesRanking` aggregates the series' pools through the placement-pool walk used by `TeamSeriesStanding` and `lib/series.functions.php`, so pool `activerank` values feed it.
+`SeriesRanking` aggregates the series' pools through the placement-pool walk used by `TeamSeriesStanding` and `lib/series.functions.php`, so pool `activerank` values feed it. Teams that share an `activerank` in a placement pool each get a row, all with the tie's first placement as `standing`.
 
 Manual placements live in `uo_team_final_standing` and are edited per division in `admin/finalstandings.php` (seeded by the upgrade from existing `uo_team_stats`). The pre-fill order is the saved placements, else season points, else the live placement-pool order, else the team list. Every team must get a placement or a disqualification; shared placements are valid. Clearing reverts the division to live standings. The page warns when scheduled games are incomplete.
 
@@ -125,6 +129,9 @@ Gated by the `CALCSEASONSTATISTICS` permission. **Calculate** runs, each with `s
 4. `CalcTeamSpiritStats($season)`
 5. `CalcPlayerStats($season)`: players without a profile id are skipped after the admin confirms their count
 6. `SetEventReadonly($season)`
+
+Event and division calculations use grouped player counts and load division game
+results in one query, so these calculations do not issue a read for every player or game.
 
 `IsSeasonStatsCalculated($season)` switches the page between **Calculate** and the totals with **Recalculate** and **Undo** (`DeleteSeasonStats($season)`, which also re-opens the event). The page reports how many divisions have confirmed final standings and warns about the rest.
 

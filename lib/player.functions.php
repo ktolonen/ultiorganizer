@@ -1090,6 +1090,18 @@ function SetPlayerProfile($teamId, $playerId, $profile)
 
             DBQuery($query);
         } else {
+            if (!hasEditPlayerProfilePrivateRight($playerId, $profileId)) {
+                // Keep the private fields of a profile other teams share.
+                $stored = PlayerProfile($profileId);
+                foreach (['email', 'info', 'national_id', 'birthdate'] as $field) {
+                    $profile[$field] = $stored[$field] ?? "";
+                }
+                $public = array_diff(explode("|", (string) $profile['public']), ["birthdate", ""]);
+                if (in_array("birthdate", explode("|", (string) ($stored['public'] ?? "")), true)) {
+                    $public[] = "birthdate";
+                }
+                $profile['public'] = implode("|", $public);
+            }
             $query = sprintf(
                 "UPDATE uo_player_profile SET accreditation_id='%s', email='%s', firstname='%s', lastname='%s', num=%s,
 			nickname='%s', gender='%s', info='%s', national_id='%s', birthdate='%s', birthplace='%s', nationality='%s', throwing_hand='%s', 

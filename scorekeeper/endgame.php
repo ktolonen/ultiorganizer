@@ -86,6 +86,9 @@ $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 $html .= "<h3>" . _("Final result") . "</h3>";
 $html .= "<p><strong>" . utf8entities($game_result['hometeamname']) . " " . $home . " - " . $away . " " . utf8entities($game_result['visitorteamname']) . "</strong></p>";
+if ($home == $away && GameNeedsWinner($gameId)) {
+    $html .= "<p class='warning'>" . _("A draw does not decide a playoff game: the higher-seeded team advances until the result is corrected.") . "</p>";
+}
 $html .= "<form action='?view=endgame&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 $html .= "<input type='submit' name='confirm' data-ajax='false' value='" . _("Confirm result and end game") . "'/>";
 $html .= "<a href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Cancel and return to scoresheet") . "</a>";

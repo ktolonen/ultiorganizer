@@ -13,7 +13,7 @@ $title = _("Scheduling");
 if (isset($_GET['reservations'])) {
     $reservations = explode(",", $_GET['reservations']);
 } else {
-    $reservations = array_flip($_SESSION['userproperties']['userrole']['resadmin']);
+    $reservations = array_flip($_SESSION['userproperties']['userrole']['resadmin'] ?? []);
 }
 $reservationData = ReservationInfoArray($reservations);
 $numOfreservations = count($reservations);
@@ -354,7 +354,7 @@ function tableStart($dayArray, $skip, $max)
         if ($dateHeader == "") {
             $dateHeader = JustDate($reservationArray['starttime']);
         }
-        echo "<th class='scheduling'>" . ReservationPlaceText($reservationArray['name'], $reservationArray['fieldname']) .
+        echo "<th class='scheduling'>" . utf8entities(ReservationPlaceText($reservationArray['name'], $reservationArray['fieldname'])) .
           " " . date("H:i", $startTime) . "</th>\n";
     }
     echo "<th>" . $dateHeader . "</th></tr><tr>\n";
@@ -531,7 +531,7 @@ if (count($reservationData) > 0) {
             $duration = ($endTime - $startTime) / 60;
 
             echo "<div style='vertical-align:bottom;min-height:" . intval($offset * MIN_HEIGHT) . "px'>";
-            echo "<h3>" . ReservationPlaceText($reservationArray['name'], $reservationArray['fieldname']) . " " . date("H:i", $startTime) . "</h3></div>\n";
+            echo "<h3>" . utf8entities(ReservationPlaceText($reservationArray['name'], $reservationArray['fieldname'])) . " " . date("H:i", $startTime) . "</h3></div>\n";
             echo "<div class='workarea' >\n";
             echo "<ul id='res" . $reservationId . "' class='draglist' style='min-height:" . ($duration * MIN_HEIGHT) . "px'>\n";
             $nextStart = $startTime;

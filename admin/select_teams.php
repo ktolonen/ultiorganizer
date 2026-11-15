@@ -137,7 +137,7 @@ foreach ($pools as $poolId) {
     $total_teams = 10;
     echo "<table><tr>\n";
     echo "<td style='vertical-align:top;padding:5px'>\n";
-    echo "<div style='vertical-align:bottom;height:100%'><h3>" . $poolinfo['name'] . "</h3></div>\n";
+    echo "<div style='vertical-align:bottom;height:100%'><h3>" . utf8entities($poolinfo['name']) . "</h3></div>\n";
     echo "<div class='workarea' >\n";
     echo "<ol id='res" . $poolId . "' class='draglist' style='min-height:" . ($total_teams * TEAM_HEIGHT) . "px'>\n";
     $poolteams = PoolTeams($poolId);
@@ -200,7 +200,7 @@ pageEnd();
 function teamEntry($color, $height, $teamId, $name, $seed, $editable = true)
 {
     $textColor = textColor($color);
-    echo "<li class='list1' style='color:#" . $textColor . ";background-color:#" . $color . ";height:" . $height . "px' id='team" . $teamId . "'>" . $name . " (" . $seed . ")";
+    echo "<li class='list1' style='color:#" . $textColor . ";background-color:#" . $color . ";height:" . $height . "px' id='team" . $teamId . "'>" . utf8entities($name) . " (" . utf8entities($seed) . ")";
     if ($editable) {
         echo "<span style='align:right;float:right'><a href='javascript:hide(\"team" . $teamId . "\");'>x</a></span>";
     }

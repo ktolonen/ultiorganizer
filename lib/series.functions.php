@@ -889,12 +889,12 @@ function ConfirmEnrolledTeam($seriesId, $id)
             $notfound = true;
             $letters = 3;
             $num = 0;
-            $abb = substr($teaminfo['name'], 0, $letters);
+            $abb = mb_strtoupper(mb_substr($teaminfo['name'], 0, $letters));
             while ($notfound) {
                 $notfound = false;
 
                 foreach ($allteams as $t) {
-                    if ($abb == $t['abbreviation']) {
+                    if ($abb === mb_strtoupper((string) $t['abbreviation'])) {
                         $notfound = true;
                         break;
                     }
@@ -903,13 +903,13 @@ function ConfirmEnrolledTeam($seriesId, $id)
                     $letters++;
                     if ($letters > 6) {
                         $num++;
-                        $abb = substr($teaminfo['name'], 0, 5) . "$num";
+                        $abb = mb_strtoupper(mb_substr($teaminfo['name'], 0, 5)) . "$num";
                     } else {
-                        $abb = substr($teaminfo['name'], 0, $letters);
+                        $abb = mb_strtoupper(mb_substr($teaminfo['name'], 0, $letters));
                     }
                 }
             }
-            DBQuery("UPDATE uo_team SET abbreviation=UPPER('" . DBEscapeString($abb) . "') WHERE team_id=$teamId");
+            DBQuery("UPDATE uo_team SET abbreviation='" . DBEscapeString($abb) . "' WHERE team_id=$teamId");
         }
 
 
@@ -920,7 +920,7 @@ function ConfirmEnrolledTeam($seriesId, $id)
         Log1("enrolment", "confirm", $seriesId, $teamId);
         return $teamId;
     } else {
-        die("Insufficient rights to delete enrolled teams for other users");
+        die("Insufficient rights to confirm enrolled teams");
     }
 }
 

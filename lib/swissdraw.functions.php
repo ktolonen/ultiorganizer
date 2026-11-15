@@ -355,7 +355,14 @@ function GenerateSwissdrawPools($poolId, $rounds, $generate = true)
                 $name =  $name . " " . $poolname;
                 $id = PoolFromAnotherPool($poolInfo['series'], $name, $poolInfo['ordering'] . ($i + 1), $poolId);
                 // make it a continuation pool
-                $query = sprintf("UPDATE uo_pool SET continuingpool=1 WHERE pool_id=%s", (int) $id);
+                // A round ranks on everything played so far, so it carries in all
+                // earlier games of its teams whatever the copied pool setting is.
+                // The last round decides the final placings, as a generated playoff's final does.
+                $query = sprintf(
+                    "UPDATE uo_pool SET continuingpool=1, mvgames=0%s WHERE pool_id=%d",
+                    $i == $rounds - 1 ? ", placementpool=1" : "",
+                    (int) $id,
+                );
                 $result = DBQuery($query);
 
                 //standard move to next pool

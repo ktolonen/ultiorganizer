@@ -108,7 +108,7 @@ Only pairs including a game on the saved board are reported; the other game may 
 - `uo_season.hometeammode`: home assignment for generated games
 - `uo_pool.timeslot`, `uo_game.timeslot`: game duration
 - `uo_pool.type`, `ordering`, `color`: generation strategy, order, and PDF colors
-- `uo_movingtime`: field-to-field move times for conflict checks
+- `uo_movingtime`: field-to-field move times for conflict checks, edited as a matrix on the Fields page (`admin/reservations.php`). The matrix has one input per field pair, so `script/movetimes.js` posts it as one `movetimes` field to stay under PHP's `max_input_vars`; the page refuses an incomplete matrix with a warning.
 
 ## Related outputs
 

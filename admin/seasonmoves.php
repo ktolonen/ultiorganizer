@@ -68,7 +68,10 @@ if (isset($_POST['hiddenDeleteId'])) {
 if (!empty($_POST['remove_x'])) {
     $move = preg_split('/:/', $_POST['hiddenDeleteId']);
 
-    PoolDeleteMove((int) $move[0], (int) $move[1]);
+    $usedName = PoolDeleteMove((int) $move[0], (int) $move[1]);
+    if ($usedName !== null) {
+        echo "<p class='warning'>" . sprintf(_("Generated games still use the scheduling name %s. Edit those games, or remove all games of the pool and generate them again."), utf8entities($usedName)) . "</p>\n";
+    }
 } elseif (!empty($_POST['undo'])) {
     $move = preg_split('/:/', $_POST['hiddenDeleteId']);
 
@@ -84,7 +87,10 @@ if (!empty($_POST['remove_x'])) {
 
     foreach ($moves as $row) {
         if (!$row['ismoved']) {
-            PoolDeleteMove($row['frompool'], $row['fromplacing']);
+            $usedName = PoolDeleteMove($row['frompool'], $row['fromplacing']);
+            if ($usedName !== null) {
+                echo "<p class='warning'>" . sprintf(_("Generated games still use the scheduling name %s. Edit those games, or remove all games of the pool and generate them again."), utf8entities($usedName)) . "</p>\n";
+            }
         }
     }
 } elseif (!empty($_POST['undoPool'])) {

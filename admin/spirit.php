@@ -240,8 +240,8 @@ function TableSpiritSearchCatAvg($season, $th, $higher = true)
 
         foreach ($matches as $row) {
             $ret .= "<tr>";
-            $ret .= "<td>" . $row['seriesname'] . "</td>";
-            $ret .= "<td>" . $row['teamname'] . "</td>";
+            $ret .= "<td>" . utf8entities($row['seriesname']) . "</td>";
+            $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
             $ret .= "<td class='center'>" . $row['cat1'] . "</td>";
             $ret .= "<td class='center'>" . $row['cat2'] . "</td>";
             $ret .= "<td class='center'>" . $row['cat3'] . "</td>";
@@ -517,11 +517,11 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
             $games = SearchMissingSpiritByPool($pool['pool_id']);
             if (!empty($games)) {
                 $nonemissing = false;
-                $html .= "<p>" . _("Pool") . ": <b>" . $pool['poolname'] . "</b> (" . $pool['seriesname'] . ")</p><table width='100%'>";
+                $html .= "<p>" . _("Pool") . ": <b>" . utf8entities($pool['poolname']) . "</b> (" . utf8entities($pool['seriesname']) . ")</p><table width='100%'>";
                 foreach ($games as $game) {
                     $visitorStyle = empty($game['homesotg']) ? 'color: red; font-weight: bold;' : '';
                     $homeStyle = empty($game['visitorsotg']) ? 'color: red; font-weight: bold;' : '';
-                    $html .= "<tr><td class='right' style='width: 10%; $homeStyle'>" . $game['home'] . "</td><td class='center' style='width: 2%'>" . $game['homescore'] . "</td><td class='center' style='width: 1%'>-</td><td class='center' style='width: 2%'>" . $game['visitorscore'] . "</td><td style='width: 10%; $visitorStyle'>" . $game['visitor'] . "</td><td class='center' style='width: 20%'>" . $game['time'] . "</td><td style='width: 10%'><a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Edit Spirit") . "</a></td></tr>";
+                    $html .= "<tr><td class='right' style='width: 10%; $homeStyle'>" . utf8entities($game['home']) . "</td><td class='center' style='width: 2%'>" . $game['homescore'] . "</td><td class='center' style='width: 1%'>-</td><td class='center' style='width: 2%'>" . $game['visitorscore'] . "</td><td style='width: 10%; $visitorStyle'>" . utf8entities($game['visitor']) . "</td><td class='center' style='width: 20%'>" . $game['time'] . "</td><td style='width: 10%'><a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Edit Spirit") . "</a></td></tr>";
                 }
                 $html .= "</table>";
             }
@@ -538,11 +538,11 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
             $games = SearchMissingSpiritBySeries(intval($series['series_id']));
             if (!empty($games)) {
                 $nonemissing = false;
-                $html .= "<p>" . _("Division") . ": <b>" . $series['name'] . "</b></p><table width='100%'>";
+                $html .= "<p>" . _("Division") . ": <b>" . utf8entities($series['name']) . "</b></p><table width='100%'>";
                 foreach ($games as $game) {
                     $visitorStyle = empty($game['homesotg']) ? 'color: red; font-weight: bold;' : '';
                     $homeStyle = empty($game['visitorsotg']) ? 'color: red; font-weight: bold;' : '';
-                    $html .= "<tr><td style='width: 10%'>" . $game['poolname'] . "</td><td class='right' style='width: 10%; $homeStyle'>" . $game['home'] . "</td><td class='center' style='width: 2%'>" . $game['homescore'] . "</td><td class='center' style='width: 1%'>-</td><td class='center' style='width: 2%'>" . $game['visitorscore'] . "</td><td style='width: 10%; $visitorStyle'>" . $game['visitor'] . "</td><td class='center' style='width: 20%'>" . $game['time'] . "</td><td style='width: 10%'><a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Edit Spirit") . "</a></td></tr>";
+                    $html .= "<tr><td style='width: 10%'>" . utf8entities($game['poolname']) . "</td><td class='right' style='width: 10%; $homeStyle'>" . utf8entities($game['home']) . "</td><td class='center' style='width: 2%'>" . $game['homescore'] . "</td><td class='center' style='width: 1%'>-</td><td class='center' style='width: 2%'>" . $game['visitorscore'] . "</td><td style='width: 10%; $visitorStyle'>" . utf8entities($game['visitor']) . "</td><td class='center' style='width: 20%'>" . $game['time'] . "</td><td style='width: 10%'><a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Edit Spirit") . "</a></td></tr>";
                 }
                 $html .= "</table>";
             }

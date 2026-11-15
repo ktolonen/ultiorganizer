@@ -41,6 +41,7 @@ if (empty($player['profile_id'])) {
 if (!hasEditPlayerProfileRight($playerId)) {
     die('Insufficient rights to edit player profile');
 }
+$canEditPrivate = hasEditPlayerProfilePrivateRight($playerId);
 
 
 if (isset($_SERVER['HTTP_REFERER'])) {
@@ -91,12 +92,12 @@ if (isset($_POST['save'])) {
     $pp['firstname'] = $_POST['firstname'];
     $pp['lastname'] = $_POST['lastname'];
     $pp['num'] = $_POST['num'];
-    $pp['email'] = $_POST['email'];
+    $pp['email'] = $_POST['email'] ?? "";
     $pp['gender'] = $_POST['gender'];
-    $pp['info'] = $_POST['info'];
-    $pp['national_id'] = $_POST['national_id'];
+    $pp['info'] = $_POST['info'] ?? "";
+    $pp['national_id'] = $_POST['national_id'] ?? "";
 
-    $pp['birthdate'] = ToInternalTimeFormat($_POST['birthdate']);
+    $pp['birthdate'] = ToInternalTimeFormat($_POST['birthdate'] ?? "");
     $pp['birthplace'] = $_POST['birthplace'];
     $pp['nationality'] = $_POST['nationality'];
     $pp['throwing_hand'] = $_POST['throwing_hand'];
@@ -140,6 +141,7 @@ if (isset($_POST['save'])) {
 
 $player = PlayerInfo($playerId);
 $profile = PlayerProfile($player['profile_id']);
+$canEditPrivate = hasEditPlayerProfilePrivateRight($playerId);
 
 if ($profile) {
     $pp['profile_id'] = $player['profile_id'];
@@ -233,17 +235,19 @@ $html .= "<tr><td class='infocell'>" . _("Nickname") . ":</td>";
 $html .= "<td><input class='input' maxlength='20' name='nickname' value='" . utf8entities($pp['nickname']) . "'/></td>";
 $html .= privacyselection("nickname", $publicfields);
 
-$html .= "<tr><td class='infocell'>" . _("Email") . ":</td>";
-$html .= "<td><input class='input' size='50' maxlength='100' name='email' value='" . utf8entities($pp['email']) . "'/></td>";
-$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value='email'/></td></tr>\n";
+if ($canEditPrivate) {
+    $html .= "<tr><td class='infocell'>" . _("Email") . ":</td>";
+    $html .= "<td><input class='input' size='50' maxlength='100' name='email' value='" . utf8entities($pp['email']) . "'/></td>";
+    $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value='email'/></td></tr>\n";
 
-$html .= "<tr><td class='infocell' style='vertical-align:top'>" . _("Additional information") . ":</td>";
-$html .= "<td><textarea class='input' rows='2' cols='70' name='info'>" . utf8entities($pp['info']) . "</textarea></td>";
-$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value='info'/></td></tr>\n";
+    $html .= "<tr><td class='infocell' style='vertical-align:top'>" . _("Additional information") . ":</td>";
+    $html .= "<td><textarea class='input' rows='2' cols='70' name='info'>" . utf8entities($pp['info']) . "</textarea></td>";
+    $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value='info'/></td></tr>\n";
 
-$html .= "<tr><td class='infocell'>" . _("National membership number") . ":</td>";
-$html .= "<td><input class='input' size='12' maxlength='10' name='national_id' id='national_id' value='" . utf8entities($pp['national_id']) . "'/></td>";
-$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
+    $html .= "<tr><td class='infocell'>" . _("National membership number") . ":</td>";
+    $html .= "<td><input class='input' size='12' maxlength='10' name='national_id' id='national_id' value='" . utf8entities($pp['national_id']) . "'/></td>";
+    $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
+}
 
 $html .= "<tr><td class='infocell'>" . _("Gender") . ":</td>";
 $html .= "<td><select class='dropdown' name='gender'>";
@@ -270,9 +274,11 @@ if ($pp['gender'] == "O") {
 $html .= "</select></td>";
 $html .= privacyselection("gender", $publicfields);
 
-$html .= "<tr><td class='infocell'>" . _("Date of birth") . " (" . _("dd.mm.yyyy") . "):</td>";
-$html .= "<td><input class='input' size='12' maxlength='10' name='birthdate' id='birthdate' value='" . ShortDate($pp['birthdate']) . "'/></td>";
-$html .= privacyselection("birthdate", $publicfields);
+if ($canEditPrivate) {
+    $html .= "<tr><td class='infocell'>" . _("Date of birth") . " (" . _("dd.mm.yyyy") . "):</td>";
+    $html .= "<td><input class='input' size='12' maxlength='10' name='birthdate' id='birthdate' value='" . ShortDate($pp['birthdate']) . "'/></td>";
+    $html .= privacyselection("birthdate", $publicfields);
+}
 
 $html .= "<tr><td class='infocell'>" . _("Place of birth") . ":</td>";
 $html .= "<td><input class='input' maxlength='20' name='birthplace' value='" . utf8entities($pp['birthplace']) . "'/></td>";

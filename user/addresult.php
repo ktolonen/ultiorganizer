@@ -39,6 +39,9 @@ if (!empty($_POST['save'])) {
             $html2 .=  sprintf(_("Winner is <span style='font-weight:bold'>%s</span>."), utf8entities($game_result['visitorteamname']));
         }
         $html2 .= "</p>";
+        if ($home == $away && GameNeedsWinner($gameId)) {
+            $html2 .= "<p class='warning'>" . _("A draw does not decide a playoff game: the higher-seeded team advances until the result is corrected.") . "</p>";
+        }
     }
     $game_result = GameInfo($gameId);
 } elseif (isset($_POST['update'])) {

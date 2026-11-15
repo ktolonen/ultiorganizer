@@ -51,6 +51,9 @@ if (isset($_POST['save'])) {
             $game_result = GameResult($gameId);
             $saveSucceeded = true;
             $info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away) . "</p>";
+            if ($home == $away && GameNeedsWinner($gameId)) {
+                $info .= "<p class='warning'>" . _("A draw does not decide a playoff game: the higher-seeded team advances until the result is corrected.") . "</p>";
+            }
         } else {
             $info = "<p class='warning'>" . _("Error: Could not save result.") . "</p>";
         }

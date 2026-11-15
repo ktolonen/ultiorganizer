@@ -612,11 +612,21 @@ if (!empty($_POST['save'])) {
         if ($isongoing) {
             echo "<p>" . sprintf(_("Game ongoing. Current score: %s - %s."), $h, $a) . ".</p>";
             $ok = GameUpdateResult($gameId, $h, $a);
-        } elseif ($game_result['isongoing']) {
+        } elseif ($game_result['isongoing'] || (!intval($game_result['hasstarted']) && count($scoreRows) > 0)) {
+            // A paper sheet typed in for a game that never started is the final result too.
             $ok = GameSetResult($gameId, $h, $a);
             if ($ok) {
                 echo "<p>" . sprintf(_("Final result saved: %s - %s."), $h, $a) . ".</p>";
             }
+        } elseif (count($scoreRows) > 0 && ((int) $game_result['homescore'] !== $h || (int) $game_result['visitorscore'] !== $a)) {
+            // The sheet of a finished game may list only some points, so it does not overwrite the result.
+            echo "<p class='warning'>" . sprintf(
+                _("The scoresheet ends at %s - %s, but the final result is %s - %s. Correct the result if the scoresheet is complete."),
+                $h,
+                $a,
+                (int) $game_result['homescore'],
+                (int) $game_result['visitorscore'],
+            ) . " <a href='?view=user/addresult&amp;game=$gameId'>" . _("Result") . "</a></p>";
         }
 
         echo "<p>" . _("Scoresheet saved") . " (" . _("at") . " " . DefTimestamp() . ")!</p>";

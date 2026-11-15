@@ -17,9 +17,19 @@ if (!empty($_GET["team"])) {
     $teamId = intval($_GET["team"]);
 }
 
-$team_info = TeamInfo($teamId);
-$seriesId = $team_info['series'];
-$season = $team_info['season'];
+$team_info = $teamId ? TeamInfo($teamId) : null;
+if ($team_info) {
+    $seriesId = $team_info['series'];
+    $season = $team_info['season'];
+} else {
+    $teamId = 0;
+    $seriesId = intval($_GET['series'] ?? 0);
+    $season = SeriesSeasonId($seriesId);
+    if (empty($season)) {
+        header("location:?view=admin/seasons");
+        exit();
+    }
+}
 
 $tp = [
     "team_id" => "",
@@ -43,7 +53,7 @@ if (!empty($_POST['save']) || !empty($_POST['add'])) {
         $tp['name'] = trim($_POST['name']);
         $tp['abbreviation'] = trim($_POST['abbreviation']);
 
-        $tp['pool'] = $team_info['pool'];
+        $tp['pool'] = $team_info['pool'] ?? null;
         $tp['rank'] = intval($_POST['rank']);
         $tp['series'] = $seriesId;
 
@@ -83,7 +93,7 @@ if (!empty($_POST['save']) || !empty($_POST['add'])) {
                 PoolAddTeam($tp['pool'], $teamId, $tp['rank']);
             }
 
-            $html .= "<p>" . $tp['name'] . " " . _("added") . ".</p><hr/>";
+            $html .= "<p>" . utf8entities($tp['name']) . " " . _("added") . ".</p><hr/>";
             $teamId = 0;
             $tp['name'] = "";
             $tp['club'] = "";

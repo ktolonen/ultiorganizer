@@ -811,6 +811,45 @@ function hasEditPlayerProfileRight($playerId)
     return true;
 }
 
+/**
+ * Whether the user may see and change the private fields (email, national
+ * membership number, date of birth, additional information) of the player's profile.
+ *
+ * A team admin can link an own player to any existing profile, so the team role
+ * alone covers them only while every player on the profile is in a team the user admins.
+ *
+ * @param int $playerId
+ * @param int|string|null $profileId profile to check instead of the player's current one
+ */
+function hasEditPlayerProfilePrivateRight($playerId, $profileId = null)
+{
+    if (!hasEditPlayerProfileRight($playerId)) {
+        return false;
+    }
+    $playerInfo = PlayerInfo($playerId);
+    $profileId ??= $playerInfo['profile_id'];
+    $series = getTeamSeries($playerInfo['team']);
+    $season = SeriesSeasonId($series);
+    if (
+        isPlayerAdmin($profileId)
+        || isset($_SESSION['userproperties']['userrole']['superadmin'])
+        || isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season])
+        || isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series])
+    ) {
+        return true;
+    }
+    if (empty($profileId)) {
+        return true;
+    }
+    $teamList = implode(",", array_map('intval', array_keys($_SESSION['userproperties']['userrole']['teamadmin'] ?? [])));
+    $outside = DBQueryToValue(sprintf(
+        "SELECT COUNT(*) FROM uo_player WHERE profile_id=%d AND team NOT IN (%s)",
+        (int) $profileId,
+        $teamList === "" ? "0" : $teamList,
+    ));
+    return (int) $outside === 0;
+}
+
 function hasEditPlayersRight($team)
 {
     $series = getTeamSeries($team);

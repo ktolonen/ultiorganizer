@@ -156,7 +156,10 @@ if (!empty($_POST['add'])) {
         if (PoolIsMoved((int) $move[0], (int) $move[1])) {
             $err .= "<p class='warning'>" . _("Team has already moved.") . "</p>\n";
         } else {
-            PoolDeleteMove((int) $move[0], (int) $move[1]);
+            $usedName = PoolDeleteMove((int) $move[0], (int) $move[1]);
+            if ($usedName !== null) {
+                $err .= "<p class='warning'>" . sprintf(_("Generated games still use the scheduling name %s. Edit those games, or remove all games of the pool and generate them again."), utf8entities($usedName)) . "</p>\n";
+            }
         }
     } else {
         $moves = preg_split('/:/', $_POST['hiddenDeleteId']);
@@ -166,7 +169,10 @@ if (!empty($_POST['add'])) {
             if (PoolIsMoved((int) $move[0], (int) $move[1])) {
                 $err .= "<p class='warning'>" . _("Team has already moved.") . "</p>\n";
             } else {
-                PoolDeleteMove((int) $move[0], (int) $move[1]);
+                $usedName = PoolDeleteMove((int) $move[0], (int) $move[1]);
+                if ($usedName !== null) {
+                    $err .= "<p class='warning'>" . sprintf(_("Generated games still use the scheduling name %s. Edit those games, or remove all games of the pool and generate them again."), utf8entities($usedName)) . "</p>\n";
+                }
             }
         }
     }

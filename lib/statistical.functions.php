@@ -335,6 +335,29 @@ function SetTeamSeasonStanding($teamId, $standing)
 }
 
 
+/**
+ * Counts players with a recorded game in the event, grouped by their division.
+ */
+function SeasonPlayedPlayerCounts($season)
+{
+    $query = sprintf(
+        "SELECT t.series, COUNT(DISTINCT p.player_id) AS players
+        FROM uo_player p
+        INNER JOIN uo_team t ON (t.team_id=p.team)
+        INNER JOIN uo_series ser ON (ser.series_id=t.series)
+        INNER JOIN uo_played played ON (played.player=p.player_id)
+        WHERE ser.season='%s' AND played.game IN (%s)
+        GROUP BY t.series",
+        DBEscapeString($season),
+        SeasonCompletedGamesSql($season),
+    );
+    $counts = [];
+    foreach (DBQueryToArray($query) as $row) {
+        $counts[(int) $row['series']] = (int) $row['players'];
+    }
+    return $counts;
+}
+
 function CalcSeasonStats($season)
 {
     if (isSeasonAdmin($season)) {
@@ -354,14 +377,7 @@ function CalcSeasonStats($season)
         $home_draws = 0;
         $home_losses = 0;
 
-        $players = SeasonAllPlayers($season);
-        $played_players = 0;
-        foreach ($players as $player) {
-            $playedgames = PlayerSeasonPlayedGames($player['player_id'], $season_info['season_id']);
-            if ($playedgames) {
-                $played_players++;
-            }
-        }
+        $played_players = array_sum(SeasonPlayedPlayerCounts($season));
 
         foreach ($allgames as $game_info) {
             $goals_total += $game_info['homescore'] + $game_info['visitorscore'];
@@ -408,31 +424,33 @@ function CalcSeriesStats($season)
     if (isSeasonAdmin($season)) {
         $season_info = SeasonInfo($season);
         $series_info = SeasonSeries($season);
+        $playedPlayerCounts = SeasonPlayedPlayerCounts($season);
+        $gamesBySeries = [];
+        foreach (DBQueryToArray(sprintf(
+            "SELECT g.*, pool.series FROM uo_game g
+            INNER JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+            INNER JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+            INNER JOIN uo_series ser ON (ser.series_id=pool.series)
+            WHERE ser.season='%s' AND g.hasstarted>0 AND COALESCE(g.isongoing,0)=0
+            ORDER BY g.game_id",
+            DBEscapeString($season),
+        )) as $game) {
+            $gamesBySeries[(int) $game['series']][] = $game;
+        }
 
         foreach ($series_info as $series) {
 
             $teams = SeriesTeams($series['series_id']);
             $teams_total = count($teams);
-            $allgames = SeriesAllGames($series['series_id']);
+            $allgames = $gamesBySeries[(int) $series['series_id']] ?? [];
             $games_total = 0;
             $goals_total = 0;
             $home_wins = 0;
             $defenses_total = 0;
 
-            $players = SeriesAllPlayers($series['series_id']);
-            $played_players = 0;
-            foreach ($players as $player) {
-                $playedgames = PlayerSeasonPlayedGames($player['player_id'], $season_info['season_id']);
-                if ($playedgames) {
-                    $played_players++;
-                }
-            }
+            $played_players = $playedPlayerCounts[(int) $series['series_id']] ?? 0;
 
-            foreach ($allgames as $game) {
-                $game_info = GameResult($game['game']);
-                if (empty($game_info) || $game_info['hasstarted'] <= 0 || $game_info['isongoing']) {
-                    continue;
-                }
+            foreach ($allgames as $game_info) {
                 $games_total++;
                 $goals_total += $game_info['homescore'] + $game_info['visitorscore'];
                 if ($game_info['homescore'] > $game_info['visitorscore']) {

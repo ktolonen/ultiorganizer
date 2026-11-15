@@ -87,7 +87,10 @@ if (!empty($_POST['undoFromPlacing'])) {
 }
 
 if (!empty($_POST['confirmMoves'])) {
-    PoolConfirmMoves($_POST['PoolId']);
+    $confirmPool = PoolInfo((int) $_POST['PoolId']);
+    if ($confirmPool && !($confirmPool['type'] == 3 && intval($confirmPool['continuingpool']))) {
+        PoolConfirmMoves($_POST['PoolId']);
+    }
 }
 
 if (!empty($_POST['setVisible'])) {
@@ -470,10 +473,10 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId)
 {
     $html = "<table class='admintable' style='width:100%; margin-left:0pt'>";
     if ($type == "to") {
-        $html .= "<tr><th colspan='5'>" . _("Moves to") . " " . $poolinfo['name'] . "</th></tr>\n";
+        $html .= "<tr><th colspan='5'>" . _("Moves to") . " " . utf8entities($poolinfo['name']) . "</th></tr>\n";
         $html .= "<tr><th>" . _("From pool") . "</th><th>" . _("Pos") . "</th><th>" . _("To") . "</th>";
     } else {
-        $html .= "<tr><th colspan='5'>" . _("Moves from") . " " . $poolinfo['name'] . "</th></tr>\n";
+        $html .= "<tr><th colspan='5'>" . _("Moves from") . " " . utf8entities($poolinfo['name']) . "</th></tr>\n";
         $html .= "<tr><th>" . _("From") . "</th><th>" . _("To pool") . "</th><th>" . _("Pos") . "</th>";
     }
     $html .= "<th>" . _("Team") . "</th><th></th></tr>\n";
@@ -515,8 +518,10 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId)
 
     $html .= "<tr><th colspan='4'>";
     if ($type == "to") {
+        // A swiss round pairs teams on Manage moves, which resolves ties and avoids rematches.
+        $swissRound = $poolinfo['type'] == 3 && intval($poolinfo['continuingpool']);
         if (PoolIsMoveFromPoolsPlayed($poolId)) {
-            if (!PoolIsAllMoved($poolId)) {
+            if (!PoolIsAllMoved($poolId) && !$swissRound) {
                 $html .= "<input class='button' type='submit' name='confirmMoves' value='" . _("Confirm moves") .
                   "' onclick='setConfirm(" . $poolId . ")'/>&nbsp;";
             } else {

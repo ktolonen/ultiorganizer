@@ -1111,6 +1111,23 @@ function GameTurnoversArray($gameId)
     return DBFetchAllAssoc(GameTurnovers($gameId));
 }
 
+/**
+ * Whether the game is in a playoff or cross-match pool and not forfeited, so a
+ * final draw decides nothing: the resolver keeps the seeded order and advances
+ * both teams as they are.
+ */
+function GameNeedsWinner($gameId)
+{
+    $query = sprintf(
+        "SELECT COUNT(*) FROM uo_game g
+            INNER JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+            INNER JOIN uo_pool p ON (p.pool_id=gp.pool)
+        WHERE g.game_id=%d AND g.forfeit=0 AND p.type IN (2, 4)",
+        (int) $gameId,
+    );
+    return (int) DBQueryToValue($query) > 0;
+}
+
 function GameInfo($gameId)
 {
     $query = sprintf(

@@ -49,6 +49,8 @@ Season-scoped role assignment through `AddSeasonUserRole()` also calls `AddEditS
 - `playeradmin:<profileId>`
   Edit rights for a single player profile.
 
+`hasEditPlayerProfileRight()` also lets event and division admins and the team admin of the player's team edit the linked profile. A team admin can link an own player to any existing profile from the roster, so the private fields (email, national membership number, date of birth, additional information) need `hasEditPlayerProfilePrivateRight()`: for the team role it holds only while every player row on the profile is in a team the user admins. Otherwise `user/playerprofile.php` leaves those rows out and `SetPlayerProfile()` keeps their stored values.
+
 ## Core permission helpers
 
 The main helpers live in [lib/user.functions.php](../lib/user.functions.php).

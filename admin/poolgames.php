@@ -77,23 +77,23 @@ if (!empty($_POST['remove_x'])) {
     if ($poolInfo['type'] == 1) {
         foreach ($generatedgames as $game) {
             if ($usepseudoteams) {
-                $fakegames .= "<p>" . TeamPseudoName($game['home']) . " - " . TeamPseudoName($game['away']) . "</p>";
+                $fakegames .= "<p>" . utf8entities(TeamPseudoName($game['home'])) . " - " . utf8entities(TeamPseudoName($game['away'])) . "</p>";
             } else {
-                $fakegames .= "<p>" . TeamName($game['home']) . " - " . TeamName($game['away']) . "</p>";
+                $fakegames .= "<p>" . utf8entities(TeamName($game['home'])) . " - " . utf8entities(TeamName($game['away'])) . "</p>";
             }
         }
     } elseif ($poolInfo['type'] == 2) {
         $generatedpools = GeneratePlayoffPools($poolId, false);
-        $fakegames .= "<p><b>" . $poolInfo['name'] . "</b></p>";
+        $fakegames .= "<p><b>" . utf8entities($poolInfo['name']) . "</b></p>";
         foreach ($generatedgames as $game) {
             if ($usepseudoteams) {
-                $fakegames .= "<p>" . TeamPseudoName($game['home']) . " - " . TeamPseudoName($game['away']) . "</p>";
+                $fakegames .= "<p>" . utf8entities(TeamPseudoName($game['home'])) . " - " . utf8entities(TeamPseudoName($game['away'])) . "</p>";
             } else {
-                $fakegames .= "<p>" . TeamName($game['home']) . " - " . TeamName($game['away']) . "</p>";
+                $fakegames .= "<p>" . utf8entities(TeamName($game['home'])) . " - " . utf8entities(TeamName($game['away'])) . "</p>";
             }
         }
         foreach ($generatedpools as $gpool) {
-            $fakegames .= "<p><b>" . $gpool['name'] . "</b></p>";
+            $fakegames .= "<p><b>" . utf8entities($gpool['name']) . "</b></p>";
             $generatedgames = GenerateGames($poolId, $rounds, false);
             $fakegames .= "<p>" . count($generatedgames) . " " . _("games") . ". " . _("Previous round winner vs. winners and losers vs. losers") . "</p>";
             //			debugVar($gpool);
@@ -107,12 +107,12 @@ if (!empty($_POST['remove_x'])) {
             $fakegames .= "<p>The number of teams in a Swiss-draw pool should be even. Please add or remove a team.</p>";
         } else {
             $generatedpools = GenerateSwissdrawPools($poolId, $rounds, false);
-            $fakegames .= "<p><b>" . $poolInfo['name'] . "</b></p>";
+            $fakegames .= "<p><b>" . utf8entities($poolInfo['name']) . "</b></p>";
             foreach ($generatedgames as $game) {
                 if ($usepseudoteams) {
-                    $fakegames .= "<p>" . TeamPseudoName($game['home']) . " - " . TeamPseudoName($game['away']) . "</p>";
+                    $fakegames .= "<p>" . utf8entities(TeamPseudoName($game['home'])) . " - " . utf8entities(TeamPseudoName($game['away'])) . "</p>";
                 } else {
-                    $fakegames .= "<p>" . TeamName($game['home']) . " - " . TeamName($game['away']) . "</p>";
+                    $fakegames .= "<p>" . utf8entities(TeamName($game['home'])) . " - " . utf8entities(TeamName($game['away'])) . "</p>";
                 }
             }
             if ($rounds > 2) {
@@ -126,9 +126,9 @@ if (!empty($_POST['remove_x'])) {
     } elseif ($poolInfo['type'] == 4) {
         foreach ($generatedgames as $game) {
             if ($usepseudoteams) {
-                $fakegames .= "<p>" . TeamPseudoName($game['home']) . " - " . TeamPseudoName($game['away']) . "</p>";
+                $fakegames .= "<p>" . utf8entities(TeamPseudoName($game['home'])) . " - " . utf8entities(TeamPseudoName($game['away'])) . "</p>";
             } else {
-                $fakegames .= "<p>" . TeamName($game['home']) . " - " . TeamName($game['away']) . "</p>";
+                $fakegames .= "<p>" . utf8entities(TeamName($game['home'])) . " - " . utf8entities(TeamName($game['away'])) . "</p>";
             }
         }
     }

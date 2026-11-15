@@ -32,7 +32,7 @@ Detailed entry resolves assist and scorer numbers through `uo_played`, not `uo_p
 
 `user/addscoresheet.php` is a bulk editor that rewrites the whole sheet on save: points (team, assist, scorer, time unless hidden), scorekeeper, starting offence, timeouts, spirit stoppages (spirit-enabled seasons with visible times), halftime, game note, and the ongoing flag.
 
-On save it calls `GameSetScoreSheetKeeper()`, `GameSetHalftime()`, `GameSetStartingTeam()`, `SetGameComment(COMMENT_TYPE_GAME, ...)`, clears and re-adds timeouts and spirit stoppages, and replaces the point sequence with `GameRemoveAllScores()` plus `GameAddScore()` per point. An ongoing game updates the result with `GameUpdateResult()`; clearing the ongoing flag finalizes it with `GameSetResult()`.
+On save it calls `GameSetScoreSheetKeeper()`, `GameSetHalftime()`, `GameSetStartingTeam()`, `SetGameComment(COMMENT_TYPE_GAME, ...)`, clears and re-adds timeouts and spirit stoppages, and replaces the point sequence with `GameRemoveAllScores()` plus `GameAddScore()` per point. An ongoing game updates the result with `GameUpdateResult()`; clearing the ongoing flag finalizes it with `GameSetResult()`, and so does saving points for a game that has not started (a paper sheet typed in afterwards). For a finished game the sheet never overwrites the result, because it may list only some points; when its last score differs from the result, the page warns and links to the result page.
 
 ### Scorekeeper
 

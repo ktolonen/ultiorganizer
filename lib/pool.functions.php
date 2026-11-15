@@ -2255,11 +2255,24 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
  *
  * @param int $frompool - move is from pool
  * @param int $fromplacing - move is from position
+ * @return string|null scheduling name that generated games still use, or null
  */
 function PoolDeleteMove($frompool, $fromplacing)
 {
     $poolInfo = PoolInfo($frompool);
     if (hasEditTeamsRight($poolInfo['series'])) {
+        // Generated games keep the move's scheduling name and are not updated
+        // by a later move, so report the name for the page to warn about.
+        $usedName = DBQueryToValue(sprintf(
+            "SELECT sn.name FROM uo_moveteams mt
+                INNER JOIN uo_scheduling_name sn ON (sn.scheduling_id=mt.scheduling_id)
+            WHERE mt.frompool=%d AND mt.fromplacing=%d
+                AND EXISTS (SELECT 1 FROM uo_game g
+                    WHERE g.scheduling_name_home=mt.scheduling_id OR g.scheduling_name_visitor=mt.scheduling_id)",
+            (int) $frompool,
+            (int) $fromplacing,
+        ));
+
         $query = sprintf(
             "DELETE FROM uo_moveteams WHERE frompool=%d AND fromplacing=%d",
             (int) $frompool,
@@ -2268,6 +2281,7 @@ function PoolDeleteMove($frompool, $fromplacing)
 
         DBQuery($query);
         CacheForgetNamespace('pool_moved_placings');
+        return $usedName === null ? null : (string) $usedName;
     } else {
         die('Insufficient rights to move teams');
     }
@@ -3041,20 +3055,37 @@ function SeriesRanking($series_id)
             $totalteams = count($teams);
         }
 
+        // Teams sharing an activerank all sit on the first placing of the tie and
+        // take the next placings' slots, so each placing yields one row and the
+        // tied rows carry the shared overall standing. A moved placing still
+        // takes its slot of a tie, so later placings stay aligned.
+        $tied = [];
+        $isTie = false;
+        $tiedStanding = null;
         for ($i = 1; $i <= $totalteams; $i++) {
-            if (!isset($movedPlacings[$i])) {
-                $team = PoolTeamFromStandings($ppool['pool_id'], $i);
-                $gamesleft = 1;
-                if (isset($team['team_id'])) {
-                    $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']));
-                }
+            if (empty($tied)) {
+                $tied = PoolTeamsFromStandings($ppool['pool_id'], $i);
+                $isTie = count($tied) > 1;
+                $tiedStanding = null;
+            }
+            $team = array_shift($tied) ?? ['team_id' => null, 'name' => '', 'activerank' => null, 'flagfile' => null];
+            if (isset($movedPlacings[$i])) {
+                continue;
+            }
+            if ($isTie) {
+                $tiedStanding ??= count($ranking) + 1;
+                $team['standing'] = $tiedStanding;
+            }
+            $gamesleft = 1;
+            if (isset($team['team_id'])) {
+                $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']));
+            }
 
-                if ($ppool['played'] || ($ppool['type'] == 2 && $gamesleft == 0)) {
-                    $team['placement'] = $i;
-                    $ranking[] = $team;
-                } else {
-                    $ranking[] = null;
-                }
+            if ($ppool['played'] || ($ppool['type'] == 2 && $gamesleft == 0)) {
+                $team['placement'] = $i;
+                $ranking[] = $team;
+            } else {
+                $ranking[] = null;
             }
         }
     }

@@ -6,6 +6,7 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/cache.functions.php';
 require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/user.functions.php';
+require_once __DIR__ . '/standings.functions.php';
 
 function SpiritModeDisabledName()
 {
@@ -1020,6 +1021,18 @@ function RefreshGameSpiritData($gameId)
     $seasonId = $game && !empty($game['season_id']) ? $game['season_id'] : null;
     if (!empty($seasonId)) {
         RefreshSeasonSpiritData($seasonId);
+    }
+    // The swiss resolver breaks its last ties on received spirit, so re-rank every
+    // swiss pool holding the finished game, including rounds that carry it forward.
+    $swissPools = DBQueryToArray(sprintf(
+        "SELECT DISTINCT gp.pool FROM uo_game_pool gp
+            INNER JOIN uo_pool p ON (p.pool_id=gp.pool)
+            INNER JOIN uo_game g ON (g.game_id=gp.game)
+        WHERE gp.game=%d AND p.type=3 AND g.hasstarted>0 AND g.isongoing=0",
+        (int) $gameId,
+    ));
+    foreach ($swissPools as $pool) {
+        ResolvePoolStandings((int) $pool['pool']);
     }
     return true;
 }

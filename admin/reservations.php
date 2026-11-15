@@ -41,7 +41,16 @@ if (isset($_POST['schedule']) && isset($_POST['reservations'])) {
     header($url);
     exit();
 }
+$moveTimesError = false;
 if (!empty($_POST['change_times'])) {
+    $moves = $_POST['move'] ?? [];
+    if (isset($_POST['movetimes']) && $_POST['movetimes'] !== "") {
+        // script/movetimes.js posts the matrix as rows of comma-separated minutes.
+        $moves = [];
+        foreach (explode(";", (string) $_POST['movetimes']) as $from => $row) {
+            $moves[$from] = explode(",", $row);
+        }
+    }
     $times = [];
     foreach ($_POST['loc'] as $i => $loc) {
         $times[$i]['location'] = $loc;
@@ -49,13 +58,25 @@ if (!empty($_POST['change_times'])) {
     foreach ($_POST['field'] as $i => $field) {
         $times[$i]['field'] = $field;
     }
-    foreach ($_POST['move'] as $from => $row) {
-        foreach ($row as $to => $time) {
+    $complete = count($moves) === count($times);
+    foreach ($times as $from => $unused) {
+        if (!isset($moves[$from]) || count($moves[$from]) !== count($times)) {
+            $complete = false;
+            break;
+        }
+        foreach ($moves[$from] as $to => $time) {
             $times[$from][$to] = $time;
         }
     }
 
-    TimeTableSetMoveTimes($season, $times);
+    if ($complete) {
+        TimeTableSetMoveTimes($season, $times);
+    } else {
+        $moveTimesError = true;
+    }
+} elseif (isset($_POST['loc'])) {
+    // The save button posts last, so PHP dropped it past max_input_vars.
+    $moveTimesError = true;
 }
 
 //common page
@@ -151,6 +172,7 @@ if (empty($season)) {
     $html .= "<input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>\n";
     $html .= "<input type='submit' name='schedule' value='" . utf8entities(_("Schedule selected")) . "'/>\n";
     $html .= "</p>";
+    $html .= "</form>";
 
     $locations = SeasonReservationLocations($season, $group);
     $movetimes = TimetableMoveTimes($season);
@@ -158,6 +180,11 @@ if (empty($season)) {
     $html .= "<h2>" . _("Transfer times") . "</h2>";
     $html .= "<p>" . _("Minimum transfer times in minutes between fields") . "</p>\n";
     $html .= "<p>" . _("These transfer times are used during schedule validation to detect conflicts between consecutive games on different fields.") . "</p>\n";
+    if ($moveTimesError) {
+        $html .= "<p class='warning'>" . _("The transfer times were not saved because the form was incomplete. Try again.") . "</p>\n";
+    }
+    $html .= "<form method='post' id='movetimesform' action='?view=admin/reservations&amp;season=$season&amp;group=" . urlencode((string) $group) . "'>\n";
+    $html .= "<input type='hidden' id='movetimes' name='movetimes' value=''/>\n";
     $i = 0;
     foreach ($locations as $location) {
         $html .= "<input type='hidden' id='loc$i' name='loc[]' value='" . utf8entities($location['location']) . "'/>";
@@ -181,7 +208,7 @@ if (empty($season)) {
 
             $html .= "<td><input type='text' size='4' maxlength='5' value='"
               . (TimeTableMoveTime($movetimes, $location1['location'], $location1['fieldname'], $location2['location'], $location2['fieldname']) / 60)
-              . "' id='move" . $i . "_" . $j . "' name='move[$i][$j]' onkeypress='ChgTime(" . $i . "," . $j . ")'/></td>";
+              . "' id='move" . $i . "_" . $j . "' name='move[$i][$j]'/></td>";
             $j++;
         }
         $html .= "</tr>\n";
@@ -198,6 +225,7 @@ if (empty($season)) {
     $html .= "<input type='submit' name='change_times' value='" . utf8entities(_("Save times")) . "'/>\n";
 
     $html .= "</form>";
+    $html .= "<script type='text/javascript' src='script/movetimes.js'></script>\n";
 }
 
 $html .= "\n<hr/>\n";
