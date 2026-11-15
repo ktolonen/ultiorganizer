@@ -801,11 +801,7 @@ function hasEditPlayerProfileRight($playerId)
         isset($_SESSION['userproperties']['userrole']['superadmin']) ||
         isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
         isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
-        (isset($_SESSION['userproperties']['userrole']['teamadmin'][$team])
-            && !ProfileHasPlayersOutsideTeams(
-                $playerInfo['profile_id'],
-                array_keys($_SESSION['userproperties']['userrole']['teamadmin']),
-            ));
+        isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]);
     if (!$hasEditRight) {
         return false;
     }
@@ -816,10 +812,40 @@ function hasEditPlayerProfileRight($playerId)
 }
 
 /**
- * Whether a player profile is linked to a player in a team outside the given ones.
+ * Whether the user may see and change the private fields (email, national
+ * membership number, date of birth, additional information) of the player's profile.
  *
  * A team admin can link an own player to any existing profile, so the team role
- * alone must not open a profile that other teams' players share.
+ * alone covers them only while every player on the profile is in a team the user admins.
+ *
+ * @param int $playerId
+ * @param int|string|null $profileId profile to check instead of the player's current one
+ */
+function hasEditPlayerProfilePrivateRight($playerId, $profileId = null)
+{
+    if (!hasEditPlayerProfileRight($playerId)) {
+        return false;
+    }
+    $playerInfo = PlayerInfo($playerId);
+    $profileId ??= $playerInfo['profile_id'];
+    $series = getTeamSeries($playerInfo['team']);
+    $season = SeriesSeasonId($series);
+    if (
+        isPlayerAdmin($profileId)
+        || isset($_SESSION['userproperties']['userrole']['superadmin'])
+        || isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season])
+        || isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series])
+    ) {
+        return true;
+    }
+    return !ProfileHasPlayersOutsideTeams(
+        $profileId,
+        array_keys($_SESSION['userproperties']['userrole']['teamadmin'] ?? []),
+    );
+}
+
+/**
+ * Whether a player profile is linked to a player in a team outside the given ones.
  *
  * @param int|string|null $profileId
  * @param array<int|string> $teamIds
