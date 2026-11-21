@@ -1274,6 +1274,49 @@ tr.state-diff>td {
 	color: var(--status-warning);
 }
 
+.warning-icon {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	border: 0;
+	padding: 2px;
+	background: transparent;
+	font-size: 16px;
+	line-height: 20px;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+.warning-icon:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 1px;
+}
+
+.warning-tip {
+	box-sizing: border-box;
+	max-width: min(360px, calc(100vw - 32px));
+	border: 1px solid var(--status-warning);
+	border-radius: 4px;
+	padding: 12px 16px;
+	background: var(--surface);
+	color: var(--text);
+	font-size: 13px;
+	font-weight: normal;
+	line-height: 1.5;
+	white-space: normal;
+}
+
+.warning-tip p {
+	margin: 0;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.warning-tip p + p {
+	margin-top: 8px;
+}
+
 .player-not-accredited {
 	display: block;
 	color: var(--status-warning);

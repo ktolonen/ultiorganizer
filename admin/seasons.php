@@ -103,9 +103,27 @@ $seasons = Seasons();
 
 foreach ($seasons as $row) {
     $info = SeasonInfo($row['season_id']);
+    $warnings = [];
+    if (empty($info['event_readonly']) && !IsSelfRegistrationDisabled() && (int) $info['scorekeeping_app'] === SCOREKEEPING_APP_USERS) {
+        $warnings[] = _("Anyone can register and change results using the scorekeeping app.");
+    }
+    if (empty($info['event_readonly']) && !empty($info['anonymous_scorekeeping'])) {
+        $warnings[] = _("Anyone with a scorekeeping link can change results without logging in.");
+    }
 
     $html .=  "<tr>";
-    $html .=  "<td><a href='?view=admin/addseasons&amp;season=" . $info['season_id'] . "'>" . utf8entities(U_($info['name'])) . "</a></td>";
+    $html .= "<td>";
+    if ($warnings) {
+        $tipId = 'scorekeeping-warning-' . utf8entities($info['season_id']);
+        $html .= "<button type='button' class='warning warning-icon' popovertarget='" . $tipId . "' aria-label='" . utf8entities(implode(' ', $warnings)) . "'>&#9888;</button> ";
+        $html .= "<div id='" . $tipId . "' class='warning-tip' popover>";
+        foreach ($warnings as $warning) {
+            $html .= "<p>" . utf8entities($warning) . "</p>";
+        }
+        $html .= "</div>";
+    }
+    $html .= "<a href='?view=admin/addseasons&amp;season=" . $info['season_id'] . "'>" . utf8entities(U_($info['name'])) . "</a>";
+    $html .= "</td>";
 
     if (!empty($info['type'])) {
         $html .=  "<td>" . U_($info['type']) . "</td>";

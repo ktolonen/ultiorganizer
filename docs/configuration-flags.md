@@ -27,6 +27,7 @@ Use these exact type names when discussing configuration work:
 - Storage: event or season records and related admin flows.
 - Use when behavior can differ between events in the same installation.
 - Example: `anonymous_scorekeeping` (`uo_season`) lets a scorekeeping link open Scorekeeper without logging in. It replaced the `ANONYMOUS_RESULT_INPUT` SYSTEM_FLAG, which allowed anonymous result entry by game number in every event. No value was carried over, because the two allow different things; a leftover define in `conf/config.inc.php` is ignored.
+- Example: `scorekeeping_app` (`uo_season`) decides who may use the scorekeeping app in the event: nobody (the default), event admins, or all logged-in users. The user page Scorekeeping app and its menu link appear only when a current event admits the user, and the app API refuses tokens the game's event does not admit.
 
 ## Selection rule
 

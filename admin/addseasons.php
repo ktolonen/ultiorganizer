@@ -4,6 +4,7 @@ include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/common.functions.php';
+include_once 'lib/configuration.functions.php';
 
 $LAYOUT_ID = SEASONS;
 $seasonId = "";
@@ -36,6 +37,7 @@ $sp = [
     "api_public" => 0,
     "showgamecomments" => 0,
     "anonymous_scorekeeping" => 0,
+    "scorekeeping_app" => 0,
     "require_accreditation" => 0,
     "iscurrent" => 0,
     "enrollopen" => 0,
@@ -87,6 +89,7 @@ if (!empty($_POST['add'])) {
     $sp['public_event'] = !empty($_POST['public_event']);
     $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
     $sp['anonymous_scorekeeping'] = !empty($_POST['anonymous_scorekeeping']);
+    $sp['scorekeeping_app'] = max(SCOREKEEPING_APP_OFF, min(SCOREKEEPING_APP_USERS, (int) ($_POST['scorekeeping_app'] ?? 0)));
     $sp['require_accreditation'] = !empty($_POST['require_accreditation']);
     $comment = $_POST['comment'];
 
@@ -158,6 +161,7 @@ if (!empty($_POST['add'])) {
         $sp['public_event'] = !empty($_POST['public_event']);
         $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
         $sp['anonymous_scorekeeping'] = !empty($_POST['anonymous_scorekeeping']);
+        $sp['scorekeeping_app'] = max(SCOREKEEPING_APP_OFF, min(SCOREKEEPING_APP_USERS, (int) ($_POST['scorekeeping_app'] ?? 0)));
         $sp['require_accreditation'] = !empty($_POST['require_accreditation']);
         $sp['timezone'] = $_POST['timezone'];
         $comment = $_POST['comment'];
@@ -204,6 +208,7 @@ if ($seasonId) {
     $sp['public_event'] = isset($info['public_event']) ? $info['public_event'] : 0;
     $sp['showgamecomments'] = isset($info['showgamecomments']) ? $info['showgamecomments'] : 0;
     $sp['anonymous_scorekeeping'] = isset($info['anonymous_scorekeeping']) ? $info['anonymous_scorekeeping'] : 0;
+    $sp['scorekeeping_app'] = isset($info['scorekeeping_app']) ? (int) $info['scorekeeping_app'] : 0;
     $sp['require_accreditation'] = isset($info['require_accreditation']) ? $info['require_accreditation'] : 0;
     $sp['timezone'] = $info['timezone'];
     $comment = CommentRaw(1, $info['season_id']);
@@ -296,7 +301,25 @@ $homeSelect .= "<option value='1'" . ((int) $sp['hometeammode'] === 1 ? " select
 $homeSelect .= "</select>";
 $html .= "<fieldset class='settings-group'><legend>" . _("Games") . "</legend>\n";
 $html .= SettingsRow(_("Home team assignment"), $homeSelect, _("Applies to games created from pools. Existing games are not changed."), "hometeammode");
-$html .= SettingsCheckRow('anonymous_scorekeeping', _("Scorekeeping links work without logging in"), !empty($sp['anonymous_scorekeeping']), _("Anyone with a game or field scorekeeping link can record scores. Share the links only with your scorekeepers."));
+$appSelect = "<select class='dropdown' id='scorekeeping_app' name='scorekeeping_app'>\n";
+foreach ([SCOREKEEPING_APP_OFF => _("Not in use"), SCOREKEEPING_APP_ADMINS => _("Event admins"), SCOREKEEPING_APP_USERS => _("All logged-in users")] as $mode => $label) {
+    $appSelect .= "<option value='" . $mode . "'" . ((int) $sp['scorekeeping_app'] === $mode ? " selected='selected'" : "") . ">" . utf8entities($label) . "</option>\n";
+}
+$appSelect .= "</select>";
+$appLabel = _("Scorekeeping app");
+if (empty($sp['event_readonly']) && !IsSelfRegistrationDisabled() && (int) $sp['scorekeeping_app'] === SCOREKEEPING_APP_USERS) {
+    $warning = utf8entities(_("Anyone can register and change results using the scorekeeping app."));
+    $appLabel .= " <button type='button' class='warning warning-icon' popovertarget='scorekeeping-app-warning' aria-label='" . $warning . "'>&#9888;</button>";
+    $appSelect .= "<span id='scorekeeping-app-warning' class='warning-tip' popover>" . $warning . "</span>";
+}
+$html .= SettingsRow($appLabel, $appSelect, _("Who can set up the scorekeeping app and keep score with it in this event."), "scorekeeping_app");
+$linkWarning = "";
+if (empty($sp['event_readonly']) && !empty($sp['anonymous_scorekeeping'])) {
+    $warning = utf8entities(_("Anyone with a scorekeeping link can change results without logging in."));
+    $linkWarning = " <button type='button' class='warning warning-icon' popovertarget='scorekeeping-links-warning' aria-label='" . $warning . "'>&#9888;</button>";
+    $linkWarning .= "<span id='scorekeeping-links-warning' class='warning-tip' popover>" . $warning . "</span>";
+}
+$html .= SettingsCheckRow('anonymous_scorekeeping', _("Scorekeeping links work without logging in") . $linkWarning, !empty($sp['anonymous_scorekeeping']), _("Anyone with a game or field scorekeeping link can record scores. Share the links only with your scorekeepers."));
 $html .= SettingsCheckRow('hide_time_on_scoresheet', _("Hide time on scoresheet"), !empty($sp['hide_time_on_scoresheet']), _("Goals are recorded and shown without times."));
 $html .= SettingsCheckRow('require_accreditation', _("Require accreditation"), !empty($sp['require_accreditation']), _("Only accredited players can be added to game rosters."));
 $html .= SettingsCheckRow('use_season_points', _("Season points"), !empty($sp['use_season_points']), _("Admins enter points per team and round. Totals form a separate ranking on the Points tab."));

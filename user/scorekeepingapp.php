@@ -8,7 +8,8 @@ $title = _("Scorekeeping app");
 $selfUrl = "?view=user/scorekeepingapp";
 
 header("Cache-Control: no-store");
-if (!empty($_POST['replace']) && ApiUserTokenReplace($_SESSION['uid']) !== null) {
+$canSetUp = CanSetUpScorekeepingApp();
+if ($canSetUp && !empty($_POST['replace']) && ApiUserTokenReplace($_SESSION['uid']) !== null) {
     header("Location: " . $selfUrl);
     exit();
 }
@@ -19,6 +20,15 @@ if (!empty($_POST['remove']) && ApiUserTokenRevoke($_SESSION['uid'])) {
 $token = ApiUserToken($_SESSION['uid']);
 
 $html = "<h1>" . utf8entities($title) . "</h1>";
+if (!$canSetUp) {
+    $html .= "<p>" . utf8entities(_("No current event uses the scorekeeping app.")) . "</p>";
+    if ($token !== null) {
+        $html .= "<form method='post' action='" . $selfUrl . "'>";
+        $html .= "<input type='submit' class='button' name='remove' value='" . utf8entities(_("Remove token")) . "'/></form>";
+    }
+    showPage($title, $html);
+    return;
+}
 if ($token === null) {
     $html .= "<p>" . utf8entities(_("No tokens created.")) . "</p>";
     $html .= "<form method='post' action='" . $selfUrl . "'>";
