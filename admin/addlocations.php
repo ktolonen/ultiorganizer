@@ -270,7 +270,7 @@ echo "'<p>" . utf8entities($loc['address']) . "</p>'";
   }
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo GetGoogleMapsAPIKey(); ?>&callback=myMap"></script>
+<script async src="https://maps.googleapis.com/maps/api/js?key=<?php echo GetGoogleMapsAPIKey(); ?>&loading=async&callback=myMap"></script>
 <?php
 pageEnd();
 ?>
