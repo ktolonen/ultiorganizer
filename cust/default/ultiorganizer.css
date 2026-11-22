@@ -1530,7 +1530,8 @@ tr.state-diff>td {
 	word-break: break-all;
 }
 
-#scorekeepingurl {
+#scorekeepingurl,
+#setupurl {
 	box-sizing: border-box;
 	width: 100%;
 	max-width: 36em;
