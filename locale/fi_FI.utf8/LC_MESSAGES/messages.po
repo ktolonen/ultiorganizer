@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 09:31+0200\n"
+"POT-Creation-Date: 2026-11-22 13:06+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -632,12 +632,12 @@ msgstr ""
 "Kuka tahansa pisteenkirjauslinkin haltija voi muuttaa tuloksia kirjautumatta "
 "sisään."
 
-#: user/scorekeepingapp.php:42
+#: user/scorekeepingapp.php:57
 msgid ""
-"Anyone with this code can keep score with any scorekeeping link they have, "
-"until you replace or remove the token."
+"Anyone with this code or link can keep score with any scorekeeping link they "
+"have, until you replace or remove the token."
 msgstr ""
-"Kuka tahansa koodin haltija voi kirjata pisteitä millä tahansa "
+"Kuka tahansa koodin tai linkin haltija voi kirjata pisteitä millä tahansa "
 "pisteenkirjauslinkillä, joka hänellä on, kunnes vaihdat tai poistat tokenin."
 
 #: user/scorekeepinglink.php:49
@@ -1420,8 +1420,8 @@ msgstr "Muunna InnoDB/utf8mb4-muotoon nyt"
 msgid "Coordinates"
 msgstr "Koordinaatit"
 
-#: admin/seasonteams.php:285 user/scorekeepinglink.php:57
-#: user/teamplayers.php:201
+#: admin/seasonteams.php:285 user/scorekeepingapp.php:45
+#: user/scorekeepinglink.php:57 user/teamplayers.php:201
 msgid "Copy"
 msgstr "Kopioi"
 
@@ -3669,7 +3669,7 @@ msgstr "Muutettu viimeksi"
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: admin/apitokens.php:177 user/scorekeepingapp.php:44
+#: admin/apitokens.php:177 user/scorekeepingapp.php:59
 msgid "Last used"
 msgstr "Viimeksi käytetty"
 
@@ -4192,7 +4192,7 @@ msgstr "Kansallinen jäsennumero"
 msgid "Nationality"
 msgstr "Kansallisuus"
 
-#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:43
+#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:58
 msgid "Never"
 msgstr "Ei koskaan"
 
@@ -4526,6 +4526,14 @@ msgstr "Toimitsija palauttaa täytetyn lomakkeen kisatoimistoon."
 #: seasonlist.php:9
 msgid "Old events"
 msgstr "Vanhat tapahtumat"
+
+#: user/scorekeepingapp.php:43
+msgid ""
+"On the phone with the app, copy this link and paste it in the app under Pair "
+"a server."
+msgstr ""
+"Kopioi tämä linkki sovelluksen puhelimella ja liitä se sovelluksessa kohtaan "
+"Pair a server."
 
 #: spiritkeeper/teamgames.php:105
 msgid ""
@@ -5341,7 +5349,7 @@ msgstr "Poista kaikki pelit"
 msgid "Remove cap"
 msgstr "Poista raja"
 
-#: user/scorekeepingapp.php:27 user/scorekeepingapp.php:48
+#: user/scorekeepingapp.php:27 user/scorekeepingapp.php:63
 msgid "Remove token"
 msgstr "Poista token"
 
@@ -5365,7 +5373,7 @@ msgstr "Toista salasana"
 msgid "Replace link"
 msgstr "Vaihda linkki"
 
-#: user/scorekeepingapp.php:47
+#: user/scorekeepingapp.php:62
 msgid "Replace token"
 msgstr "Vaihda token"
 
@@ -5766,7 +5774,7 @@ msgstr "Tallennus vaikuttaa vain valittuun sarjaan."
 msgid "Saving failed. Please try again."
 msgstr "Tallennus epäonnistui. Yritä uudelleen."
 
-#: user/scorekeepingapp.php:41
+#: user/scorekeepingapp.php:42
 msgid ""
 "Scan this code in the scorekeeping app, then scan a scorekeeping link in the "
 "app to keep score."
@@ -6954,7 +6962,7 @@ msgstr ""
 "Nykyinen linkki lakkaa toimimasta, ja kaikki sen avanneet menettävät "
 "pääsynsä. Jatketaanko?"
 
-#: user/scorekeepingapp.php:45
+#: user/scorekeepingapp.php:60
 msgid ""
 "The current token stops working and the app must be set up again. Continue?"
 msgstr ""

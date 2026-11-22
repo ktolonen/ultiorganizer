@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 09:31+0200\n"
+"POT-Creation-Date: 2026-11-22 13:06+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -636,13 +636,13 @@ msgid "Anyone with a scorekeeping link can change results without logging in."
 msgstr ""
 "Jeder mit einem Scorekeeping-Link kann Ergebnisse ohne Anmeldung ändern."
 
-#: user/scorekeepingapp.php:42
+#: user/scorekeepingapp.php:57
 msgid ""
-"Anyone with this code can keep score with any scorekeeping link they have, "
-"until you replace or remove the token."
+"Anyone with this code or link can keep score with any scorekeeping link they "
+"have, until you replace or remove the token."
 msgstr ""
-"Jeder mit diesem Code kann mit jedem Scorekeeping-Link, den er besitzt, "
-"Punkte erfassen, bis das Token ersetzt oder entfernt wird."
+"Jeder mit diesem Code oder Link kann mit jedem Scorekeeping-Link, den er "
+"besitzt, Punkte erfassen, bis das Token ersetzt oder entfernt wird."
 
 #: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
@@ -1436,8 +1436,8 @@ msgstr "Jetzt nach InnoDB/utf8mb4 umwandeln"
 msgid "Coordinates"
 msgstr "Koordinaten"
 
-#: admin/seasonteams.php:285 user/scorekeepinglink.php:57
-#: user/teamplayers.php:201
+#: admin/seasonteams.php:285 user/scorekeepingapp.php:45
+#: user/scorekeepinglink.php:57 user/teamplayers.php:201
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -3693,7 +3693,7 @@ msgstr "Zuletzt geändert"
 msgid "Last name"
 msgstr "Nachname"
 
-#: admin/apitokens.php:177 user/scorekeepingapp.php:44
+#: admin/apitokens.php:177 user/scorekeepingapp.php:59
 msgid "Last used"
 msgstr "Zuletzt verwendet"
 
@@ -4218,7 +4218,7 @@ msgstr "Nationale Mitgliedsnummer"
 msgid "Nationality"
 msgstr "Nationalität"
 
-#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:43
+#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:58
 msgid "Never"
 msgstr "Nie"
 
@@ -4555,6 +4555,14 @@ msgstr "Geben Sie den ausgefüllten Spielbericht bei der Turnierleitung ab."
 #: seasonlist.php:9
 msgid "Old events"
 msgstr "Alte Turniere"
+
+#: user/scorekeepingapp.php:43
+msgid ""
+"On the phone with the app, copy this link and paste it in the app under Pair "
+"a server."
+msgstr ""
+"Auf dem Telefon mit der App diesen Link kopieren und in der App unter Pair a "
+"server einfügen."
 
 #: spiritkeeper/teamgames.php:105
 msgid ""
@@ -5376,7 +5384,7 @@ msgstr "Alle Spiele entfernen"
 msgid "Remove cap"
 msgstr "Obergrenze entfernen"
 
-#: user/scorekeepingapp.php:27 user/scorekeepingapp.php:48
+#: user/scorekeepingapp.php:27 user/scorekeepingapp.php:63
 msgid "Remove token"
 msgstr "Token entfernen"
 
@@ -5400,7 +5408,7 @@ msgstr "Passwort (Wdh.)"
 msgid "Replace link"
 msgstr "Link ersetzen"
 
-#: user/scorekeepingapp.php:47
+#: user/scorekeepingapp.php:62
 msgid "Replace token"
 msgstr "Token ersetzen"
 
@@ -5802,7 +5810,7 @@ msgstr "Speichern betrifft nur die ausgewählte Division."
 msgid "Saving failed. Please try again."
 msgstr "Das Speichern ist fehlgeschlagen. Bitte versuche es erneut."
 
-#: user/scorekeepingapp.php:41
+#: user/scorekeepingapp.php:42
 msgid ""
 "Scan this code in the scorekeeping app, then scan a scorekeeping link in the "
 "app to keep score."
@@ -7002,7 +7010,7 @@ msgstr ""
 "Der aktuelle Link funktioniert nicht mehr, und alle, die ihn geöffnet haben, "
 "verlieren den Zugriff. Fortfahren?"
 
-#: user/scorekeepingapp.php:45
+#: user/scorekeepingapp.php:60
 msgid ""
 "The current token stops working and the app must be set up again. Continue?"
 msgstr ""

@@ -37,9 +37,24 @@ if ($token === null) {
     return;
 }
 
-$html .= "<div class='scorekeeping-qr'>" . ScorekeeperQrSvg(ScorekeeperAppSetupUrl($token['token']), 5) . "</div>";
+$setupUrl = ScorekeeperAppSetupUrl($token['token']);
+$html .= "<div class='scorekeeping-qr'>" . ScorekeeperQrSvg($setupUrl, 5) . "</div>";
 $html .= "<p>" . utf8entities(_("Scan this code in the scorekeeping app, then scan a scorekeeping link in the app to keep score.")) . "</p>";
-$html .= "<p>" . utf8entities(_("Anyone with this code can keep score with any scorekeeping link they have, until you replace or remove the token.")) . "</p>";
+$html .= "<p>" . utf8entities(_("On the phone with the app, copy this link and paste it in the app under Pair a server.")) . "</p>";
+$html .= "<p><input type='text' id='setupurl' class='input' readonly='readonly' value='" . utf8entities($setupUrl) . "'/> ";
+$html .= "<button type='button' class='button' onclick='copySetupUrl()'>" . utf8entities(_("Copy")) . "</button></p>";
+$html .= "<script type='text/javascript'>
+function copySetupUrl() {
+  var field = document.getElementById('setupurl');
+  field.select();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(field.value);
+  } else {
+    document.execCommand('copy');
+  }
+}
+</script>";
+$html .= "<p>" . utf8entities(_("Anyone with this code or link can keep score with any scorekeeping link they have, until you replace or remove the token.")) . "</p>";
 $lastUsed = empty($token['last_used']) ? _("Never") : DefTimeFormat($token['last_used']);
 $html .= "<p>" . utf8entities(_("Last used")) . ": " . utf8entities($lastUsed) . "</p>";
 $confirm = htmlspecialchars((string) json_encode(_("The current token stops working and the app must be set up again. Continue?")), ENT_QUOTES);
