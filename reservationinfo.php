@@ -36,8 +36,7 @@ $hasCoordinates = is_numeric($place['lat']) && is_numeric($place['lng'])
 
 //common page
 pageTopHeadOpen($title);
-$pageAttributes = $hasCoordinates ? "onload=\"load()\" onunload=\"GUnload()\"" : "";
-pageTopHeadClose($title, false, $pageAttributes);
+pageTopHeadClose($title, false);
 leftMenu();
 contentStart();
 echo "<h1>" . utf8entities($headingText) . "</h1>\n";
@@ -91,7 +90,7 @@ if ($hasCoordinates) {
   }
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo GetGoogleMapsAPIKey(); ?>&callback=myMap"></script>
+<script async src="https://maps.googleapis.com/maps/api/js?key=<?php echo GetGoogleMapsAPIKey(); ?>&loading=async&callback=myMap"></script>
 
 <?php
 }

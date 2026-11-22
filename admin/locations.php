@@ -190,7 +190,7 @@ contentEnd();
       });
   }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo GetGoogleMapsAPIKey(); ?>&amp;libraries=places&amp;callback=initMap"></script>
+<script async src="https://maps.googleapis.com/maps/api/js?key=<?php echo GetGoogleMapsAPIKey(); ?>&amp;libraries=places&amp;loading=async&amp;callback=initMap"></script>
 
 <?php
 pageEnd();
