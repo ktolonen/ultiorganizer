@@ -91,19 +91,6 @@ pageTopHeadOpen($title);
       button.value = '<?php echo _("Hide"); ?>';
     }
   }
-  function setDeleteId(tokenId) {
-    var input = document.getElementById('hiddenDeleteId');
-    if (!input) {
-      return false;
-    }
-    var answer = confirm('<?php echo _("Delete this token permanently?"); ?>');
-    if (answer) {
-      input.value = tokenId;
-      return true;
-    }
-    input.value = '';
-    return false;
-  }
   document.addEventListener('DOMContentLoaded', toggleScopeId);
 </script>
 <?php
@@ -166,7 +153,7 @@ echo "<h3>" . _("Existing tokens") . "</h3>";
 if (empty($tokens)) {
     echo "<p>" . _("No tokens created.") . "</p>";
 } else {
-    echo "<table style='white-space: nowrap;width:100%' border='0' cellpadding='4'>\n";
+    echo "<table style='width:100%' border='0' cellpadding='4'>\n";
     echo "<tr>";
     echo "<th>" . _("ID") . "</th>";
     echo "<th></th>";
@@ -180,6 +167,12 @@ if (empty($tokens)) {
     echo "<th></th>";
     echo "</tr>\n";
 
+    // Let a timestamp wrap between date and time, never at a hyphen.
+    $timestampCell = function ($value) {
+        $parts = array_map(fn($part) => "<span style='white-space: nowrap'>" . utf8entities($part) . "</span>", explode(' ', (string) $value));
+        return "<td>" . implode(' ', $parts) . "</td>";
+    };
+
     foreach ($tokens as $token) {
         $status = !empty($token['revoked']) ? _("Revoked") : _("Active");
         echo "<tr>";
@@ -192,8 +185,8 @@ if (empty($tokens)) {
         echo "<td>" . utf8entities($token['label']) . "</td>";
         echo "<td>" . utf8entities($token['scope_type']) . "</td>";
         echo "<td>" . utf8entities($token['scope_id']) . "</td>";
-        echo "<td>" . utf8entities($token['created_at']) . "</td>";
-        echo "<td>" . utf8entities($token['last_used']) . "</td>";
+        echo $timestampCell($token['created_at']);
+        echo $timestampCell($token['last_used']);
         echo "<td>" . $status . "</td>";
         echo "<td>";
         echo "<form method='post' action='?view=admin/apitokens' style='display:inline;'>";
@@ -210,13 +203,13 @@ if (empty($tokens)) {
         echo "</td>";
         echo "<td class='center'>";
         echo "<form method='post' action='?view=admin/apitokens' style='display:inline;'>";
-        echo "<input class='deletebutton' type='image' src='images/remove.png' alt='X' name='delete' value='" . _("X") . "' onclick='return setDeleteId(" . (int) $token['token_id'] . ");'/>";
-        echo "<input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>";
+        echo "<input class='deletebutton' type='image' src='images/remove.png' alt='X' name='delete' value='" . _("X") . "' onclick='return confirm(" . htmlspecialchars(json_encode(_("Delete this token permanently?")), ENT_QUOTES) . ");'/>";
+        echo "<input type='hidden' name='hiddenDeleteId' value='" . $tokenId . "'/>";
         echo "</form>";
         echo "</td>";
         echo "</tr>\n";
         echo "<tr id='token_row_" . $tokenId . "' style='display:none;'>";
-        echo "<td colspan='10'><code id='token_value_" . $tokenId . "'></code></td>";
+        echo "<td colspan='10'><code style='word-break: break-all' id='token_value_" . $tokenId . "'></code></td>";
         echo "</tr>\n";
     }
     echo "</table>\n";
