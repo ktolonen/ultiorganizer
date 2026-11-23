@@ -538,11 +538,11 @@ function ScorekeeperMust($done, $step)
  * The games a scorekeeping link covers right now, for the app to pick from.
  *
  * Needs the scorekeeping API actor set. A link outside its day yields no
- * games and the date it starts working.
+ * games, the date it starts working and what it covers, so the app can name it.
  *
  * @param string $season The link's event
  * @param int $linkTokenId uo_scorekeeper_token.token_id
- * @return array{games: array<int, array<string, mixed>>, available_from: ?string}
+ * @return array{games: array<int, array<string, mixed>>, available_from: ?string, upcoming: ?array<string, mixed>}
  */
 function ScorekeeperDiscoverGames($season, $linkTokenId)
 {
@@ -583,19 +583,36 @@ function ScorekeeperDiscoverGames($season, $linkTokenId)
     usort($games, fn($a, $b) => [(string) $a['time'], $a['game_id']] <=> [(string) $b['time'], $b['game_id']]);
 
     $availableFrom = null;
+    $upcoming = null;
     if ($games === []) {
         $row = ScorekeeperTokenRow($linkTokenId);
-        $start = null;
         if (is_array($row) && !empty($row['game'])) {
             $info = GameInfo((int) $row['game']);
-            $start = is_array($info) ? $info['time'] : null;
+            if (is_array($info)) {
+                $upcoming = [
+                    'time' => $info['time'],
+                    'field' => $info['fieldname'],
+                    'location' => $info['placename'],
+                    'home' => $info['hometeam'] === null ? $info['phometeamname'] : $info['hometeamname'],
+                    'away' => $info['visitorteam'] === null ? $info['pvisitorteamname'] : $info['visitorteamname'],
+                ];
+            }
         } elseif (is_array($row) && !empty($row['reservation'])) {
             $reservation = ReservationInfo((int) $row['reservation']);
-            $start = is_array($reservation) ? $reservation['starttime'] : null;
+            if (is_array($reservation)) {
+                $upcoming = [
+                    'time' => $reservation['starttime'],
+                    'field' => $reservation['fieldname'],
+                    'location' => $reservation['name'],
+                    'home' => null,
+                    'away' => null,
+                ];
+            }
         }
+        $start = $upcoming['time'] ?? null;
         $availableFrom = empty($start) ? null : substr((string) $start, 0, 10);
     }
-    return ['games' => $games, 'available_from' => $availableFrom];
+    return ['games' => $games, 'available_from' => $availableFrom, 'upcoming' => $upcoming];
 }
 
 /**

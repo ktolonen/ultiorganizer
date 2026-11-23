@@ -1494,6 +1494,7 @@ function api_handle_scorekeeping($parts, $route)
                     'event_id' => $season,
                     'games' => $found['games'],
                     'available_from' => $found['available_from'],
+                    'upcoming' => $found['upcoming'],
                 ],
             ]);
         }
