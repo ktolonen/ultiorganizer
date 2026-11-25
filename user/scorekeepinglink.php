@@ -6,6 +6,7 @@ include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/reservation.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/scorekeeper.functions.php';
+include_once $include_prefix . 'lib/configuration.functions.php';
 
 $title = _("Scorekeeping link");
 $gameId = (int) iget("game");
@@ -39,6 +40,23 @@ if ($print) {
 $target = ScorekeeperLinkTarget($scope, $scopeId);
 $seasonInfo = SeasonInfo($target['season']);
 $anonymous = !empty($seasonInfo['anonymous_scorekeeping']);
+if ($scope === 'game') {
+    $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
+    $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
+    $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
+    if (!empty($seasonInfo['spiritmode'])) {
+        $spiritUrl = SpiritEntryUrl($gameId);
+        if (!empty($spiritUrl)) {
+            $menutabs[_("Spirit score")] = $spiritUrl;
+        }
+    }
+    if (ShowDefenseStats()) {
+        $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
+    }
+    $menutabs[_("Scorekeeping link")] = "?view=user/scorekeepinglink&game=$gameId";
+    $html .= pageMenu($menutabs, "?view=user/scorekeepinglink&game=$gameId", false);
+}
+
 if ($scope === 'game') {
     $who = $anonymous
         ? _("Anyone with this link can keep score for this game without logging in.")
