@@ -3,6 +3,7 @@
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
+include_once $include_prefix . 'lib/scorekeeper.functions.php';
 include_once $include_prefix . 'lib/standings.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
@@ -79,6 +80,9 @@ if (ShowDefenseStats()) {
 }
 
 
+if (CanIssueGameScorekeeperToken($gameId)) {
+    $menutabs[_("Scorekeeping link")] = "?view=user/scorekeepinglink&game=$gameId";
+}
 pageMenu($menutabs);
 
 $html .= "<form  method='post' action='?view=user/addresult&amp;game=" . $gameId . "'>

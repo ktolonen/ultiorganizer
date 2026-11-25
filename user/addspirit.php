@@ -3,6 +3,7 @@
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
+include_once $include_prefix . 'lib/scorekeeper.functions.php';
 include_once $include_prefix . 'lib/standings.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
@@ -226,6 +227,9 @@ if ($season['spiritmode'] > 0) {
     $menutabs[_("Spirit score")] = SpiritEntryUrl($gameId);
     if (ShowDefenseStats()) {
         $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId&amp;team=$teamId";
+    }
+    if (CanIssueGameScorekeeperToken($gameId)) {
+        $menutabs[_("Scorekeeping link")] = "?view=user/scorekeepinglink&game=$gameId";
     }
     $html .= pageMenu($menutabs, "", false);
 

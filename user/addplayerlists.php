@@ -2,6 +2,7 @@
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
+include_once $include_prefix . 'lib/scorekeeper.functions.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/player.functions.php';
 
@@ -285,6 +286,9 @@ if (ShowDefenseStats()) {
     $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 
+if (CanIssueGameScorekeeperToken($gameId)) {
+    $menutabs[_("Scorekeeping link")] = "?view=user/scorekeepinglink&game=$gameId";
+}
 pageMenu($menutabs);
 
 
