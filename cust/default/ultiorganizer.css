@@ -959,6 +959,23 @@ table#pagemenu a.current {
 	border-collapse: collapse;
 }
 
+.api-tokens-scroll {
+	overflow-x: auto;
+}
+
+.api-tokens-table {
+	width: 100%;
+	margin: 5px 0;
+}
+
+.api-tokens-table th {
+	white-space: nowrap;
+}
+
+.api-tokens-table td:nth-last-child(2) form {
+	margin-bottom: 4px;
+}
+
 .history-table th,
 .history-table td {
 	padding: 1px 2px;
