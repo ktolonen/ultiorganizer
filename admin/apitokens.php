@@ -153,7 +153,8 @@ echo "<h3>" . _("Existing tokens") . "</h3>";
 if (empty($tokens)) {
     echo "<p>" . _("No tokens created.") . "</p>";
 } else {
-    echo "<table style='width:100%' border='0' cellpadding='4'>\n";
+    echo "<div class='api-tokens-scroll'>";
+    echo "<table class='api-tokens-table' border='0' cellpadding='4'>\n";
     echo "<tr>";
     echo "<th>" . _("ID") . "</th>";
     echo "<th></th>";
@@ -189,7 +190,7 @@ if (empty($tokens)) {
         echo $timestampCell($token['last_used']);
         echo "<td>" . $status . "</td>";
         echo "<td>";
-        echo "<form method='post' action='?view=admin/apitokens' style='display:inline;'>";
+        echo "<form method='post' action='?view=admin/apitokens'>";
         echo "<input type='hidden' name='token_id' value='" . (int) $token['token_id'] . "'/>";
         if (!empty($token['revoked'])) {
             echo "<input type='submit' name='restore_token' value='" . _("Restore") . "'/>";
@@ -212,7 +213,7 @@ if (empty($tokens)) {
         echo "<td colspan='10'><code style='word-break: break-all' id='token_value_" . $tokenId . "'></code></td>";
         echo "</tr>\n";
     }
-    echo "</table>\n";
+    echo "</table></div>\n";
 }
 
 contentEnd();
