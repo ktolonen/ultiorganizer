@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 19:18+0000\n"
+"POT-Creation-Date: 2026-11-28 16:28+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -299,7 +299,7 @@ msgstr ""
 msgid "Actions"
 msgstr "Aktionen"
 
-#: admin/apitokens.php:177
+#: admin/apitokens.php:178
 msgid "Active"
 msgstr "Aktiv"
 
@@ -636,7 +636,7 @@ msgid "Anyone with a scorekeeping link can change results without logging in."
 msgstr ""
 "Jeder mit einem Scorekeeping-Link kann Ergebnisse ohne Anmeldung ändern."
 
-#: user/scorekeepingapp.php:57
+#: user/scorekeepingapp.php:58
 msgid ""
 "Anyone with this code or link can keep score with any scorekeeping link they "
 "have, until you replace or remove the token."
@@ -667,7 +667,7 @@ msgid "Anyone with this link can keep score for this game without logging in."
 msgstr ""
 "Jeder mit diesem Link kann ohne Anmeldung Punkte für dieses Spiel erfassen."
 
-#: admin/apitokens.php:147 admin/apitokens.php:201
+#: admin/apitokens.php:147 admin/apitokens.php:202
 msgid "App setup QR"
 msgstr "App-Einrichtungs-QR-Code"
 
@@ -1436,7 +1436,7 @@ msgstr "Jetzt nach InnoDB/utf8mb4 umwandeln"
 msgid "Coordinates"
 msgstr "Koordinaten"
 
-#: admin/seasonteams.php:285 user/scorekeepingapp.php:45
+#: admin/seasonteams.php:285 user/scorekeepingapp.php:46
 #: user/scorekeepinglink.php:75 user/teamplayers.php:201
 msgid "Copy"
 msgstr "Kopieren"
@@ -1517,11 +1517,11 @@ msgstr "Erzeugen"
 msgid "Create new event"
 msgstr "Neue(s) Turnier/Saison"
 
-#: admin/apitokens.php:126 user/scorekeepingapp.php:35
+#: admin/apitokens.php:126 user/scorekeepingapp.php:36
 msgid "Create token"
 msgstr "Token erzeugen"
 
-#: admin/apitokens.php:163 admin/scorekeepinglinks.php:93
+#: admin/apitokens.php:164 admin/scorekeepinglinks.php:93
 msgid "Created"
 msgstr "Erzeugt"
 
@@ -1759,7 +1759,7 @@ msgstr "Diese Runde loeschen?"
 msgid "Delete this spirit score?"
 msgstr "Diese Spirit-Wertung loeschen?"
 
-#: admin/apitokens.php:206
+#: admin/apitokens.php:207
 msgid "Delete this token permanently?"
 msgstr "Dieses Token dauerhaft loeschen?"
 
@@ -3319,7 +3319,7 @@ msgstr "Heimteam ist für Spieleingabe verantwortlich"
 msgid "Homepage"
 msgstr "Homepage"
 
-#: admin/apitokens.php:158 admin/clubs.php:58 admin/clubs.php:93
+#: admin/apitokens.php:159 admin/clubs.php:58 admin/clubs.php:93
 msgid "ID"
 msgstr "ID"
 
@@ -3666,7 +3666,7 @@ msgstr "Behalten (am haeufigsten referenziert)"
 msgid "Key"
 msgstr "Schlüssel"
 
-#: admin/apitokens.php:129 admin/apitokens.php:160
+#: admin/apitokens.php:129 admin/apitokens.php:161
 msgid "Label"
 msgstr "Bezeichnung"
 
@@ -3694,7 +3694,7 @@ msgstr "Zuletzt geändert"
 msgid "Last name"
 msgstr "Nachname"
 
-#: admin/apitokens.php:164 user/scorekeepingapp.php:59
+#: admin/apitokens.php:165 user/scorekeepingapp.php:60
 msgid "Last used"
 msgstr "Zuletzt verwendet"
 
@@ -4219,7 +4219,7 @@ msgstr "Nationale Mitgliedsnummer"
 msgid "Nationality"
 msgstr "Nationalität"
 
-#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:58
+#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:59
 msgid "Never"
 msgstr "Nie"
 
@@ -4291,7 +4291,7 @@ msgstr "Keine Änderungen aufgezeichnet"
 msgid "No countries available for team generation."
 msgstr "Für die Teamerstellung sind keine Länder verfügbar."
 
-#: user/scorekeepingapp.php:24
+#: user/scorekeepingapp.php:25
 msgid "No current event uses the scorekeeping app."
 msgstr "Kein aktuelles Turnier nutzt die Scorekeeping-App."
 
@@ -4479,7 +4479,7 @@ msgstr "Kein Team ohne Gruppe"
 msgid "No token deleted."
 msgstr "Kein Token gelöscht."
 
-#: admin/apitokens.php:154 user/scorekeepingapp.php:33
+#: admin/apitokens.php:154 user/scorekeepingapp.php:34
 msgid "No tokens created."
 msgstr "Keine Tokens erstellt."
 
@@ -4557,7 +4557,7 @@ msgstr "Geben Sie den ausgefüllten Spielbericht bei der Turnierleitung ab."
 msgid "Old events"
 msgstr "Alte Turniere"
 
-#: user/scorekeepingapp.php:43
+#: user/scorekeepingapp.php:44
 msgid ""
 "On the phone with the app, copy this link and paste it in the app under Pair "
 "a server."
@@ -4620,7 +4620,7 @@ msgstr "Ereigniseinstellungen oeffnen"
 msgid "Open for enrollment"
 msgstr "Anmeldung offen"
 
-#: admin/apitokens.php:166 admin/locations.php:55 admin/seasonpools.php:125
+#: admin/apitokens.php:167 admin/locations.php:55 admin/seasonpools.php:125
 #: admin/seasons.php:98 admin/seasonseries.php:77 admin/spirit.php:386
 msgid "Operations"
 msgstr "Operationen"
@@ -5386,7 +5386,7 @@ msgstr "Alle Spiele entfernen"
 msgid "Remove cap"
 msgstr "Obergrenze entfernen"
 
-#: user/scorekeepingapp.php:27 user/scorekeepingapp.php:63
+#: user/scorekeepingapp.php:28 user/scorekeepingapp.php:64
 msgid "Remove token"
 msgstr "Token entfernen"
 
@@ -5410,7 +5410,7 @@ msgstr "Passwort (Wdh.)"
 msgid "Replace link"
 msgstr "Link ersetzen"
 
-#: user/scorekeepingapp.php:62
+#: user/scorekeepingapp.php:63
 msgid "Replace token"
 msgstr "Token ersetzen"
 
@@ -5498,7 +5498,7 @@ msgstr "Spieluhr bei 00:00 neu starten?"
 msgid "Restart the game clock to continue timed scoring."
 msgstr "Spieluhr neu starten, um die Zeitwertung fortzusetzen."
 
-#: admin/apitokens.php:195 admin/dbadmin.php:72 admin/dbrestore.php:34
+#: admin/apitokens.php:196 admin/dbadmin.php:72 admin/dbrestore.php:34
 #: admin/dbrestore.php:51
 msgid "Restore"
 msgstr "Wiederherstellen"
@@ -5599,11 +5599,11 @@ msgstr "Zur Datenbankverwaltung zurückkehren"
 msgid "Review Spirit Score"
 msgstr "Spirit-Bewertung ansehen"
 
-#: admin/apitokens.php:197 admin/scorekeepinglinks.php:80
+#: admin/apitokens.php:198 admin/scorekeepinglinks.php:80
 msgid "Revoke"
 msgstr "Widerrufen"
 
-#: admin/apitokens.php:177
+#: admin/apitokens.php:178
 msgid "Revoked"
 msgstr "Widerrufen"
 
@@ -5813,7 +5813,7 @@ msgstr "Speichern betrifft nur die ausgewählte Division."
 msgid "Saving failed. Please try again."
 msgstr "Das Speichern ist fehlgeschlagen. Bitte versuche es erneut."
 
-#: user/scorekeepingapp.php:42
+#: user/scorekeepingapp.php:43
 msgid ""
 "Scan this code in the scorekeeping app, then scan a scorekeeping link in the "
 "app to keep score."
@@ -5886,11 +5886,11 @@ msgstr "Name im Spielplan"
 msgid "Scheduling right"
 msgstr "Spielplan-Verantwortlicher"
 
-#: admin/apitokens.php:161
+#: admin/apitokens.php:162
 msgid "Scope"
 msgstr "Bereich"
 
-#: admin/apitokens.php:137 admin/apitokens.php:162
+#: admin/apitokens.php:137 admin/apitokens.php:163
 msgid "Scope ID"
 msgstr "Bereichs-ID"
 
@@ -5940,6 +5940,10 @@ msgstr "Protokollführer tragen ihre Namen ein."
 #: menufunctions.php:422 admin/addseasons.php:309 user/scorekeepingapp.php:7
 msgid "Scorekeeping app"
 msgstr "Scorekeeping-App"
+
+#: user/scorekeepingapp.php:23
+msgid "Scorekeeping app releases"
+msgstr "Versionen der Scorekeeping-App"
 
 #: user/adddefensesheet.php:75 user/addplayerlists.php:290
 #: user/addresult.php:84 user/addscoresheet.php:290 user/addspirit.php:232
@@ -6311,7 +6315,7 @@ msgstr "Teilen"
 msgid "Shirt numbers"
 msgstr "Trikotnummern"
 
-#: admin/apitokens.php:88 admin/apitokens.php:183
+#: admin/apitokens.php:88 admin/apitokens.php:184
 #: admin/scorekeepinglinks.php:76 spiritkeeper/home.php:56
 #: user/scoresheethistory.php:426 user/userinfo.php:320
 msgid "Show"
@@ -6795,7 +6799,7 @@ msgstr "Statistik"
 msgid "Stats refs"
 msgstr "Statistikreferenzen"
 
-#: admin/apitokens.php:165 admin/finalstandings.php:130
+#: admin/apitokens.php:166 admin/finalstandings.php:130
 #: admin/finalstandings.php:132 scorekeeper/addscoresheet.php:303
 #: scorekeeper/auth.php:168
 msgid "Status"
@@ -7018,7 +7022,7 @@ msgstr ""
 "Der aktuelle Link funktioniert nicht mehr, und alle, die ihn geöffnet haben, "
 "verlieren den Zugriff. Fortfahren?"
 
-#: user/scorekeepingapp.php:60
+#: user/scorekeepingapp.php:61
 msgid ""
 "The current token stops working and the app must be set up again. Continue?"
 msgstr ""
@@ -8148,7 +8152,7 @@ msgstr "World Flying Disc Federation"
 #: admin/addseasonlinks.php:73 admin/addseasonusers.php:101
 #: admin/addseasonusers.php:126 admin/addseasonusers.php:153
 #: admin/addseasonusers.php:207 admin/addseasonusers.php:271
-#: admin/addteamadmins.php:77 admin/apitokens.php:206 admin/clubs.php:76
+#: admin/addteamadmins.php:77 admin/apitokens.php:207 admin/clubs.php:76
 #: admin/clubs.php:112 admin/locations.php:66 admin/poolgames.php:295
 #: admin/poolgames.php:296 admin/poolgames.php:335 admin/poolgames.php:336
 #: admin/poolgames.php:359 admin/poolgames.php:360 admin/poolmoves.php:256

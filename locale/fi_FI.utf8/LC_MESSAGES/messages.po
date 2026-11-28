@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 19:18+0000\n"
+"POT-Creation-Date: 2026-11-28 16:28+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -294,7 +294,7 @@ msgstr ""
 msgid "Actions"
 msgstr "Toiminnot"
 
-#: admin/apitokens.php:177
+#: admin/apitokens.php:178
 msgid "Active"
 msgstr "Aktiivinen"
 
@@ -632,7 +632,7 @@ msgstr ""
 "Kuka tahansa pisteenkirjauslinkin haltija voi muuttaa tuloksia kirjautumatta "
 "sisään."
 
-#: user/scorekeepingapp.php:57
+#: user/scorekeepingapp.php:58
 msgid ""
 "Anyone with this code or link can keep score with any scorekeeping link they "
 "have, until you replace or remove the token."
@@ -665,7 +665,7 @@ msgstr ""
 "Kuka tahansa tämän linkin haltija voi kirjata pisteet tälle pelille "
 "kirjautumatta sisään."
 
-#: admin/apitokens.php:147 admin/apitokens.php:201
+#: admin/apitokens.php:147 admin/apitokens.php:202
 msgid "App setup QR"
 msgstr "Sovelluksen asetus-QR"
 
@@ -1420,7 +1420,7 @@ msgstr "Muunna InnoDB/utf8mb4-muotoon nyt"
 msgid "Coordinates"
 msgstr "Koordinaatit"
 
-#: admin/seasonteams.php:285 user/scorekeepingapp.php:45
+#: admin/seasonteams.php:285 user/scorekeepingapp.php:46
 #: user/scorekeepinglink.php:75 user/teamplayers.php:201
 msgid "Copy"
 msgstr "Kopioi"
@@ -1501,11 +1501,11 @@ msgstr "Luo"
 msgid "Create new event"
 msgstr "Uusi tapahtuma"
 
-#: admin/apitokens.php:126 user/scorekeepingapp.php:35
+#: admin/apitokens.php:126 user/scorekeepingapp.php:36
 msgid "Create token"
 msgstr "Luo token"
 
-#: admin/apitokens.php:163 admin/scorekeepinglinks.php:93
+#: admin/apitokens.php:164 admin/scorekeepinglinks.php:93
 msgid "Created"
 msgstr "Luotu"
 
@@ -1742,7 +1742,7 @@ msgstr "Poista tämä kierros?"
 msgid "Delete this spirit score?"
 msgstr "Poistetaanko nämä spirit-pisteet?"
 
-#: admin/apitokens.php:206
+#: admin/apitokens.php:207
 msgid "Delete this token permanently?"
 msgstr "Poista tämä token pysyvästi?"
 
@@ -3298,7 +3298,7 @@ msgstr "Kotijoukkue on vastuussa pelistä"
 msgid "Homepage"
 msgstr "Kotisivut"
 
-#: admin/apitokens.php:158 admin/clubs.php:58 admin/clubs.php:93
+#: admin/apitokens.php:159 admin/clubs.php:58 admin/clubs.php:93
 msgid "ID"
 msgstr "Tunnus"
 
@@ -3642,7 +3642,7 @@ msgstr "Pidä (eniten viitattu)"
 msgid "Key"
 msgstr "Avain"
 
-#: admin/apitokens.php:129 admin/apitokens.php:160
+#: admin/apitokens.php:129 admin/apitokens.php:161
 msgid "Label"
 msgstr "Nimike"
 
@@ -3670,7 +3670,7 @@ msgstr "Muutettu viimeksi"
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: admin/apitokens.php:164 user/scorekeepingapp.php:59
+#: admin/apitokens.php:165 user/scorekeepingapp.php:60
 msgid "Last used"
 msgstr "Viimeksi käytetty"
 
@@ -4193,7 +4193,7 @@ msgstr "Kansallinen jäsennumero"
 msgid "Nationality"
 msgstr "Kansallisuus"
 
-#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:58
+#: admin/visitors.php:53 admin/visitors.php:54 user/scorekeepingapp.php:59
 msgid "Never"
 msgstr "Ei koskaan"
 
@@ -4265,7 +4265,7 @@ msgstr "Muutoksia ei ole kirjattu"
 msgid "No countries available for team generation."
 msgstr "Joukkueiden luontiin ei ole saatavilla maita."
 
-#: user/scorekeepingapp.php:24
+#: user/scorekeepingapp.php:25
 msgid "No current event uses the scorekeeping app."
 msgstr "Yksikään nykyinen tapahtuma ei käytä pisteenkirjaussovellusta."
 
@@ -4451,7 +4451,7 @@ msgstr "Ei joukkueita ilman lohkoa"
 msgid "No token deleted."
 msgstr "Yhtään tokenia ei poistettu."
 
-#: admin/apitokens.php:154 user/scorekeepingapp.php:33
+#: admin/apitokens.php:154 user/scorekeepingapp.php:34
 msgid "No tokens created."
 msgstr "Tokeneita ei ole luotu."
 
@@ -4528,7 +4528,7 @@ msgstr "Toimitsija palauttaa täytetyn lomakkeen kisatoimistoon."
 msgid "Old events"
 msgstr "Vanhat tapahtumat"
 
-#: user/scorekeepingapp.php:43
+#: user/scorekeepingapp.php:44
 msgid ""
 "On the phone with the app, copy this link and paste it in the app under Pair "
 "a server."
@@ -4591,7 +4591,7 @@ msgstr "Avaa tapahtuman asetukset"
 msgid "Open for enrollment"
 msgstr "Avoin ilmoittautumisille"
 
-#: admin/apitokens.php:166 admin/locations.php:55 admin/seasonpools.php:125
+#: admin/apitokens.php:167 admin/locations.php:55 admin/seasonpools.php:125
 #: admin/seasons.php:98 admin/seasonseries.php:77 admin/spirit.php:386
 msgid "Operations"
 msgstr "Toiminnot"
@@ -5351,7 +5351,7 @@ msgstr "Poista kaikki pelit"
 msgid "Remove cap"
 msgstr "Poista raja"
 
-#: user/scorekeepingapp.php:27 user/scorekeepingapp.php:63
+#: user/scorekeepingapp.php:28 user/scorekeepingapp.php:64
 msgid "Remove token"
 msgstr "Poista token"
 
@@ -5375,7 +5375,7 @@ msgstr "Toista salasana"
 msgid "Replace link"
 msgstr "Vaihda linkki"
 
-#: user/scorekeepingapp.php:62
+#: user/scorekeepingapp.php:63
 msgid "Replace token"
 msgstr "Vaihda token"
 
@@ -5463,7 +5463,7 @@ msgstr "Käynnistetäänkö pelikello uudelleen ajasta 00:00?"
 msgid "Restart the game clock to continue timed scoring."
 msgstr "Käynnistä pelikello uudelleen jatkaaksesi ajastettua pistelaskua."
 
-#: admin/apitokens.php:195 admin/dbadmin.php:72 admin/dbrestore.php:34
+#: admin/apitokens.php:196 admin/dbadmin.php:72 admin/dbrestore.php:34
 #: admin/dbrestore.php:51
 msgid "Restore"
 msgstr "Palauta varmuuskopio"
@@ -5563,11 +5563,11 @@ msgstr "Palaa tietokannan ylläpitoon"
 msgid "Review Spirit Score"
 msgstr "Tarkastele spirit-pisteitä"
 
-#: admin/apitokens.php:197 admin/scorekeepinglinks.php:80
+#: admin/apitokens.php:198 admin/scorekeepinglinks.php:80
 msgid "Revoke"
 msgstr "Kumoa"
 
-#: admin/apitokens.php:177
+#: admin/apitokens.php:178
 msgid "Revoked"
 msgstr "Kumottu"
 
@@ -5777,7 +5777,7 @@ msgstr "Tallennus vaikuttaa vain valittuun sarjaan."
 msgid "Saving failed. Please try again."
 msgstr "Tallennus epäonnistui. Yritä uudelleen."
 
-#: user/scorekeepingapp.php:42
+#: user/scorekeepingapp.php:43
 msgid ""
 "Scan this code in the scorekeeping app, then scan a scorekeeping link in the "
 "app to keep score."
@@ -5850,11 +5850,11 @@ msgstr "Aikataulutusnimi"
 msgid "Scheduling right"
 msgstr "Aikataulutus oikeus"
 
-#: admin/apitokens.php:161
+#: admin/apitokens.php:162
 msgid "Scope"
 msgstr "Scope"
 
-#: admin/apitokens.php:137 admin/apitokens.php:162
+#: admin/apitokens.php:137 admin/apitokens.php:163
 msgid "Scope ID"
 msgstr "Scopen tunnus"
 
@@ -5904,6 +5904,10 @@ msgstr "Pöytäkirjanpitäjät kirjoittavat nimensä."
 #: menufunctions.php:422 admin/addseasons.php:309 user/scorekeepingapp.php:7
 msgid "Scorekeeping app"
 msgstr "Pisteenkirjaussovellus"
+
+#: user/scorekeepingapp.php:23
+msgid "Scorekeeping app releases"
+msgstr "Pisteenkirjaussovelluksen julkaisut"
 
 #: user/adddefensesheet.php:75 user/addplayerlists.php:290
 #: user/addresult.php:84 user/addscoresheet.php:290 user/addspirit.php:232
@@ -6268,7 +6272,7 @@ msgstr "Jaa"
 msgid "Shirt numbers"
 msgstr "Pelinumerot"
 
-#: admin/apitokens.php:88 admin/apitokens.php:183
+#: admin/apitokens.php:88 admin/apitokens.php:184
 #: admin/scorekeepinglinks.php:76 spiritkeeper/home.php:56
 #: user/scoresheethistory.php:426 user/userinfo.php:320
 msgid "Show"
@@ -6750,7 +6754,7 @@ msgstr "Tilastot"
 msgid "Stats refs"
 msgstr "Tilastoviitteitä"
 
-#: admin/apitokens.php:165 admin/finalstandings.php:130
+#: admin/apitokens.php:166 admin/finalstandings.php:130
 #: admin/finalstandings.php:132 scorekeeper/addscoresheet.php:303
 #: scorekeeper/auth.php:168
 msgid "Status"
@@ -6970,7 +6974,7 @@ msgstr ""
 "Nykyinen linkki lakkaa toimimasta, ja kaikki sen avanneet menettävät "
 "pääsynsä. Jatketaanko?"
 
-#: user/scorekeepingapp.php:60
+#: user/scorekeepingapp.php:61
 msgid ""
 "The current token stops working and the app must be set up again. Continue?"
 msgstr ""
@@ -8073,7 +8077,7 @@ msgstr "Maailman Liitokiekkoliitto"
 #: admin/addseasonlinks.php:73 admin/addseasonusers.php:101
 #: admin/addseasonusers.php:126 admin/addseasonusers.php:153
 #: admin/addseasonusers.php:207 admin/addseasonusers.php:271
-#: admin/addteamadmins.php:77 admin/apitokens.php:206 admin/clubs.php:76
+#: admin/addteamadmins.php:77 admin/apitokens.php:207 admin/clubs.php:76
 #: admin/clubs.php:112 admin/locations.php:66 admin/poolgames.php:295
 #: admin/poolgames.php:296 admin/poolgames.php:335 admin/poolgames.php:336
 #: admin/poolgames.php:359 admin/poolgames.php:360 admin/poolmoves.php:256
