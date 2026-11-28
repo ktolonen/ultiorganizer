@@ -20,6 +20,7 @@ if (!empty($_POST['remove']) && ApiUserTokenRevoke($_SESSION['uid'])) {
 $token = ApiUserToken($_SESSION['uid']);
 
 $html = "<h1>" . utf8entities($title) . "</h1>";
+$html .= "<p><a href='https://github.com/ktolonen/ultiorganizer-app/releases'>" . utf8entities(_("Scorekeeping app releases")) . "</a></p>";
 if (!$canSetUp) {
     $html .= "<p>" . utf8entities(_("No current event uses the scorekeeping app.")) . "</p>";
     if ($token !== null) {
